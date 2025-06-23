@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flip Card Interaction Example</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+            padding: 2rem;
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: #2c3e50;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+        
+        .card {
+            height: 300px;
+            perspective: 1000px;
+            cursor: pointer;
+        }
+        
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.8s;
+            transform-style: preserve-3d;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+        
+        .card.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+        
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 1.5rem;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .card-front {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        .card-back {
+            background-color: #2ecc71;
+            color: white;
+            transform: rotateY(180deg);
+        }
+        
+        .card-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .card-title {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .card-content {
+            font-size: 1rem;
+        }
+        
+        .instructions {
+            text-align: center;
+            margin-bottom: 2rem;
+            font-style: italic;
+            color: #7f8c8d;
+        }
+        
+        @media (max-width: 768px) {
+            .cards-container {
+                grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+                gap: 1.5rem;
+            }
+            
+            .card {
+                height: 250px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Flip Card Interaction Example</h1>
+        <p class="instructions">Click on any card to flip it and reveal the content on the back</p>
+        
+        <div class="cards-container">
+            <!-- Card 1 -->
+            <div class="card">
+                <div class="card-inner">
+                    <div class="card-front">
+                        <div class="card-icon">🌟</div>
+                        <h2 class="card-title">Features</h2>
+                        <p class="card-content">Click to learn about our features</p>
+                    </div>
+                    <div class="card-back">
+                        <div class="card-icon">📋</div>
+                        <h2 class="card-title">Amazing Features</h2>
+                        <p class="card-content">Our product includes responsive design, accessibility features, and cross-browser compatibility.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Card 2 -->
+            <div class="card">
+                <div class="card-inner">
+                    <div class="card-front">
+                        <div class="card-icon">💡</div>
+                        <h2 class="card-title">Tips</h2>
+                        <p class="card-content">Click for helpful tips</p>
+                    </div>
+                    <div class="card-back">
+                        <div class="card-icon">✅</div>
+                        <h2 class="card-title">Pro Tips</h2>
+                        <p class="card-content">Always keep your code clean and well-documented. Test regularly and refactor when necessary.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Card 3 -->
+            <div class="card">
+                <div class="card-inner">
+                    <div class="card-front">
+                        <div class="card-icon">🔧</div>
+                        <h2 class="card-title">Tools</h2>
+                        <p class="card-content">Click to see recommended tools</p>
+                    </div>
+                    <div class="card-back">
+                        <div class="card-icon">🛠️</div>
+                        <h2 class="card-title">Essential Tools</h2>
+                        <p class="card-content">VSCode, Git, Chrome DevTools, and a good cup of coffee are all you need to get started.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Card 4 -->
+            <div class="card">
+                <div class="card-inner">
+                    <div class="card-front">
+                        <div class="card-icon">📚</div>
+                        <h2 class="card-title">Resources</h2>
+                        <p class="card-content">Click for learning resources</p>
+                    </div>
+                    <div class="card-back">
+                        <div class="card-icon">🎓</div>
+                        <h2 class="card-title">Learning Resources</h2>
+                        <p class="card-content">MDN Web Docs, freeCodeCamp, and CSS-Tricks are excellent resources for web developers.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Card 5 -->
+            <div class="card">
+                <div class="card-inner">
+                    <div class="card-front">
+                        <div class="card-icon">🚀</div>
+                        <h2 class="card-title">Performance</h2>
+                        <p class="card-content">Click for performance tips</p>
+                    </div>
+                    <div class="card-back">
+                        <div class="card-icon">⚡</div>
+                        <h2 class="card-title">Speed Matters</h2>
+                        <p class="card-content">Optimize images, minimize HTTP requests, and use browser caching to improve website performance.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Card 6 -->
+            <div class="card">
+                <div class="card-inner">
+                    <div class="card-front">
+                        <div class="card-icon">🎨</div>
+                        <h2 class="card-title">Design</h2>
+                        <p class="card-content">Click for design principles</p>
+                    </div>
+                    <div class="card-back">
+                        <div class="card-icon">👁️</div>
+                        <h2 class="card-title">Design Principles</h2>
+                        <p class="card-content">Focus on user experience, maintain consistency, and ensure accessibility in all your designs.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Get all cards
+        const cards = document.querySelectorAll('.card');
+        
+        // Add click event listener to each card
+        cards.forEach(card => {
+            card.addEventListener('click', () => {
+                // Toggle the 'flipped' class
+                card.classList.toggle('flipped');
+            });
+        });
+    </script>
+</body>
+</html>
