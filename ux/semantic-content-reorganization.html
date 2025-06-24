@@ -156,10 +156,31 @@
             border-bottom: 1px solid #e2e8f0;
         }
 
-        .group-title {
+        .group-title.editable {
+            cursor: pointer;
+            padding: 2px 4px;
+            border-radius: 4px;
+            transition: background 0.2s ease;
+        }
+
+        .group-title.editable:hover {
+            background: rgba(66, 153, 225, 0.1);
+        }
+
+        .group-title-input {
+            background: white;
+            border: 2px solid #4299e1;
+            border-radius: 4px;
+            padding: 2px 6px;
+            font-size: 0.9rem;
             font-weight: 600;
             color: #2d3748;
-            font-size: 0.9rem;
+            width: 150px;
+        }
+
+        .group-title-input:focus {
+            outline: none;
+            border-color: #3182ce;
         }
 
         .group-badge {
@@ -549,7 +570,7 @@
                     <li><strong>Option 1 - Let AI Do the Work:</strong> Click "Analyze Content" first to see AI automatically organize items with detailed reasoning</li>
                     <li><strong>Option 2 - Manual Organization:</strong> Drag content items from the left into any organizational group to see AI feedback on your choices</li>
                     <li><strong>Option 3 - Mixed Approach:</strong> Drag some items manually, then click "Analyze Content" to let AI handle the rest</li>
-                    <li><strong>Create Custom Groups:</strong> Use "New Group" to create your own organizational categories</li>
+                    <li><strong>Create Custom Groups:</strong> Use "New Group" to create your own organizational categories, then click the group title to rename it</li>
                     <li><strong>Review AI Reasoning:</strong> Check the AI Feedback pane (right side) to see detailed explanations for every decision</li>
                     <li><strong>Start Over:</strong> Click "Reset" anytime to restore all 15 content items and try a different approach</li>
                 </ul>
@@ -918,6 +939,8 @@
         document.addEventListener('DOMContentLoaded', function() {
             setupDragAndDrop();
             updateProgress();
+            updateRelationships(); // Initialize with default state
+            updateSuggestions(); // Initialize with default state
         });
 
         function setupDragAndDrop() {
@@ -1179,7 +1202,7 @@
             
             newGroup.innerHTML = `
                 <div class="group-header">
-                    <div class="group-title">Custom Group ${groupCount - 3}</div>
+                    <div class="group-title editable" onclick="editGroupTitle(this)">Custom Group ${groupCount - 3}</div>
                     <div class="group-badge user">User</div>
                 </div>
                 <div class="group-items" id="group${groupCount}Items">
@@ -1197,7 +1220,7 @@
             
             addFeedback(
                 '📂 Created Custom Group',
-                'New user-defined group created. AI will learn from how you organize content in this custom category to improve future suggestions.',
+                'New user-defined group created. Click the group title to rename it to something meaningful like "Project Alpha" or "Q4 Materials". AI will learn from how you organize content in custom categories.',
                 'info'
             );
         }
@@ -1306,13 +1329,99 @@
         }
 
         function updateAIAnalysis(groupId, itemType) {
-            // Simulate updating AI confidence based on user actions
-            const confidenceBars = document.querySelectorAll('.confidence-fill');
-            confidenceBars.forEach(bar => {
-                const currentWidth = parseInt(bar.style.width);
-                const newWidth = Math.min(currentWidth + 3, 95);
-                bar.style.width = newWidth + '%';
-            });
+            // Update confidence bars based on what's being organized
+            const themeUpdates = {
+                'strategy': { id: 'strategy-confidence', boost: 5 },
+                'meeting': { id: 'collaboration-confidence', boost: 4 },
+                'analysis': { id: 'analysis-confidence', boost: 6 },
+                'design': { id: 'design-confidence', boost: 3 }
+            };
+            
+            if (themeUpdates[itemType]) {
+                const confidenceBar = document.getElementById(themeUpdates[itemType].id);
+                if (confidenceBar) {
+                    const currentWidth = parseInt(confidenceBar.style.width) || 0;
+                    const newWidth = Math.min(currentWidth + themeUpdates[itemType].boost, 95);
+                    confidenceBar.style.width = newWidth + '%';
+                }
+            }
+            
+            // Update relationships based on what's being organized
+            updateRelationships();
+            
+            // Update suggestions based on current organization state
+            updateSuggestions();
+        }
+        
+        function updateRelationships() {
+            const relationshipsList = document.getElementById('relationshipsList');
+            const relationships = [];
+            
+            // Check what's organized to generate dynamic relationships
+            const strategyItems = document.querySelectorAll('#group1Items .grouped-item').length;
+            const meetingItems = document.querySelectorAll('#group2Items .grouped-item').length;
+            const analysisItems = document.querySelectorAll('#group3Items .grouped-item').length;
+            const designItems = document.querySelectorAll('#designGroup .grouped-item').length;
+            
+            if (strategyItems > 0 && analysisItems > 0) {
+                relationships.push('Strategy ↔ Analysis (Strong) - Strategic docs inform research priorities');
+            }
+            
+            if (meetingItems > 0 && strategyItems > 0) {
+                relationships.push('Meetings → Strategy (Medium) - Planning sessions drive strategic decisions');
+            }
+            
+            if (analysisItems > 1) {
+                relationships.push('Research ↔ Feedback (Strong) - Customer insights shape product decisions');
+            }
+            
+            if (designItems > 0 && strategyItems > 0) {
+                relationships.push('Design → Strategy (Medium) - Visual assets support strategic initiatives');
+            }
+            
+            if (relationships.length === 0) {
+                relationshipsList.innerHTML = '<div class="analysis-item">Organize items to see content relationships emerge</div>';
+            } else {
+                relationshipsList.innerHTML = relationships.map(rel => 
+                    `<div class="analysis-item">${rel}</div>`
+                ).join('');
+            }
+        }
+        
+        function updateSuggestions() {
+            const suggestionsList = document.getElementById('suggestionsList');
+            const suggestions = [];
+            
+            // Generate smart suggestions based on current organization
+            const totalOrganized = document.querySelectorAll('.grouped-item').length;
+            const unorganizedCount = document.querySelectorAll('.content-item').length;
+            
+            if (totalOrganized === 0) {
+                suggestions.push('Start with "Analyze Content" for AI-powered organization');
+                suggestions.push('Or manually drag items to see AI feedback on your choices');
+            } else if (unorganizedCount > 0) {
+                suggestions.push(`${unorganizedCount} items remaining - click "Analyze Content" to auto-organize`);
+                
+                // Check if they have many strategy items
+                const strategyCount = document.querySelectorAll('#group1Items .grouped-item').length;
+                if (strategyCount >= 2) {
+                    suggestions.push('Consider creating timeline-based sub-groups for strategy documents');
+                }
+                
+                // Check if they need a design group
+                const designItems = document.querySelectorAll('[data-type="design"]').length;
+                if (designItems >= 2 && !document.getElementById('designGroup')) {
+                    suggestions.push('Multiple design items detected - consider creating a Design group');
+                }
+            } else {
+                suggestions.push('✅ Perfect organization! Try "Reset" to test different approaches');
+                suggestions.push('Create project-specific groups for better content findability');
+                suggestions.push('Consider adding date-based sub-categories for better timeline tracking');
+            }
+            
+            suggestionsList.innerHTML = suggestions.map(suggestion => 
+                `<div class="analysis-item">${suggestion}</div>`
+            ).join('');
         }
 
         function addFeedback(title, reasoning, type = 'info') {
@@ -1357,11 +1466,68 @@
             `;
         }
 
+        function editGroupTitle(titleElement) {
+            const currentTitle = titleElement.textContent;
+            
+            // Create input field
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.className = 'group-title-input';
+            input.value = currentTitle;
+            input.maxLength = 30;
+            
+            // Replace title with input
+            titleElement.parentNode.replaceChild(input, titleElement);
+            input.focus();
+            input.select();
+            
+            // Handle saving
+            function saveTitle() {
+                const newTitle = input.value.trim() || currentTitle;
+                
+                // Create new title element
+                const newTitleElement = document.createElement('div');
+                newTitleElement.className = 'group-title editable';
+                newTitleElement.textContent = newTitle;
+                newTitleElement.onclick = () => editGroupTitle(newTitleElement);
+                
+                // Replace input with title
+                input.parentNode.replaceChild(newTitleElement, input);
+                
+                // Add feedback if title was changed
+                if (newTitle !== currentTitle && newTitle !== currentTitle.trim()) {
+                    addFeedback(
+                        `✏️ Group Renamed`,
+                        `Custom group renamed to "${newTitle}". AI will associate this meaningful name with the content you organize within this category, improving future suggestions.`,
+                        'info'
+                    );
+                }
+            }
+            
+            // Save on enter or blur
+            input.addEventListener('blur', saveTitle);
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    saveTitle();
+                } else if (e.key === 'Escape') {
+                    e.preventDefault();
+                    // Restore original title without saving
+                    const originalTitleElement = document.createElement('div');
+                    originalTitleElement.className = 'group-title editable';
+                    originalTitleElement.textContent = currentTitle;
+                    originalTitleElement.onclick = () => editGroupTitle(originalTitleElement);
+                    input.parentNode.replaceChild(originalTitleElement, input);
+                }
+            });
+        }
+
         // Make functions globally available
         window.analyzeContent = analyzeContent;
         window.createGroup = createGroup;
         window.resetOrganization = resetOrganization;
         window.clearAllFeedback = clearAllFeedback;
+        window.editGroupTitle = editGroupTitle;
     </script>
 </body>
 </html>
