@@ -1,0 +1,1367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Semantic Content Reorganization | AI-Enhanced UX Prototypes</title>
+    <link rel="stylesheet" href="./style.css">
+    <style>
+        /* Demo-specific styles */
+        .demo-app {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            height: 750px;
+            position: relative;
+            overflow: hidden;
+            margin: 40px 0;
+        }
+
+        .demo-header {
+            background: #f7fafc;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .demo-title {
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .ai-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8rem;
+            color: #4299e1;
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            background: #4299e1;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .demo-content {
+            display: grid;
+            grid-template-columns: 280px 1fr 240px 320px;
+            height: calc(100% - 70px);
+        }
+
+        /* Left Sidebar - Content List */
+        .content-list {
+            background: #f8f9fa;
+            border-right: 1px solid #e2e8f0;
+            padding: 15px;
+            overflow-y: auto;
+        }
+
+        .content-list h4 {
+            font-size: 0.9rem;
+            color: #4a5568;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .content-item {
+            background: white;
+            padding: 10px;
+            margin-bottom: 8px;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+            cursor: grab;
+            transition: all 0.2s ease;
+            font-size: 0.8rem;
+        }
+
+        .content-item:hover {
+            border-color: #4299e1;
+            box-shadow: 0 2px 4px rgba(66, 153, 225, 0.1);
+        }
+
+        .content-item.dragging {
+            opacity: 0.5;
+            transform: rotate(2deg);
+        }
+
+        .content-item .title {
+            font-weight: 500;
+            color: #2d3748;
+            margin-bottom: 4px;
+        }
+
+        .content-item .meta {
+            color: #718096;
+            font-size: 0.7rem;
+        }
+
+        /* Center Area - Organization Canvas */
+        .organization-canvas {
+            padding: 20px;
+            position: relative;
+            background: linear-gradient(45deg, #f7fafc 25%, transparent 25%), 
+                        linear-gradient(-45deg, #f7fafc 25%, transparent 25%), 
+                        linear-gradient(45deg, transparent 75%, #f7fafc 75%), 
+                        linear-gradient(-45deg, transparent 75%, #f7fafc 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+            overflow-y: auto;
+        }
+
+        .organization-group {
+            background: white;
+            border: 2px dashed #cbd5e0;
+            border-radius: 12px;
+            min-height: 120px;
+            padding: 15px;
+            margin-bottom: 15px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .organization-group.ai-suggested {
+            border-color: #4299e1;
+            background: #ebf8ff;
+        }
+
+        .organization-group.user-created {
+            border-color: #38a169;
+            background: #f0fff4;
+        }
+
+        .organization-group.drop-target {
+            border-color: #ed8936;
+            background: #fffbf0;
+            transform: scale(1.02);
+        }
+
+        .group-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .group-title {
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 0.9rem;
+        }
+
+        .group-badge {
+            background: #4299e1;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 500;
+        }
+
+        .group-badge.user {
+            background: #38a169;
+        }
+
+        .group-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .grouped-item {
+            background: #4299e1;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 16px;
+            font-size: 0.7rem;
+            font-weight: 500;
+        }
+
+        /* AI Analysis Sidebar */
+        .ai-analysis {
+            background: #f7fafc;
+            border-left: 1px solid #e2e8f0;
+            border-right: 1px solid #e2e8f0;
+            padding: 15px;
+            overflow-y: auto;
+        }
+
+        .analysis-section {
+            margin-bottom: 20px;
+        }
+
+        .analysis-section h4 {
+            font-size: 0.8rem;
+            color: #4a5568;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .analysis-item {
+            background: white;
+            padding: 8px;
+            margin-bottom: 6px;
+            border-radius: 4px;
+            border-left: 3px solid #4299e1;
+            font-size: 0.75rem;
+        }
+
+        .confidence-meter {
+            width: 100%;
+            height: 4px;
+            background: #e2e8f0;
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 4px;
+        }
+
+        .confidence-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #fc8181, #f6ad55, #68d391);
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+
+        /* Feedback Pane - NEW */
+        .feedback-pane {
+            background: #fafafa;
+            border-left: 1px solid #e2e8f0;
+            padding: 15px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .feedback-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .feedback-header h4 {
+            font-size: 0.8rem;
+            color: #4a5568;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            flex: 1;
+        }
+
+        .clear-feedback {
+            background: #e2e8f0;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            cursor: pointer;
+            color: #4a5568;
+            transition: background 0.2s ease;
+        }
+
+        .clear-feedback:hover {
+            background: #cbd5e0;
+        }
+
+        .feedback-list {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .feedback-item {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 0.8rem;
+            transition: all 0.2s ease;
+            animation: slideInFeedback 0.3s ease;
+        }
+
+        .feedback-item:hover {
+            border-color: #4299e1;
+            box-shadow: 0 2px 8px rgba(66, 153, 225, 0.1);
+        }
+
+        .feedback-item.analysis {
+            border-left: 3px solid #805ad5;
+            background: #faf5ff;
+        }
+
+        .feedback-item.success {
+            border-left: 3px solid #38a169;
+            background: #f0fff4;
+        }
+
+        .feedback-item.info {
+            border-left: 3px solid #4299e1;
+            background: #ebf8ff;
+        }
+
+        .feedback-title {
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feedback-badge {
+            background: #4299e1;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 8px;
+            font-size: 0.65rem;
+            font-weight: 500;
+        }
+
+        .feedback-badge.analysis {
+            background: #805ad5;
+        }
+
+        .feedback-badge.success {
+            background: #38a169;
+        }
+
+        .feedback-reasoning {
+            color: #4a5568;
+            line-height: 1.4;
+            font-size: 0.75rem;
+        }
+
+        .feedback-timestamp {
+            color: #718096;
+            font-size: 0.65rem;
+            margin-top: 6px;
+            text-align: right;
+        }
+
+        .feedback-empty {
+            text-align: center;
+            color: #718096;
+            font-size: 0.8rem;
+            padding: 20px;
+            font-style: italic;
+        }
+
+        @keyframes slideInFeedback {
+            from { transform: translateX(20px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Demo Controls */
+        .demo-controls {
+            position: absolute;
+            bottom: 15px;
+            left: 20px;
+            right: 340px; /* Account for feedback pane */
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 8px;
+            padding: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+            color: #4a5568;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .demo-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .demo-btn {
+            background: #4299e1;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .demo-btn:hover {
+            background: #3182ce;
+            transform: translateY(-1px);
+        }
+
+        .demo-btn.secondary {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+
+        .demo-btn.secondary:hover {
+            background: #cbd5e0;
+        }
+
+        .progress-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.7rem;
+        }
+
+        /* Instruction box */
+        .demo-instructions {
+            background: #e6fffa;
+            border: 2px solid #38b2ac;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .demo-instructions h4 {
+            color: #234e52;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .demo-instructions ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .demo-instructions li {
+            color: #2c5282;
+            margin-bottom: 8px;
+            padding-left: 20px;
+            position: relative;
+            line-height: 1.4;
+        }
+
+        .demo-instructions li::before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: #38b2ac;
+            font-weight: bold;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 1200px) {
+            .demo-content {
+                grid-template-columns: 260px 1fr 220px 280px;
+            }
+            .demo-controls {
+                right: 300px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .demo-content {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto auto auto auto;
+            }
+            
+            .demo-controls {
+                right: 20px;
+                position: relative;
+                bottom: auto;
+                margin-top: 15px;
+            }
+            
+            .feedback-pane {
+                order: 4;
+                max-height: 300px;
+            }
+            
+            .organization-canvas {
+                order: 1;
+            }
+            
+            .content-list {
+                order: 2;
+                max-height: 200px;
+            }
+            
+            .ai-analysis {
+                order: 3;
+                max-height: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Navigation -->
+        <nav class="nav">
+            <a href="index.html">Back to All Projects</a>
+        </nav>
+
+        <!-- Header -->
+        <header class="header">
+            <div class="project-number">4</div>
+            <h1>Semantic Content Reorganization</h1>
+            <p class="subtitle">AI assistant that automatically organizes messy content collections and improves search accuracy, helping teams spend less time searching for information and more time on high-value work.</p>
+            
+            <div class="business-impact">
+                <h3>Business Impact:</h3>
+                <p>Improve knowledge worker productivity by 30% through better content management and findability</p>
+            </div>
+        </header>
+
+        <!-- Prerequisites -->
+        <section class="section">
+            <div class="implementation-note">
+                <strong>Prerequisites:</strong> For these experiments, being proficient in HTML, CSS, and Vanilla JS is recommended. Also familiarity with how GitHub works will make you a more speedy publisher!
+            </div>
+        </section>
+
+        <!-- The Innovation -->
+        <section class="section">
+            <div class="innovation-box">
+                <h3>The Innovation</h3>
+                <p>AI analyzes user's content and automatically suggests better organization, relationships, and structure based on semantic understanding and usage patterns. The system processes documents, notes, and files to identify themes, topics, and connections that humans might miss, creating intelligent organizational structures that improve findability and reduce search time.</p>
+            </div>
+        </section>
+
+        <!-- Interactive Demo -->
+        <section class="section">
+            <h2 class="section-title">Interactive Demo</h2>
+            <p class="section-description">Experience how AI analyzes content semantically to suggest better organization. Drag content items into groups or let AI suggest optimal categorization based on content analysis.</p>
+            
+            <div class="demo-instructions">
+                <h4>📁 How to Use This Demo (Try Any Approach):</h4>
+                <ul>
+                    <li><strong>Option 1 - Let AI Do the Work:</strong> Click "Analyze Content" first to see AI automatically organize items with detailed reasoning</li>
+                    <li><strong>Option 2 - Manual Organization:</strong> Drag content items from the left into any organizational group to see AI feedback on your choices</li>
+                    <li><strong>Option 3 - Mixed Approach:</strong> Drag some items manually, then click "Analyze Content" to let AI handle the rest</li>
+                    <li><strong>Create Custom Groups:</strong> Use "New Group" to create your own organizational categories</li>
+                    <li><strong>Review AI Reasoning:</strong> Check the AI Feedback pane (right side) to see detailed explanations for every decision</li>
+                    <li><strong>Start Over:</strong> Click "Reset" anytime to restore all 15 content items and try a different approach</li>
+                </ul>
+            </div>
+            
+            <!-- Demo Container -->
+            <div class="demo-app">
+                <div class="demo-header">
+                    <div class="demo-title">Content Organization Assistant</div>
+                    <div class="ai-status">
+                        <div class="status-indicator"></div>
+                        AI Content Analysis Active
+                    </div>
+                </div>
+                
+                <div class="demo-content">
+                    <!-- Left Sidebar: Content Items -->
+                    <div class="content-list">
+                        <h4>Unorganized Content</h4>
+                        <div id="contentItems">
+                            <div class="content-item" draggable="true" data-id="1" data-type="strategy">
+                                <div class="title">Q4 Marketing Strategy</div>
+                                <div class="meta">PDF • 12 pages • Strategy</div>
+                            </div>
+                            <div class="content-item" draggable="true" data-id="2" data-type="meeting">
+                                <div class="title">Team Meeting Notes - Oct 15</div>
+                                <div class="meta">Doc • 3 pages • Meeting</div>
+                            </div>
+                            <div class="content-item" draggable="true" data-id="3" data-type="analysis">
+                                <div class="title">Customer Feedback Analysis</div>
+                                <div class="meta">Spreadsheet • Analysis</div>
+                            </div>
+                            <div class="content-item" draggable="true" data-id="4" data-type="strategy">
+                                <div class="title">Product Roadmap 2025</div>
+                                <div class="meta">Presentation • Strategy</div>
+                            </div>
+                            <div class="content-item" draggable="true" data-id="5" data-type="meeting">
+                                <div class="title">Client Kickoff Meeting</div>
+                                <div class="meta">Video • 45 min • Meeting</div>
+                            </div>
+                            <div class="content-item" draggable="true" data-id="6" data-type="design">
+                                <div class="title">UI Design System v2</div>
+                                <div class="meta">Figma • Design</div>
+                            </div>
+                            <div class="content-item" draggable="true" data-id="7" data-type="analysis">
+                                <div class="title">Market Research Report</div>
+                                <div class="meta">PDF • 28 pages • Analysis</div>
+                            </div>
+                            <div class="content-item" draggable="true" data-id="8" data-type="design">
+                                <div class="title">Brand Guidelines Update</div>
+                                <div class="meta">PDF • Design</div>
+                            </div>
+                            <div class="content-item" draggable="true" data-id="9" data-type="strategy">
+                                <div class="title">Annual Business Plan</div>
+                                <div class="meta">Doc • 45 pages • Strategy</div>
+                            </div>
+                            <div class="content-item" draggable="true" data-id="10" data-type="meeting">
+                                <div class="title">Sprint Planning Session</div>
+                                <div class="meta">Recording • 1.5hr • Meeting</div>
+                            </div>
+                            <div class="content-item" draggable="true" data-id="11" data-type="analysis">
+                                <div class="title">Competitor Analysis Q3</div>
+                                <div class="meta">Report • 22 pages • Analysis</div>
+                            </div>
+                            <div class="content-item" draggable="true" data-id="12" data-type="design">
+                                <div class="title">Website Redesign Mockups</div>
+                                <div class="meta">Figma • 15 screens • Design</div>
+                            </div>
+                            <div class="content-item" draggable="true" data-id="13" data-type="strategy">
+                                <div class="title">Go-to-Market Strategy</div>
+                                <div class="meta">Presentation • Strategy</div>
+                            </div>
+                            <div class="content-item" draggable="true" data-id="14" data-type="meeting">
+                                <div class="title">Board Meeting Minutes</div>
+                                <div class="meta">Doc • 8 pages • Meeting</div>
+                            </div>
+                            <div class="content-item" draggable="true" data-id="15" data-type="analysis">
+                                <div class="title">User Research Findings</div>
+                                <div class="meta">Report • Analysis</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Center: Organization Canvas -->
+                    <div class="organization-canvas" id="organizationCanvas">
+                        <div class="organization-group ai-suggested" id="group1">
+                            <div class="group-header">
+                                <div class="group-title">Strategic Planning</div>
+                                <div class="group-badge">AI</div>
+                            </div>
+                            <div class="group-items" id="group1Items">
+                                <!-- Items will be dropped here -->
+                            </div>
+                        </div>
+
+                        <div class="organization-group ai-suggested" id="group2">
+                            <div class="group-header">
+                                <div class="group-title">Team Communication</div>
+                                <div class="group-badge">AI</div>
+                            </div>
+                            <div class="group-items" id="group2Items">
+                                <!-- Items will be dropped here -->
+                            </div>
+                        </div>
+
+                        <div class="organization-group user-created" id="group3">
+                            <div class="group-header">
+                                <div class="group-title">Research & Analysis</div>
+                                <div class="group-badge user">User</div>
+                            </div>
+                            <div class="group-items" id="group3Items">
+                                <!-- Items will be dropped here -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- AI Analysis Sidebar -->
+                    <div class="ai-analysis">
+                        <div class="analysis-section">
+                            <h4>Content Themes</h4>
+                            <div class="analysis-item">
+                                Strategy & Planning
+                                <div class="confidence-meter">
+                                    <div class="confidence-fill" style="width: 85%"></div>
+                                </div>
+                            </div>
+                            <div class="analysis-item">
+                                Team Collaboration
+                                <div class="confidence-meter">
+                                    <div class="confidence-fill" style="width: 72%"></div>
+                                </div>
+                            </div>
+                            <div class="analysis-item">
+                                Design & Creative
+                                <div class="confidence-meter">
+                                    <div class="confidence-fill" style="width: 68%"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="analysis-section">
+                            <h4>Relationships</h4>
+                            <div class="analysis-item">Marketing → Strategy (Strong)</div>
+                            <div class="analysis-item">Design → Brand (Medium)</div>
+                            <div class="analysis-item">Meetings → Planning (Weak)</div>
+                        </div>
+
+                        <div class="analysis-section">
+                            <h4>Suggestions</h4>
+                            <div class="analysis-item">Group by project phase</div>
+                            <div class="analysis-item">Separate by content type</div>
+                            <div class="analysis-item">Create timeline view</div>
+                        </div>
+                    </div>
+
+                    <!-- Feedback Pane - NEW -->
+                    <div class="feedback-pane">
+                        <div class="feedback-header">
+                            <h4>AI Feedback</h4>
+                            <button class="clear-feedback" onclick="clearAllFeedback()">Clear All</button>
+                        </div>
+                        <div class="feedback-list" id="feedbackList">
+                            <div class="feedback-empty">
+                                Start organizing content to see AI feedback and reasoning here.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="demo-controls">
+                    <div class="demo-actions">
+                        <button class="demo-btn" onclick="analyzeContent()">Analyze Content</button>
+                        <button class="demo-btn secondary" onclick="createGroup()">New Group</button>
+                        <button class="demo-btn secondary" onclick="resetOrganization()">Reset</button>
+                    </div>
+                    <div class="progress-indicator">
+                        <span>Organization Progress:</span>
+                        <div style="width: 80px; height: 4px; background: #e2e8f0; border-radius: 2px; overflow: hidden;">
+                            <div style="width: 0%; height: 100%; background: #4299e1; transition: width 0.3s ease;" id="progressBar"></div>
+                        </div>
+                        <span id="progressText">0%</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Technical Implementation -->
+        <section class="section">
+            <h2 class="section-title">Technical Implementation</h2>
+            
+            <h4>Built With</h4>
+            <div class="tech-stack">
+                <span class="tech-tag">React</span>
+                <span class="tech-tag">Natural Language Processing</span>
+                <span class="tech-tag">Semantic Analysis</span>
+                <span class="tech-tag">D3.js Visualization</span>
+            </div>
+
+            <h4>Key Implementation</h4>
+            <div class="code-block">
+<span class="comment">// Semantic content analysis system</span>
+<span class="keyword">const</span> analyzeContentSemantics = (documents) => {
+  <span class="keyword">const</span> themes = extractThemes(documents);
+  <span class="keyword">const</span> relationships = findRelationships(documents);
+  <span class="keyword">const</span> clusters = performSemanticClustering(themes);
+  
+  <span class="keyword">return</span> {
+    <span class="string">suggestedGroups</span>: generateGroupSuggestions(clusters),
+    <span class="string">confidence</span>: calculateConfidenceScores(relationships),
+    <span class="string">semanticMap</span>: buildRelationshipGraph(documents)
+  };
+};
+            </div>
+
+            <div class="implementation-note">
+                <strong>AI Enhancement:</strong> Natural language processing analyzes content semantically to identify themes, relationships, and optimal organizational structures that improve findability and reduce search time.
+            </div>
+
+            <h4>Resources</h4>
+            <div class="section-content">
+                <p><a href="#" target="_blank">View Source Code →</a></p>
+                <p><a href="#" target="_blank">Try Live Demo →</a></p>
+                <p><a href="#" target="_blank">Design Files →</a></p>
+            </div>
+        </section>
+
+        <!-- Project Description -->
+        <section class="section">
+            <h2 class="section-title">Project Overview</h2>
+            <div class="section-content">
+                <p>Knowledge workers waste 30% of their time searching for information in poorly organized content systems. Traditional file organization relies on rigid folder structures that don't reflect how people actually think about and use content, leading to information silos and reduced productivity.</p>
+                
+                <p>This semantic content reorganization system uses AI to analyze document content, extract themes and relationships, and suggest intelligent organizational structures based on actual usage patterns and semantic connections. Rather than forcing content into predetermined categories, the system adapts to how teams naturally work and think about their information.</p>
+                
+                <p>By understanding content meaning rather than just metadata, the system enables semantic search, automatic categorization, and dynamic reorganization that evolves with changing project needs and team workflows, transforming chaotic content collections into intuitive, findable knowledge systems.</p>
+            </div>
+        </section>
+
+        <!-- Value Proposition -->
+        <section class="section">
+            <h2 class="section-title">Value for UX Designers</h2>
+            <div class="section-content">
+                <p>This prototype demonstrates advanced information architecture and content strategy skills enhanced by AI semantic analysis—capabilities that position designers as strategic partners in knowledge management and organizational efficiency initiatives across enterprise environments.</p>
+                
+                <p>The system showcases expertise in cognitive load reduction, findability optimization, and adaptive information systems—competencies that differentiate strategic UX practitioners who understand how AI can enhance human information processing and organizational workflows.</p>
+                
+                <p>Designers who can build intelligent content organization systems demonstrate mastery of semantic design patterns essential for knowledge management platforms, enterprise search systems, and collaborative tools where information findability directly impacts team productivity and business outcomes.</p>
+            </div>
+        </section>
+
+        <!-- Efficiency Gains -->
+        <section class="section">
+            <h2 class="section-title">Efficiency Gains</h2>
+            <div class="section-content">
+                <p><strong>Time Savings:</strong> AI processes 1000+ content pieces versus manually organizing 20-50, while automatically generating semantic relationship maps that would take weeks to create and maintain manually.</p>
+                
+                <p><strong>Quality Improvements:</strong> Machine learning identifies content relationships and themes that humans might miss, creating more intuitive organizational structures based on actual semantic connections rather than surface-level categorization.</p>
+                
+                <p><strong>Scope Expansion:</strong> AI enables testing of complex organizational hierarchies, content relationship mapping, and adaptive categorization systems that would be impossible to validate manually across diverse content types and team workflows.</p>
+            </div>
+        </section>
+
+        <!-- Strategy for UX Designers -->
+        <section class="section">
+            <h2 class="section-title">Implementation Strategy for UX Designers</h2>
+            
+            <div class="strategy-grid">
+                <div class="strategy-item">
+                    <h4>AI Enhancement Strategy</h4>
+                    <ul>
+                        <li>ChatGPT analyzes sample content to suggest organizational patterns and relationships</li>
+                        <li>Claude generates content categorization rules and semantic connections</li>
+                        <li>Google Gemini processes document/note samples to demonstrate reorganization</li>
+                        <li>Testing Ready: Airtable with AI-suggested relationships + Figma visualization</li>
+                    </ul>
+                </div>
+
+                <div class="strategy-item">
+                    <h4>No-Code Implementation</h4>
+                    <ul>
+                        <li>Airtable: Content database with AI-powered categorization and relationship tracking</li>
+                        <li>Notion: Semantic tagging system with automated content classification</li>
+                        <li>Figma: Interactive organizational hierarchy visualization and flow mapping</li>
+                        <li>Whimsical: Semantic relationship diagrams and content connection mapping</li>
+                    </ul>
+                </div>
+
+                <div class="strategy-item">
+                    <h4>Testing & Validation</h4>
+                    <ul>
+                        <li>Google Analytics: Content findability improvement tracking and search success rates</li>
+                        <li>Hotjar: User behavior analysis during content discovery and organization tasks</li>
+                        <li>UserVoice: Feedback collection on AI reorganization suggestions and accuracy</li>
+                        <li>Tree Testing: Information architecture validation for AI-suggested structures</li>
+                    </ul>
+                </div>
+
+                <div class="strategy-item">
+                    <h4>Business Impact Measurement</h4>
+                    <ul>
+                        <li>Search success rates: Track 30% improvement in content findability metrics</li>
+                        <li>Time-to-information: Measure reduced search time and increased productivity</li>
+                        <li>Organization adoption: Monitor user acceptance of AI-suggested content structures</li>
+                        <li>Knowledge retention: Track improved information discovery and reuse patterns</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Implementation Steps -->
+        <section class="section">
+            <h2 class="section-title">Step-by-Step Implementation</h2>
+            
+            <div class="steps-list">
+                <div class="step-item">
+                    <h4>Setup & Planning</h4>
+                    <p>Install natural language processing libraries, set up semantic analysis algorithms, and create content taxonomy framework for different document types and organizational contexts.</p>
+                </div>
+
+                <div class="step-item">
+                    <h4>AI Integration</h4>
+                    <p>Implement content analysis APIs for theme extraction, build semantic clustering algorithms for relationship detection, and create machine learning pipeline for improving categorization accuracy over time.</p>
+                </div>
+
+                <div class="step-item">
+                    <h4>Prototype Development</h4>
+                    <p>Build interactive reorganization interface with drag-and-drop functionality, implement visual relationship mapping between content pieces, and create enhanced semantic search capabilities.</p>
+                </div>
+
+                <div class="step-item">
+                    <h4>Testing & Validation</h4>
+                    <p>Conduct organizational mental model studies comparing user vs. AI categorization approaches, validate semantic accuracy across different content domains, and measure findability improvements.</p>
+                </div>
+
+                <div class="step-item">
+                    <h4>Iteration & Improvement</h4>
+                    <p>Refine semantic analysis based on user feedback and usage patterns, optimize categorization algorithms for domain-specific content, and scale successful organizational patterns across teams.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Call to Action -->
+        <section class="cta-section">
+            <h3>Ready to Build This Prototype?</h3>
+            <p>Transform your UX process with AI-enhanced design capabilities</p>
+            <div class="cta-links">
+                <a href="mailto:tchr01@proton.me" class="cta-link">Get Implementation Guide</a>
+                <a href="https://www.linkedin.com/in/mwhiteboston/" class="cta-link secondary">Connect on LinkedIn</a>
+            </div>
+        </section>
+
+        <!-- Project Navigation -->
+        <nav class="project-nav">
+            <a href="predictive-error-prevention.html" class="project-nav-link prev">Previous Project</a>
+            <a href="empathy-driven-design-validator.html" class="project-nav-link next">Next Project</a>
+        </nav>
+    </div>
+
+    <script>
+        // Demo functionality
+        let draggedElement = null;
+        let organizationProgress = 0;
+        let feedbackCounter = 0;
+
+        // Initialize demo
+        document.addEventListener('DOMContentLoaded', function() {
+            setupDragAndDrop();
+            updateProgress();
+        });
+
+        function setupDragAndDrop() {
+            // Add drag event listeners to content items
+            document.querySelectorAll('.content-item').forEach(item => {
+                item.addEventListener('dragstart', handleDragStart);
+                item.addEventListener('dragend', handleDragEnd);
+            });
+
+            // Add drop event listeners to organization groups
+            document.querySelectorAll('.organization-group').forEach(group => {
+                group.addEventListener('dragover', handleDragOver);
+                group.addEventListener('dragenter', handleDragEnter);
+                group.addEventListener('dragleave', handleDragLeave);
+                group.addEventListener('drop', handleDrop);
+            });
+        }
+
+        function handleDragStart(e) {
+            draggedElement = e.target;
+            e.target.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+        }
+
+        function handleDragEnd(e) {
+            e.target.classList.remove('dragging');
+            draggedElement = null;
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+        }
+
+        function handleDragEnter(e) {
+            e.preventDefault();
+            e.target.closest('.organization-group').classList.add('drop-target');
+        }
+
+        function handleDragLeave(e) {
+            if (!e.target.closest('.organization-group').contains(e.relatedTarget)) {
+                e.target.closest('.organization-group').classList.remove('drop-target');
+            }
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            const group = e.target.closest('.organization-group');
+            group.classList.remove('drop-target');
+            
+            if (draggedElement) {
+                const groupItems = group.querySelector('.group-items');
+                const itemTitle = draggedElement.querySelector('.title').textContent;
+                const itemType = draggedElement.dataset.type;
+                const groupTitle = group.querySelector('.group-title').textContent;
+                
+                // Create grouped item
+                const groupedItem = document.createElement('div');
+                groupedItem.className = 'grouped-item';
+                groupedItem.textContent = itemTitle;
+                groupedItem.dataset.type = itemType;
+                
+                // Add to group
+                groupItems.appendChild(groupedItem);
+                
+                // Remove from original location
+                draggedElement.remove();
+                
+                // Update progress
+                organizationProgress += 7;
+                updateProgress();
+                
+                // Update AI analysis
+                updateAIAnalysis(group.id, itemType);
+                
+                // Check if this was the last item
+                const remainingItems = document.querySelectorAll('.content-item').length;
+                
+                // Add feedback for the drop action
+                let reasoning = '';
+                const isAIGroup = group.classList.contains('ai-suggested');
+                
+                if (isAIGroup) {
+                    if (groupTitle === 'Strategic Planning') {
+                        reasoning = `Excellent choice! AI analysis confirms this document contains strategic planning content with high semantic similarity to other strategy documents.`;
+                    } else if (groupTitle === 'Team Communication') {
+                        reasoning = `Perfect match! AI detects strong communication and collaboration patterns that align with this organizational category.`;
+                    } else if (groupTitle === 'Research & Analysis') {
+                        reasoning = `Great categorization! AI identified analytical language patterns and data-driven content markers that fit this research grouping.`;
+                    }
+                } else {
+                    reasoning = `User-defined placement in custom category. AI will learn from this organizational decision to improve future content classification suggestions.`;
+                }
+                
+                addFeedback(
+                    `📁 Manual Organization: "${itemTitle}"`,
+                    `Moved to "${groupTitle}" group. ${reasoning}`,
+                    'success'
+                );
+                
+                // Special feedback if all items are now organized
+                if (remainingItems === 0) {
+                    setTimeout(() => {
+                        addFeedback(
+                            `🎉 All Content Successfully Organized!`,
+                            `Outstanding! You've manually organized all 15 content items. The AI has learned from your organizational patterns and will use this knowledge to improve future suggestions. Click "Reset" to try different approaches or test AI-first organization.`,
+                            'success'
+                        );
+                    }, 500);
+                }
+            }
+        }
+
+        function analyzeContent() {
+            const unorganizedItems = document.querySelectorAll('.content-item');
+            
+            if (unorganizedItems.length === 0) {
+                addFeedback(
+                    `🎉 All Content Organized!`,
+                    `Perfect! All content has been organized into categories. The AI has learned from your organizational choices. Click "Reset" to try different organizational approaches or test how AI handles new content sets.`,
+                    'success'
+                );
+                return;
+            }
+            
+            addFeedback('🔄 AI Analysis Starting', 'Beginning semantic analysis of remaining unorganized content...', 'analysis');
+            
+            // Show analysis steps
+            setTimeout(() => {
+                addFeedback('🔍 Extracting Themes', 'Analyzing document content to identify key themes, topics, and semantic patterns...', 'analysis');
+            }, 600);
+            
+            setTimeout(() => {
+                addFeedback('🧠 Finding Relationships', 'Mapping relationships between documents based on content similarity and context...', 'analysis');
+            }, 1200);
+            
+            // Simulate AI analysis
+            setTimeout(() => {
+                // Auto-organize remaining items (up to 6)
+                let organized = 0;
+                const maxToOrganize = Math.min(6, unorganizedItems.length);
+                
+                Array.from(unorganizedItems).forEach((item, index) => {
+                    if (index < maxToOrganize) {
+                        const itemType = item.dataset.type;
+                        const itemTitle = item.querySelector('.title').textContent;
+                        let targetGroup;
+                        let reasoning = '';
+                        
+                        if (itemType === 'strategy') {
+                            targetGroup = document.getElementById('group1');
+                            reasoning = `Semantic analysis detected strategic keywords: "roadmap," "planning," "business strategy." Content similarity score of 87% with existing strategic planning documents.`;
+                        } else if (itemType === 'meeting') {
+                            targetGroup = document.getElementById('group2');
+                            reasoning = `Meeting content identified through temporal markers and collaborative language patterns. Keywords: "notes," "minutes," "session." 92% confidence match.`;
+                        } else if (itemType === 'analysis') {
+                            targetGroup = document.getElementById('group3');
+                            reasoning = `Analytical content detected through data-focused language: "feedback," "research," "findings," "analysis." NLP confidence: 89%.`;
+                        } else if (itemType === 'design') {
+                            // Create design group if needed
+                            let designGroup = document.getElementById('designGroup');
+                            if (!designGroup) {
+                                designGroup = createDesignGroup();
+                            }
+                            targetGroup = designGroup;
+                            reasoning = `Design content classification based on creative keywords: "UI," "mockups," "guidelines," "visual." Created specialized Design category with 91% confidence.`;
+                        }
+                        
+                        if (targetGroup) {
+                            const groupItems = targetGroup.querySelector('.group-items');
+                            
+                            const groupedItem = document.createElement('div');
+                            groupedItem.className = 'grouped-item';
+                            groupedItem.textContent = itemTitle;
+                            groupedItem.dataset.type = itemType;
+                            
+                            groupItems.appendChild(groupedItem);
+                            item.remove();
+                            organized++;
+                            
+                            // Add detailed feedback for each move
+                            setTimeout(() => {
+                                addFeedback(
+                                    `📁 AI Moved: "${itemTitle}"`,
+                                    `Placed in "${targetGroup.querySelector('.group-title').textContent}" group. ${reasoning}`,
+                                    'success'
+                                );
+                            }, 800 + (organized * 500));
+                        }
+                    }
+                });
+                
+                organizationProgress += organized * 7;
+                updateProgress();
+                
+                // Check if there are still items left after AI analysis
+                setTimeout(() => {
+                    const remainingItems = document.querySelectorAll('.content-item').length;
+                    
+                    if (remainingItems === 0) {
+                        addFeedback(
+                            `✅ Complete Organization Achieved`,
+                            `All ${organized} remaining items successfully organized using AI semantic analysis. The system has created a comprehensive organizational structure based on content relationships and meaning.`,
+                            'success'
+                        );
+                    } else {
+                        addFeedback(
+                            `📊 Partial Analysis Complete`,
+                            `AI organized ${organized} items using semantic analysis. ${remainingItems} items remain - these may need custom categories or manual review. Consider creating specialized groups for unique content types.`,
+                            'info'
+                        );
+                    }
+                }, 800 + (organized * 500 + 600));
+                
+            }, 1800);
+        }
+
+        function createDesignGroup() {
+            const canvas = document.getElementById('organizationCanvas');
+            
+            const designGroup = document.createElement('div');
+            designGroup.className = 'organization-group ai-suggested';
+            designGroup.id = 'designGroup';
+            
+            designGroup.innerHTML = `
+                <div class="group-header">
+                    <div class="group-title">Design & Creative</div>
+                    <div class="group-badge">AI</div>
+                </div>
+                <div class="group-items" id="designGroupItems">
+                    <!-- Items will be dropped here -->
+                </div>
+            `;
+            
+            // Add drop functionality
+            designGroup.addEventListener('dragover', handleDragOver);
+            designGroup.addEventListener('dragenter', handleDragEnter);
+            designGroup.addEventListener('dragleave', handleDragLeave);
+            designGroup.addEventListener('drop', handleDrop);
+            
+            canvas.appendChild(designGroup);
+            
+            addFeedback(
+                '🎨 Created Design & Creative Group',
+                'AI detected design-related content and automatically created a new organizational category to better structure your creative assets.',
+                'info'
+            );
+            
+            return designGroup;
+        }
+
+        function createGroup() {
+            const canvas = document.getElementById('organizationCanvas');
+            const groupCount = canvas.querySelectorAll('.organization-group').length + 1;
+            
+            const newGroup = document.createElement('div');
+            newGroup.className = 'organization-group user-created';
+            newGroup.id = `group${groupCount}`;
+            
+            newGroup.innerHTML = `
+                <div class="group-header">
+                    <div class="group-title">Custom Group ${groupCount - 3}</div>
+                    <div class="group-badge user">User</div>
+                </div>
+                <div class="group-items" id="group${groupCount}Items">
+                    <!-- Items will be dropped here -->
+                </div>
+            `;
+            
+            // Add drop functionality
+            newGroup.addEventListener('dragover', handleDragOver);
+            newGroup.addEventListener('dragenter', handleDragEnter);
+            newGroup.addEventListener('dragleave', handleDragLeave);
+            newGroup.addEventListener('drop', handleDrop);
+            
+            canvas.appendChild(newGroup);
+            
+            addFeedback(
+                '📂 Created Custom Group',
+                'New user-defined group created. AI will learn from how you organize content in this custom category to improve future suggestions.',
+                'info'
+            );
+        }
+
+        function resetOrganization() {
+            // Clear all groups
+            document.querySelectorAll('.group-items').forEach(container => {
+                container.innerHTML = '';
+            });
+            
+            // Remove any dynamically created groups
+            const designGroup = document.getElementById('designGroup');
+            if (designGroup) {
+                designGroup.remove();
+            }
+            
+            // Reset unorganized content
+            const contentList = document.getElementById('contentItems');
+            contentList.innerHTML = `
+                <div class="content-item" draggable="true" data-id="1" data-type="strategy">
+                    <div class="title">Q4 Marketing Strategy</div>
+                    <div class="meta">PDF • 12 pages • Strategy</div>
+                </div>
+                <div class="content-item" draggable="true" data-id="2" data-type="meeting">
+                    <div class="title">Team Meeting Notes - Oct 15</div>
+                    <div class="meta">Doc • 3 pages • Meeting</div>
+                </div>
+                <div class="content-item" draggable="true" data-id="3" data-type="analysis">
+                    <div class="title">Customer Feedback Analysis</div>
+                    <div class="meta">Spreadsheet • Analysis</div>
+                </div>
+                <div class="content-item" draggable="true" data-id="4" data-type="strategy">
+                    <div class="title">Product Roadmap 2025</div>
+                    <div class="meta">Presentation • Strategy</div>
+                </div>
+                <div class="content-item" draggable="true" data-id="5" data-type="meeting">
+                    <div class="title">Client Kickoff Meeting</div>
+                    <div class="meta">Video • 45 min • Meeting</div>
+                </div>
+                <div class="content-item" draggable="true" data-id="6" data-type="design">
+                    <div class="title">UI Design System v2</div>
+                    <div class="meta">Figma • Design</div>
+                </div>
+                <div class="content-item" draggable="true" data-id="7" data-type="analysis">
+                    <div class="title">Market Research Report</div>
+                    <div class="meta">PDF • 28 pages • Analysis</div>
+                </div>
+                <div class="content-item" draggable="true" data-id="8" data-type="design">
+                    <div class="title">Brand Guidelines Update</div>
+                    <div class="meta">PDF • Design</div>
+                </div>
+                <div class="content-item" draggable="true" data-id="9" data-type="strategy">
+                    <div class="title">Annual Business Plan</div>
+                    <div class="meta">Doc • 45 pages • Strategy</div>
+                </div>
+                <div class="content-item" draggable="true" data-id="10" data-type="meeting">
+                    <div class="title">Sprint Planning Session</div>
+                    <div class="meta">Recording • 1.5hr • Meeting</div>
+                </div>
+                <div class="content-item" draggable="true" data-id="11" data-type="analysis">
+                    <div class="title">Competitor Analysis Q3</div>
+                    <div class="meta">Report • 22 pages • Analysis</div>
+                </div>
+                <div class="content-item" draggable="true" data-id="12" data-type="design">
+                    <div class="title">Website Redesign Mockups</div>
+                    <div class="meta">Figma • 15 screens • Design</div>
+                </div>
+                <div class="content-item" draggable="true" data-id="13" data-type="strategy">
+                    <div class="title">Go-to-Market Strategy</div>
+                    <div class="meta">Presentation • Strategy</div>
+                </div>
+                <div class="content-item" draggable="true" data-id="14" data-type="meeting">
+                    <div class="title">Board Meeting Minutes</div>
+                    <div class="meta">Doc • 8 pages • Meeting</div>
+                </div>
+                <div class="content-item" draggable="true" data-id="15" data-type="analysis">
+                    <div class="title">User Research Findings</div>
+                    <div class="meta">Report • Analysis</div>
+                </div>
+            `;
+            
+            // Re-setup drag and drop
+            setupDragAndDrop();
+            
+            // Reset progress
+            organizationProgress = 0;
+            updateProgress();
+            
+            addFeedback(
+                '🔄 System Reset',
+                'Reset with 15 content items ready for organization. All previous categorizations cleared and AI analysis ready to begin fresh.',
+                'info'
+            );
+        }
+
+        function updateProgress() {
+            const progressElement = document.getElementById('progressBar');
+            const progressText = document.getElementById('progressText');
+            
+            if (progressElement) {
+                progressElement.style.width = Math.min(organizationProgress, 100) + '%';
+            }
+            if (progressText) {
+                progressText.textContent = Math.min(organizationProgress, 100) + '%';
+            }
+        }
+
+        function updateAIAnalysis(groupId, itemType) {
+            // Simulate updating AI confidence based on user actions
+            const confidenceBars = document.querySelectorAll('.confidence-fill');
+            confidenceBars.forEach(bar => {
+                const currentWidth = parseInt(bar.style.width);
+                const newWidth = Math.min(currentWidth + 3, 95);
+                bar.style.width = newWidth + '%';
+            });
+        }
+
+        function addFeedback(title, reasoning, type = 'info') {
+            const feedbackList = document.getElementById('feedbackList');
+            
+            // Remove empty state if it exists
+            const emptyState = feedbackList.querySelector('.feedback-empty');
+            if (emptyState) {
+                emptyState.remove();
+            }
+            
+            feedbackCounter++;
+            const timestamp = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            
+            const feedbackItem = document.createElement('div');
+            feedbackItem.className = `feedback-item ${type}`;
+            feedbackItem.innerHTML = `
+                <div class="feedback-title">
+                    ${title}
+                    <span class="feedback-badge ${type}">${type === 'analysis' ? 'Analysis' : type === 'success' ? 'Success' : 'Info'}</span>
+                </div>
+                <div class="feedback-reasoning">${reasoning}</div>
+                <div class="feedback-timestamp">${timestamp}</div>
+            `;
+            
+            // Add to top of list
+            feedbackList.insertBefore(feedbackItem, feedbackList.firstChild);
+            
+            // Limit to 10 items
+            const items = feedbackList.querySelectorAll('.feedback-item');
+            if (items.length > 10) {
+                items[items.length - 1].remove();
+            }
+        }
+
+        function clearAllFeedback() {
+            const feedbackList = document.getElementById('feedbackList');
+            feedbackList.innerHTML = `
+                <div class="feedback-empty">
+                    Start organizing content to see AI feedback and reasoning here.
+                </div>
+            `;
+        }
+
+        // Make functions globally available
+        window.analyzeContent = analyzeContent;
+        window.createGroup = createGroup;
+        window.resetOrganization = resetOrganization;
+        window.clearAllFeedback = clearAllFeedback;
+    </script>
+</body>
+</html>
