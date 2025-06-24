@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spider Diagram Tool</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+        
+        .description {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #7f8c8d;
+        }
+        
+        .diagram-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 20px;
+        }
+        
+        .canvas-container {
+            flex: 1;
+            min-width: 400px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .inputs-container {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        canvas {
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        
+        .input-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        input[type="range"] {
+            width: 100%;
+            margin-bottom: 5px;
+        }
+        
+        .value-display {
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .value-display span {
+            font-size: 0.8rem;
+            color: #7f8c8d;
+        }
+        
+        .current-value {
+            font-weight: bold;
+            color: #2980b9;
+        }
+        
+        .color-input {
+            display: flex;
+            align-items: center;
+            margin-top: 20px;
+        }
+        
+        .color-input label {
+            margin-right: 10px;
+            margin-bottom: 0;
+        }
+        
+        .buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        button {
+            padding: 10px 15px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #2980b9;
+        }
+        
+        #exportBtn {
+            background-color: #2ecc71;
+        }
+        
+        #exportBtn:hover {
+            background-color: #27ae60;
+        }
+        
+        #resetBtn {
+            background-color: #e74c3c;
+        }
+        
+        #resetBtn:hover {
+            background-color: #c0392b;
+        }
+        
+        .criteria-labels {
+            margin-top: 20px;
+        }
+        
+        .criteria-labels h3 {
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+        
+        .criteria-labels ul {
+            list-style-type: none;
+        }
+        
+        .criteria-labels li {
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .color-indicator {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 10px;
+        }
+        
+        @media (max-width: 768px) {
+            .diagram-container {
+                flex-direction: column;
+            }
+            
+            .canvas-container, .inputs-container {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Spider Diagram Tool</h1>
+        <p class="description">Adjust the sliders to create a custom spider diagram. Scale: 0-4 for each criterion.</p>
+        
+        <div class="diagram-container">
+            <div class="canvas-container">
+                <canvas id="spiderCanvas" width="400" height="400"></canvas>
+                <div class="buttons">
+                    <button id="drawBtn">Redraw Diagram</button>
+                    <button id="exportBtn">Export as PNG</button>
+                    <button id="resetBtn">Reset Values</button>
+                </div>
+            </div>
+            
+            <div class="inputs-container">
+                <div class="input-group">
+                    <label for="criteria1">Criterion 1</label>
+                    <input type="range" id="criteria1" min="0" max="4" step="0.1" value="2">
+                    <div class="value-display">
+                        <span>0</span>
+                        <span class="current-value" id="criteria1Value">2.0</span>
+                        <span>4</span>
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <label for="criteria2">Criterion 2</label>
+                    <input type="range" id="criteria2" min="0" max="4" step="0.1" value="3">
+                    <div class="value-display">
+                        <span>0</span>
+                        <span class="current-value" id="criteria2Value">3.0</span>
+                        <span>4</span>
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <label for="criteria3">Criterion 3</label>
+                    <input type="range" id="criteria3" min="0" max="4" step="0.1" value="1.5">
+                    <div class="value-display">
+                        <span>0</span>
+                        <span class="current-value" id="criteria3Value">1.5</span>
+                        <span>4</span>
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <label for="criteria4">Criterion 4</label>
+                    <input type="range" id="criteria4" min="0" max="4" step="0.1" value="3.5">
+                    <div class="value-display">
+                        <span>0</span>
+                        <span class="current-value" id="criteria4Value">3.5</span>
+                        <span>4</span>
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <label for="criteria5">Criterion 5</label>
+                    <input type="range" id="criteria5" min="0" max="4" step="0.1" value="2.5">
+                    <div class="value-display">
+                        <span>0</span>
+                        <span class="current-value" id="criteria5Value">2.5</span>
+                        <span>4</span>
+                    </div>
+                </div>
+                
+                <div class="color-input">
+                    <label for="diagramColor">Diagram Color:</label>
+                    <input type="color" id="diagramColor" value="#3498db">
+                </div>
+                
+                <div class="criteria-labels">
+                    <h3>Customize Criteria Labels:</h3>
+                    <div class="input-group">
+                        <label for="label1">Label for Criterion 1:</label>
+                        <input type="text" id="label1" value="Performance" style="width: 100%; padding: 5px;">
+                    </div>
+                    <div class="input-group">
+                        <label for="label2">Label for Criterion 2:</label>
+                        <input type="text" id="label2" value="Reliability" style="width: 100%; padding: 5px;">
+                    </div>
+                    <div class="input-group">
+                        <label for="label3">Label for Criterion 3:</label>
+                        <input type="text" id="label3" value="Usability" style="width: 100%; padding: 5px;">
+                    </div>
+                    <div class="input-group">
+                        <label for="label4">Label for Criterion 4:</label>
+                        <input type="text" id="label4" value="Functionality" style="width: 100%; padding: 5px;">
+                    </div>
+                    <div class="input-group">
+                        <label for="label5">Label for Criterion 5:</label>
+                        <input type="text" id="label5" value="Efficiency" style="width: 100%; padding: 5px;">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Get canvas and context
+        const canvas = document.getElementById('spiderCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        // Get input elements
+        const criteria1 = document.getElementById('criteria1');
+        const criteria2 = document.getElementById('criteria2');
+        const criteria3 = document.getElementById('criteria3');
+        const criteria4 = document.getElementById('criteria4');
+        const criteria5 = document.getElementById('criteria5');
+        
+        // Get value display elements
+        const criteria1Value = document.getElementById('criteria1Value');
+        const criteria2Value = document.getElementById('criteria2Value');
+        const criteria3Value = document.getElementById('criteria3Value');
+        const criteria4Value = document.getElementById('criteria4Value');
+        const criteria5Value = document.getElementById('criteria5Value');
+        
+        // Get label input elements
+        const label1 = document.getElementById('label1');
+        const label2 = document.getElementById('label2');
+        const label3 = document.getElementById('label3');
+        const label4 = document.getElementById('label4');
+        const label5 = document.getElementById('label5');
+        
+        // Get color input
+        const diagramColor = document.getElementById('diagramColor');
+        
+        // Get buttons
+        const drawBtn = document.getElementById('drawBtn');
+        const exportBtn = document.getElementById('exportBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        
+        // Update value displays when sliders change
+        criteria1.addEventListener('input', () => {
+            criteria1Value.textContent = parseFloat(criteria1.value).toFixed(1);
+        });
+        
+        criteria2.addEventListener('input', () => {
+            criteria2Value.textContent = parseFloat(criteria2.value).toFixed(1);
+        });
+        
+        criteria3.addEventListener('input', () => {
+            criteria3Value.textContent = parseFloat(criteria3.value).toFixed(1);
+        });
+        
+        criteria4.addEventListener('input', () => {
+            criteria4Value.textContent = parseFloat(criteria4.value).toFixed(1);
+        });
+        
+        criteria5.addEventListener('input', () => {
+            criteria5Value.textContent = parseFloat(criteria5.value).toFixed(1);
+        });
+        
+        // Function to draw the spider diagram
+        function drawSpiderDiagram() {
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Get values
+            const values = [
+                parseFloat(criteria1.value),
+                parseFloat(criteria2.value),
+                parseFloat(criteria3.value),
+                parseFloat(criteria4.value),
+                parseFloat(criteria5.value)
+            ];
+            
+            // Get labels
+            const labels = [
+                label1.value || 'Criterion 1',
+                label2.value || 'Criterion 2',
+                label3.value || 'Criterion 3',
+                label4.value || 'Criterion 4',
+                label5.value || 'Criterion 5'
+            ];
+            
+            // Get color
+            const color = diagramColor.value;
+            
+            // Set canvas dimensions
+            const width = canvas.width;
+            const height = canvas.height;
+            const centerX = width / 2;
+            const centerY = height / 2;
+            const radius = Math.min(width, height) / 2 - 50;
+            
+            // Draw background grid
+            drawGrid(centerX, centerY, radius);
+            
+            // Draw axis labels
+            drawAxisLabels(centerX, centerY, radius, labels);
+            
+            // Draw data
+            drawData(centerX, centerY, radius, values, color);
+        }
+        
+        // Function to draw the background grid
+        function drawGrid(centerX, centerY, radius) {
+            // Draw circles
+            ctx.strokeStyle = '#ddd';
+            ctx.fillStyle = '#f9f9f9';
+            
+            for (let i = 1; i <= 4; i++) {
+                const r = (radius / 4) * i;
+                
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, r, 0, 2 * Math.PI);
+                ctx.stroke();
+                
+                // Add scale labels
+                ctx.fillStyle = '#999';
+                ctx.font = '10px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(i.toString(), centerX, centerY - r - 5);
+            }
+            
+            // Draw axes
+            ctx.beginPath();
+            for (let i = 0; i < 5; i++) {
+                const angle = (Math.PI * 2 * i) / 5 - Math.PI / 2;
+                const x = centerX + radius * Math.cos(angle);
+                const y = centerY + radius * Math.sin(angle);
+                
+                ctx.moveTo(centerX, centerY);
+                ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+        }
+        
+        // Function to draw axis labels
+        function drawAxisLabels(centerX, centerY, radius, labels) {
+            ctx.fillStyle = '#333';
+            ctx.font = 'bold 12px Arial';
+            ctx.textAlign = 'center';
+            
+            for (let i = 0; i < 5; i++) {
+                const angle = (Math.PI * 2 * i) / 5 - Math.PI / 2;
+                const labelRadius = radius + 20;
+                const x = centerX + labelRadius * Math.cos(angle);
+                const y = centerY + labelRadius * Math.sin(angle);
+                
+                // Adjust text alignment based on position
+                if (angle === -Math.PI / 2) {
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'bottom';
+                } else if (angle > -Math.PI / 2 && angle < Math.PI / 2) {
+                    ctx.textAlign = 'left';
+                    ctx.textBaseline = 'middle';
+                } else if (angle === Math.PI / 2) {
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'top';
+                } else {
+                    ctx.textAlign = 'right';
+                    ctx.textBaseline = 'middle';
+                }
+                
+                ctx.fillText(labels[i], x, y);
+            }
+            
+            // Reset text alignment
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'alphabetic';
+        }
+        
+        // Function to draw data
+        function drawData(centerX, centerY, radius, values, color) {
+            // Draw data points and lines
+            ctx.strokeStyle = color;
+            ctx.fillStyle = color + '40'; // Add transparency
+            ctx.lineWidth = 2;
+            
+            // Draw data polygon
+            ctx.beginPath();
+            for (let i = 0; i < 5; i++) {
+                const angle = (Math.PI * 2 * i) / 5 - Math.PI / 2;
+                const value = values[i];
+                const r = (radius / 4) * value;
+                const x = centerX + r * Math.cos(angle);
+                const y = centerY + r * Math.sin(angle);
+                
+                if (i === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            }
+            ctx.closePath();
+            ctx.stroke();
+            ctx.fill();
+            
+            // Draw data points
+            ctx.fillStyle = color;
+            for (let i = 0; i < 5; i++) {
+                const angle = (Math.PI * 2 * i) / 5 - Math.PI / 2;
+                const value = values[i];
+                const r = (radius / 4) * value;
+                const x = centerX + r * Math.cos(angle);
+                const y = centerY + r * Math.sin(angle);
+                
+                ctx.beginPath();
+                ctx.arc(x, y, 5, 0, 2 * Math.PI);
+                ctx.fill();
+                
+                // Add value labels
+                ctx.fillStyle = '#333';
+                ctx.font = 'bold 12px Arial';
+                const labelX = centerX + (r + 15) * Math.cos(angle);
+                const labelY = centerY + (r + 15) * Math.sin(angle);
+                ctx.fillText(value.toFixed(1), labelX, labelY);
+                ctx.fillStyle = color;
+            }
+        }
+        
+        // Draw button click handler
+        drawBtn.addEventListener('click', drawSpiderDiagram);
+        
+        // Export button click handler
+        exportBtn.addEventListener('click', () => {
+            // Create a temporary link
+            const link = document.createElement('a');
+            link.download = 'spider-diagram.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        });
+        
+        // Reset button click handler
+        resetBtn.addEventListener('click', () => {
+            criteria1.value = 2;
+            criteria2.value = 3;
+            criteria3.value = 1.5;
+            criteria4.value = 3.5;
+            criteria5.value = 2.5;
+            
+            criteria1Value.textContent = '2.0';
+            criteria2Value.textContent = '3.0';
+            criteria3Value.textContent = '1.5';
+            criteria4Value.textContent = '3.5';
+            criteria5Value.textContent = '2.5';
+            
+            diagramColor.value = '#3498db';
+            
+            drawSpiderDiagram();
+        });
+        
+        // Draw initial diagram
+        window.addEventListener('load', drawSpiderDiagram);
+    </script>
+</body>
+</html>
