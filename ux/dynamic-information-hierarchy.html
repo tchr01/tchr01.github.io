@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Information Hierarchy | AI-Enhanced Executive Decision Making</title>
+    <link rel="stylesheet" href="./style.css">
+    <style>
+        /* Inherit styles from empathy-driven-design-validator.html */
+        /* Additional project-specific styles can be added here */
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Navigation -->
+        <nav class="nav">
+            <a href="index.html">Back to All Projects</a>
+        </nav>
+
+        <!-- Header -->
+        <header class="header">
+            <div class="project-number">6</div>
+            <h1>Dynamic Information Hierarchy</h1>
+            <p class="subtitle">Business Goal: Increase executive decision-making speed by 45% through better information prioritization and visibility. Design a dashboard that automatically surfaces the most business-critical information based on role, deadlines, and company priorities.</p>
+            
+            <div class="business-impact">
+                <h3>Business Impact:</h3>
+                <p>Accelerate strategic decision-making by 45% through AI-powered information prioritization and adaptive dashboards</p>
+            </div>
+        </header>
+
+        <!-- Prerequisites -->
+        <section class="section">
+            <div class="implementation-note">
+                <strong>Prerequisites:</strong> Proficiency in JavaScript, React, machine learning concepts, and understanding of adaptive UI/UX design principles.
+            </div>
+        </section>
+
+        <!-- The Innovation -->
+        <section class="section">
+            <div class="innovation-box">
+                <h3>The Innovation</h3>
+                <p>An AI-driven dashboard that dynamically reorganizes information based on user importance, urgency, context, and behavioral patterns. Content automatically adapts to surface the most relevant insights at the right time, enabling faster and more strategic executive decision-making.</p>
+            </div>
+        </section>
+
+        <!-- Dashboard Prototype Section -->
+        <section class="section">
+            <h2 class="section-title">AI-Powered Executive Dashboard Simulator</h2>
+            
+            <div class="tool-overview">
+                <p>An advanced AI system that transforms how executives consume and prioritize business information, providing real-time, context-aware insights that adapt to changing business landscapes.</p>
+            </div>
+
+            <div class="demo-instructions">
+                <h4>🔬 How the Dynamic Information Hierarchy Works:</h4>
+                <ul>
+                    <li><strong>AI Priority Scoring:</strong> Automatically calculate information importance using multiple contextual factors</li>
+                    <li><strong>Adaptive Layout:</strong> Dynamically reorganize dashboard widgets based on real-time priority changes</li>
+                    <li><strong>Context Detection:</strong> Recognize user role, time of day, current projects, and adjust information hierarchy</li>
+                    <li><strong>Personalized Learning:</strong> Balance AI-generated priorities with user manual adjustments</li>
+                    <li><strong>Real-time Updates:</strong> Continuously update dashboard as new information becomes available</li>
+                    <li><strong>Efficiency Optimization:</strong> Reduce cognitive load by presenting only the most critical information</li>
+                </ul>
+            </div>
+
+            <div id="dynamicDashboard" class="dynamic-dashboard">
+                <div class="dashboard-controls">
+                    <select id="userRoleSelector">
+                        <option value="ceo">CEO</option>
+                        <option value="cfo">CFO</option>
+                        <option value="cto">CTO</option>
+                        <option value="coo">COO</option>
+                    </select>
+                    <div class="time-context">
+                        <span id="currentTime"></span>
+                        <span id="currentProject">Q3 Strategic Planning</span>
+                    </div>
+                </div>
+                <div id="dashboardWidgets" class="dashboard-widgets">
+                    <!-- Widgets will be dynamically generated -->
+                </div>
+            </div>
+
+            <style>
+                .dynamic-dashboard {
+                    background-color: #f4f6f9;
+                    border-radius: 12px;
+                    padding: 20px;
+                    margin-top: 20px;
+                }
+                .dashboard-controls {
+                    display: flex;
+                    justify-content: space-between;
+                    margin-bottom: 20px;
+                }
+                .dashboard-widgets {
+                    display: grid;
+                    grid-template-columns: repeat(3, 1fr);
+                    gap: 15px;
+                }
+                .widget {
+                    background-color: white;
+                    border-radius: 8px;
+                    padding: 15px;
+                    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                    transition: all 0.3s ease;
+                }
+                .widget.high-priority {
+                    border-left: 5px solid #4299e1;
+                    transform: scale(1.05);
+                }
+                .widget-title {
+                    font-weight: bold;
+                    margin-bottom: 10px;
+                    color: #2d3748;
+                }
+                .widget-content {
+                    color: #718096;
+                }
+                .widget-description {
+                    font-size: 0.8em;
+                    color: #718096;
+                    margin-top: 10px;
+                    line-height: 1.4;
+                }
+                .recommend-btn {
+                    background-color: #4299e1;
+                    color: white;
+                    border: none;
+                    padding: 8px 12px;
+                    border-radius: 4px;
+                    margin-top: 10px;
+                    cursor: pointer;
+                    transition: background-color 0.3s ease;
+                }
+                .recommend-btn:hover {
+                    background-color: #3182ce;
+                }
+                .recommendation-panel {
+                    background-color: #ebf8ff;
+                    border-left: 4px solid #4299e1;
+                    padding: 15px;
+                    margin-top: 10px;
+                    border-radius: 4px;
+                }
+                .recommendation-subcards {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 8px;
+                    margin-top: 10px;
+                }
+                .recommendation-subcard {
+                    background-color: white;
+                    border-radius: 4px;
+                    padding: 8px;
+                    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+                    font-size: 0.8em;
+                }
+                .recommendation-subcard.high-risk {
+                    border-left: 3px solid #e53e3e;
+                    background-color: #fff5f5;
+                }
+                .recommendation-subcard.medium-risk {
+                    border-left: 3px solid #ed8936;
+                    background-color: #fffaf0;
+                }
+                .recommendation-subcard.low-risk {
+                    border-left: 3px solid #48bb78;
+                    background-color: #f0fff4;
+                }
+                .recommendation-subcard-title {
+                    font-weight: bold;
+                    margin-bottom: 4px;
+                    color: #2d3748;
+                    font-size: 0.9em;
+                }
+                .recommendation-processing {
+                    text-align: center;
+                    color: #4299e1;
+                    padding: 10px;
+                    background-color: #ebf8ff;
+                    border-radius: 4px;
+                }
+            </style>
+        </section>
+
+        <!-- Technical Implementation -->
+        <section class="section">
+            <h2 class="section-title">Technical Implementation</h2>
+            
+            <h4>Built With</h4>
+            <div class="tech-stack">
+                <span class="tech-tag">React</span>
+                <span class="tech-tag">Machine Learning</span>
+                <span class="tech-tag">Context Detection</span>
+                <span class="tech-tag">Real-time Data Processing</span>
+            </div>
+
+            <h4>Key Implementation</h4>
+            <div class="code-block">
+<span class="comment">// Dynamic Information Hierarchy priority scoring algorithm</span>
+<span class="keyword">const</span> calculateInformationPriority = (context, userBehavior, businessRules) => {
+  <span class="keyword">const</span> priorityFactors = {
+    <span class="string">urgency</span>: assessDeadlineProximity(context.deadlines),
+    <span class="string">relevance</span>: matchUserRole(context.role, businessRules),
+    <span class="string">personalizedWeight</span>: analyzeUserInteractionHistory(userBehavior)
+  };
+  
+  <span class="keyword">return</span> computeWeightedPriorityScore(priorityFactors);
+};
+            </div>
+
+            <div class="implementation-note">
+                <strong>AI Enhancement:</strong> Machine learning models dynamically adjust information hierarchy based on continuous behavioral analysis and contextual understanding.
+            </div>
+        </section>
+
+        <!-- Project Description -->
+        <section class="section">
+            <h2 class="section-title">Project Overview</h2>
+            <div class="section-content">
+                <p>Traditional dashboards present static, one-size-fits-all information layouts that overwhelm executives with irrelevant data and slow down decision-making processes. The Dynamic Information Hierarchy revolutionizes information consumption by creating an intelligent, adaptive interface that understands and anticipates user needs.</p>
+                
+                <p>By leveraging AI to dynamically prioritize and reorganize information, this system transforms how executives interact with complex business data. It goes beyond simple filtering, using machine learning to create a truly personalized, context-aware information experience that evolves in real-time.</p>
+                
+                <p>More than just a dashboard, this is an intelligent decision acceleration platform that learns from user interactions, understands organizational priorities, and presents information in the most cognitively efficient manner possible.</p>
+            </div>
+        </section>
+
+        <!-- AI Enhancement Strategy -->
+        <section class="section">
+            <h2 class="section-title">AI Enhancement Strategy</h2>
+            
+            <div class="strategy-grid">
+                <div class="strategy-item">
+                    <h4>AI Model Roles</h4>
+                    <ul>
+                        <li>ChatGPT creates importance scoring algorithms</li>
+                        <li>Claude generates realistic business data scenarios</li>
+                        <li>Perplexity researches information prioritization psychology</li>
+                    </ul>
+                </div>
+
+                <div class="strategy-item">
+                    <h4>Testing Platforms</h4>
+                    <ul>
+                        <li>Google Sheets: AI scoring validation</li>
+                        <li>Looker Studio: Priority visualization</li>
+                        <li>Figma: Adaptive layout prototyping</li>
+                    </ul>
+                </div>
+
+                <div class="strategy-item">
+                    <h4>Validation Methods</h4>
+                    <ul>
+                        <li>Information Seeking Efficiency Testing</li>
+                        <li>Priority Accuracy Validation</li>
+                        <li>Cognitive Load Assessment</li>
+                        <li>Context Switching Performance Study</li>
+                    </ul>
+                </div>
+
+                <div class="strategy-item">
+                    <h4>Business Impact Measurement</h4>
+                    <ul>
+                        <li>Decision-Making Speed Improvement</li>
+                        <li>Cognitive Resource Optimization</li>
+                        <li>Information Relevance Tracking</li>
+                        <li>User Adaptation Rate</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Implementation Steps -->
+        <section class="section">
+            <h2 class="section-title">Implementation Components</h2>
+            
+            <div class="steps-list">
+                <div class="step-item">
+                    <h4>Priority Scoring Algorithm</h4>
+                    <p>Develop machine learning model to score content importance based on user behavior, deadlines, and business rules.</p>
+                </div>
+
+                <div class="step-item">
+                    <h4>Dynamic Layout System</h4>
+                    <p>Create dashboard that automatically reorganizes widgets based on changing priority scores with smooth transitions.</p>
+                </div>
+
+                <div class="step-item">
+                    <h4>Context Detection</h4>
+                    <p>Implement system to detect user context (role, time of day, current project) and adapt information hierarchy accordingly.</p>
+                </div>
+
+                <div class="step-item">
+                    <h4>User Preference Learning</h4>
+                    <p>Build preference learning system that balances AI suggestions with user manual adjustments, creating a collaborative intelligence approach.</p>
+                </div>
+
+                <div class="step-item">
+                    <h4>Real-time Updates</h4>
+                    <p>Develop live dashboard infrastructure that updates priorities and layout as new information becomes available, ensuring constant relevance.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Efficiency Gains -->
+        <section class="section">
+            <h2 class="section-title">Efficiency Gains</h2>
+            <div class="section-content">
+                <p><strong>Scenario Generation:</strong> AI creates 50+ information hierarchy variations compared to manual creation of 3-5 static layouts.</p>
+                
+                <p><strong>Adaptive Intelligence:</strong> System generates data scenarios that change meaningfully based on context, providing unprecedented insights.</p>
+                
+                <p><strong>Decision Acceleration:</strong> Potential to increase executive decision-making speed by up to 45% through intelligent information prioritization.</p>
+            </div>
+        </section>
+
+        <!-- Call to Action -->
+        <section class="cta-section">
+            <h3>Ready to Transform Executive Decision-Making?</h3>
+            <p>Unlock the power of AI-driven information prioritization</p>
+            <div class="cta-links">
+                <a href="mailto:tchr01@proton.me" class="cta-link">Get Implementation Guide</a>
+                <a href="https://www.linkedin.com/in/mwhiteboston/" class="cta-link secondary">Connect on LinkedIn</a>
+            </div>
+        </section>
+
+        <!-- Project Navigation -->
+        <nav class="project-nav">
+            <a href="empathy-driven-design-validator.html" class="project-nav-link prev">Previous Project</a>
+            <a href="next-project.html" class="project-nav-link next">Next Project</a>
+        </nav>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Dynamic Information Hierarchy: Script started');
+            
+            try {
+                const dashboardWidgets = document.getElementById('dashboardWidgets');
+                const userRoleSelector = document.getElementById('userRoleSelector');
+                const currentTime = document.getElementById('currentTime');
+                const currentProject = document.getElementById('currentProject');
+
+                if (!dashboardWidgets || !userRoleSelector || !currentTime || !currentProject) {
+                    console.error('Dynamic Information Hierarchy: One or more required elements not found');
+                    return;
+                }
+
+                const widgets = [
+                    { 
+                        title: 'Quarterly Revenue', 
+                        content: '$24.5M (+12% YoY)', 
+                        description: 'Comprehensive financial performance metric tracking revenue growth and market expansion.',
+                        priority: {
+                            ceo: 'high',
+                            cfo: 'high',
+                            cto: 'low',
+                            coo: 'medium'
+                        },
+                        recommendationLogic: (role) => {
+                            const recommendations = {
+                                ceo: 'Consider accelerating investment in high-growth market segments. Explore potential strategic acquisitions to maintain momentum.',
+                                cfo: 'Analyze revenue streams for optimization. Investigate tax efficiency and potential cost reduction strategies.',
+                                cto: 'Identify technology investments that could further drive revenue growth.',
+                                coo: 'Align operational strategies to support continued revenue expansion.'
+                            };
+                            return recommendations[role];
+                        }
+                    },
+                    { 
+                        title: 'Product Development', 
+                        content: 'AI Feature Sprint: 78% Complete', 
+                        description: 'Tracking progress of critical AI feature development, highlighting innovation and technological advancement.',
+                        priority: {
+                            ceo: 'medium',
+                            cfo: 'low',
+                            cto: 'high',
+                            coo: 'high'
+                        },
+                        recommendationLogic: (role) => {
+                            const recommendations = {
+                                ceo: 'Evaluate potential market impact of AI feature sprint. Consider early investor briefing on technological innovations.',
+                                cfo: 'Assess resource allocation and potential return on investment for AI development.',
+                                cto: 'Accelerate feature completion. Identify potential optimization or integration opportunities.',
+                                coo: 'Prepare cross-functional teams for feature launch and potential operational adjustments.'
+                            };
+                            return recommendations[role];
+                        }
+                    },
+                    { 
+                        title: 'Market Expansion', 
+                        content: 'New Region Launch: Southeast Asia', 
+                        description: 'Strategic geographical expansion targeting high-growth emerging market opportunities in Southeast Asia.',
+                        priority: {
+                            ceo: 'high',
+                            cfo: 'medium',
+                            cto: 'low',
+                            coo: 'high'
+                        },
+                        recommendationLogic: (role) => {
+                            const recommendations = {
+                                ceo: 'Develop comprehensive market entry strategy. Assess geopolitical risks and potential partnership opportunities.',
+                                cfo: 'Conduct detailed financial risk assessment. Analyze currency exchange implications and investment requirements.',
+                                cto: 'Evaluate technological infrastructure and localization needs for new market.',
+                                coo: 'Create operational playbook for market entry. Identify local talent acquisition and supply chain strategies.'
+                            };
+                            return recommendations[role];
+                        }
+                    },
+                    { 
+                        title: 'Customer Acquisition', 
+                        content: '3,200 New Enterprise Clients', 
+                        description: 'Significant growth in enterprise client base, indicating strong market validation and sales performance.',
+                        priority: {
+                            ceo: 'high',
+                            cfo: 'medium',
+                            cto: 'low',
+                            coo: 'high'
+                        },
+                        recommendationLogic: (role) => {
+                            const recommendations = {
+                                ceo: 'Develop retention and expansion strategies for new enterprise clients. Consider creating a dedicated enterprise success team.',
+                                cfo: 'Analyze customer acquisition cost and lifetime value. Optimize sales and marketing spend.',
+                                cto: 'Identify technological features that attracted these enterprise clients. Develop targeted product roadmap.',
+                                coo: 'Create scalable onboarding and support processes for enterprise client segment.'
+                            };
+                            return recommendations[role];
+                        }
+                    },
+                    { 
+                        title: 'Infrastructure Costs', 
+                        content: 'Cloud Optimization: $1.2M Saved', 
+                        description: 'Successful cost optimization initiative demonstrating efficient resource management and technological strategy.',
+                        priority: {
+                            ceo: 'low',
+                            cfo: 'high',
+                            cto: 'medium',
+                            coo: 'medium'
+                        },
+                        recommendationLogic: (role) => {
+                            const recommendations = {
+                                ceo: 'Review overall cost optimization strategies. Ensure technological investments align with long-term business goals.',
+                                cfo: 'Continue identifying cost-saving opportunities. Develop comprehensive technology spend analysis.',
+                                cto: 'Explore further optimization techniques. Investigate emerging cost-efficient technologies.',
+                                coo: 'Implement best practices from cloud optimization across other operational domains.'
+                            };
+                            return recommendations[role];
+                        }
+                    },
+                    { 
+                        title: 'Talent Acquisition', 
+                        content: 'AI/ML Specialists Recruitment', 
+                        description: 'Strategic hiring initiative focusing on acquiring top-tier AI and machine learning talent to drive innovation.',
+                        priority: {
+                            ceo: 'medium',
+                            cfo: 'low',
+                            cto: 'high',
+                            coo: 'high'
+                        },
+                        recommendationLogic: (role) => {
+                            const recommendations = {
+                                ceo: {
+                                    high: 'Immediately review and potentially restructure talent acquisition strategy to align with long-term innovation goals.',
+                                    medium: 'Develop cross-functional talent development program for AI and ML specialists.',
+                                    low: 'Conduct quarterly reviews of talent acquisition performance and market trends.'
+                                },
+                                cfo: {
+                                    high: 'Conduct comprehensive cost-benefit analysis of specialized talent acquisition.',
+                                    medium: 'Develop competitive compensation packages for AI/ML talent.',
+                                    low: 'Monitor industry benchmarks for specialized talent compensation.'
+                                },
+                                cto: {
+                                    high: 'Create aggressive recruitment strategy targeting top-tier AI/ML talent.',
+                                    medium: 'Develop internal upskilling and reskilling programs for existing team.',
+                                    low: 'Establish partnerships with universities and research institutions.'
+                                },
+                                coo: {
+                                    high: 'Design comprehensive onboarding and integration framework for specialized talent.',
+                                    medium: 'Create cross-functional collaboration mechanisms for new AI/ML specialists.',
+                                    low: 'Develop mentorship and knowledge transfer programs.'
+                                }
+                            };
+                            return recommendations[role];
+                        }
+                    }
+                ];
+
+                function updateTime() {
+                    const now = new Date();
+                    currentTime.textContent = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                    console.log('Dynamic Information Hierarchy: Time updated');
+                }
+
+                function renderDashboard(role) {
+                    console.log(`Dynamic Information Hierarchy: Rendering dashboard for ${role}`);
+                    dashboardWidgets.innerHTML = '';
+                    
+                    const sortedWidgets = widgets.sort((a, b) => {
+                        const priorityMap = { 'high': 3, 'medium': 2, 'low': 1 };
+                        return priorityMap[b.priority[role]] - priorityMap[a.priority[role]];
+                    });
+
+                    sortedWidgets.forEach(widget => {
+                        const widgetElement = document.createElement('div');
+                        widgetElement.classList.add('widget');
+                        
+                        if (widget.priority[role] === 'high') {
+                            widgetElement.classList.add('high-priority');
+                        }
+
+                        widgetElement.innerHTML = `
+                            <div class="widget-title">${widget.title}</div>
+                            <div class="widget-content">${widget.content}</div>
+                            <div class="widget-description">${widget.description || 'No additional description available.'}</div>
+                            <button class="recommend-btn" data-title="${widget.title}">Get AI Recommendation</button>
+                            <div class="recommendation-panel" style="display:none;"></div>
+                        `;
+
+                        // Add recommendation functionality
+                        const recommendBtn = widgetElement.querySelector('.recommend-btn');
+                        const recommendationPanel = widgetElement.querySelector('.recommendation-panel');
+                        
+                        recommendBtn.addEventListener('click', () => {
+                            // Show processing notification
+                            recommendationPanel.innerHTML = `
+                                <div class="recommendation-processing">
+                                    AI is generating recommendations... 
+                                    <br>
+                                    <small>Analyzing contextual data</small>
+                                </div>
+                            `;
+                            recommendationPanel.style.display = 'block';
+
+                            // Simulate processing delay
+                            setTimeout(() => {
+                                if (widget.recommendationLogic) {
+                                    const recommendations = widget.recommendationLogic(role);
+                                    
+                                    // Check if recommendations are multi-level or single string
+                                    if (typeof recommendations === 'object' && recommendations.high) {
+                                        recommendationPanel.innerHTML = `
+                                            <div class="recommendation-subcards">
+                                                <div class="recommendation-subcard high-risk">
+                                                    <div class="recommendation-subcard-title">High Risk</div>
+                                                    ${recommendations.high}
+                                                </div>
+                                                <div class="recommendation-subcard medium-risk">
+                                                    <div class="recommendation-subcard-title">Medium Risk</div>
+                                                    ${recommendations.medium}
+                                                </div>
+                                                <div class="recommendation-subcard low-risk">
+                                                    <div class="recommendation-subcard-title">Low Risk</div>
+                                                    ${recommendations.low}
+                                                </div>
+                                            </div>
+                                        `;
+                                    } else {
+                                        // Fallback for single string recommendations
+                                        recommendationPanel.innerHTML = `
+                                            <div class="recommendation-subcards">
+                                                <div class="recommendation-subcard high-risk">
+                                                    <div class="recommendation-subcard-title">Recommendation</div>
+                                                    ${recommendations}
+                                                </div>
+                                            </div>
+                                        `;
+                                    }
+                                } else {
+                                    recommendationPanel.innerHTML = 'No AI recommendations available for this widget.';
+                                }
+                            }, 1000);
+                        });
+
+                        dashboardWidgets.appendChild(widgetElement);
+                    });
+
+                    console.log('Dynamic Information Hierarchy: Dashboard rendered');
+                }
+
+                // Initial render
+                updateTime();
+                renderDashboard('ceo');
+
+                // Update time every minute
+                setInterval(updateTime, 60000);
+
+                // Role selector event listener
+                userRoleSelector.addEventListener('change', (e) => {
+                    renderDashboard(e.target.value);
+                });
+
+                // Simulate real-time updates every 30 seconds
+                setInterval(() => {
+                    const currentRole = userRoleSelector.value;
+                    renderDashboard(currentRole);
+                }, 30000);
+
+                console.log('Dynamic Information Hierarchy: Script completed successfully');
+            } catch (error) {
+                console.error('Dynamic Information Hierarchy: Error in script', error);
+            }
+        });
+    </script>
+</body>
+</html>
