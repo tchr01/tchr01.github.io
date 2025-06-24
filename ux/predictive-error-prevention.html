@@ -11,7 +11,7 @@
             background: white;
             border: 2px solid #e2e8f0;
             border-radius: 12px;
-            min-height: 750px;
+            min-height: 650px;
             position: relative;
             overflow: hidden;
             margin: 40px 0;
@@ -1415,11 +1415,16 @@
 
         function showSuccessToast() {
             const toast = document.getElementById('successToast');
+            toast.style.display = 'flex'; // Make sure it's visible first
             toast.classList.add('show');
             
             // Auto-hide after 4 seconds
             setTimeout(() => {
                 toast.classList.remove('show');
+                // Hide completely after animation
+                setTimeout(() => {
+                    toast.style.display = 'none';
+                }, 300);
             }, 4000);
         }
 
