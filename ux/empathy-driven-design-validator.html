@@ -31,6 +31,65 @@
                 border-right: 1px solid #e2e8f0;
                 overflow-y: auto;
                 padding: 20px;
+                position: relative;
+            }
+
+            .add-persona-btn {
+                background-color: #4299e1;
+                color: white;
+                border: none;
+                padding: 10px 15px;
+                border-radius: 6px;
+                cursor: pointer;
+                margin-bottom: 15px;
+                display: block;
+                width: 100%;
+                text-align: center;
+            }
+
+            .persona-card {
+                position: relative;
+            }
+
+            .remove-persona-btn {
+                position: absolute;
+                top: 10px;
+                right: 10px;
+                background-color: #e53e3e;
+                color: white;
+                border: none;
+                border-radius: 50%;
+                width: 24px;
+                height: 24px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                font-size: 14px;
+                line-height: 1;
+                padding: 0;
+            }
+
+            #personaModal {
+                display: none;
+                position: fixed;
+                z-index: 1000;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                overflow: auto;
+                background-color: rgba(0,0,0,0.4);
+            }
+
+            .modal-content {
+                background-color: #fefefe;
+                margin: 15% auto;
+                padding: 20px;
+                border: 1px solid #888;
+                width: 80%;
+                max-width: 500px;
+                border-radius: 12px;
             }
 
             .persona-content {
@@ -72,11 +131,22 @@
                 transition: all 0.3s ease;
                 display: flex;
                 align-items: center;
+                position: relative;
             }
 
             .persona-card:hover {
                 box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
                 transform: translateY(-3px);
+            }
+
+            .persona-card.dragging {
+                opacity: 0.5;
+                transform: scale(1.05);
+                background-color: #f0f4f8;
+            }
+
+            .persona-card.drag-over {
+                border: 2px dashed #4299e1;
             }
 
             .persona-card.active {
@@ -189,20 +259,15 @@
             </div>
         </section>
 
-        <!-- Interactive Demo -->
+        <!-- UX Persona Research Tool -->
         <section class="section">
-            <h2 class="section-title">Interactive Demo</h2>
-            <p class="section-description">Explore how AI can help designers validate interfaces across diverse user perspectives, uncovering potential accessibility and cultural design challenges.</p>
+            <h2 class="section-title">UX Persona Research Simulator</h2>
             
-            <div class="demo-instructions">
-                <h4>🔍 How to Use This Demo:</h4>
-                <ul>
-                    <li>Click on different personas to simulate their experience with an interface</li>
-                    <li>Observe accessibility challenges and cultural context adaptations</li>
-                    <li>Identify potential design biases and barriers</li>
-                    <li>Learn how small design changes can dramatically improve inclusivity</li>
-                </ul>
+            <div class="tool-overview">
+                <p>A comprehensive AI-driven research platform designed to help UX designers, researchers, and product managers develop deeper empathy and understanding of diverse user experiences.</p>
             </div>
+            
+            
             
             <!-- Demo Container -->
             <div class="demo-app">
@@ -218,6 +283,56 @@
                 </div>
             </div>
         </section>
+
+        <!-- Persona Generation Prompt -->
+        <div id="personaModal" class="modal">
+            <div class="modal-content">
+                <h2>AI Persona Generation</h2>
+                <div class="ai-prompt-container">
+                    <input type="text" id="aiPersonaName" placeholder="Persona Name (e.g., Maria Rodriguez)" required>
+                    <textarea id="aiPersonaPrompt" placeholder="Describe the user persona you want to create. Include details about their background, abilities, challenges, and cultural context." rows="5" required></textarea>
+                    <div class="modal-buttons">
+                        <button type="button" id="cancelPersonaBtn" class="cancel-btn">Cancel</button>
+                        <button type="button" id="generatePersonaBtn" class="submit-btn">Generate Persona with AI</button>
+                    </div>
+                    <div id="aiGenerationStatus" class="ai-generation-status"></div>
+                </div>
+            </div>
+        </div>
+
+        <style>
+            #aiPersonaName {
+                width: 100%;
+                padding: 10px;
+                margin-bottom: 15px;
+                border: 1px solid #e2e8f0;
+                border-radius: 6px;
+            }
+        </style>
+
+        <style>
+            .ai-prompt-container {
+                display: flex;
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .ai-generation-status {
+                margin-top: 10px;
+                padding: 10px;
+                background-color: #f0f4f8;
+                border-radius: 6px;
+                min-height: 50px;
+            }
+
+            #aiPersonaPrompt {
+                width: 100%;
+                padding: 10px;
+                border: 1px solid #e2e8f0;
+                border-radius: 6px;
+                resize: vertical;
+            }
+        </style>
 
         <!-- Technical Implementation -->
         <section class="section">
@@ -546,16 +661,83 @@
                 }
             ];
 
+            // Add persona button
+            const addPersonaBtn = document.createElement('button');
+            addPersonaBtn.id = 'addPersonaBtn';
+            addPersonaBtn.className = 'add-persona-btn';
+            addPersonaBtn.textContent = '+ Add Persona';
+            personaList.appendChild(addPersonaBtn);
+
             personas.forEach((persona, index) => {
                 const personaCard = document.createElement('div');
                 personaCard.className = 'persona-card';
+                personaCard.setAttribute('draggable', 'true');
                 personaCard.innerHTML = `
                     <img src="${persona.headshot}" alt="${persona.name}" class="persona-headshot">
                     <div class="persona-details">
                         <h3>${persona.name}</h3>
                         <div class="subtitle">${persona.subtitle}</div>
                     </div>
+                    <button class="remove-persona-btn">×</button>
                 `;
+
+                // Drag and Drop Event Listeners
+                personaCard.addEventListener('dragstart', (e) => {
+                    e.dataTransfer.setData('text/plain', ''); // Required for Firefox
+                    personaCard.classList.add('dragging');
+                });
+
+                personaCard.addEventListener('dragend', () => {
+                    personaCard.classList.remove('dragging');
+                });
+
+                personaList.addEventListener('dragover', (e) => {
+                    e.preventDefault(); // Necessary to allow dropping
+                    const draggingCard = document.querySelector('.dragging');
+                    if (draggingCard && draggingCard !== e.target) {
+                        const afterElement = getDragAfterElement(personaList, e.clientY);
+                        if (afterElement) {
+                            personaList.insertBefore(draggingCard, afterElement);
+                        } else {
+                            personaList.appendChild(draggingCard);
+                        }
+                    }
+                });
+
+                const removeBtn = personaCard.querySelector('.remove-persona-btn');
+                removeBtn.addEventListener('click', (e) => {
+                    e.stopPropagation(); // Prevent card click event
+                    personaList.removeChild(personaCard);
+                    
+                    // If no personas left, reset content
+                    const remainingCards = personaList.querySelectorAll('.persona-card');
+                    if (remainingCards.length === 0) {
+                        personaContent.innerHTML = `
+                            <div class="placeholder-message">
+                                <p>Click on a persona to view details</p>
+                            </div>
+                        `;
+                    } else {
+                        // Select the first remaining persona
+                        remainingCards[0].click();
+                    }
+                });
+
+                // Helper function to determine drop location
+                function getDragAfterElement(container, y) {
+                    const draggableElements = [...container.querySelectorAll('.persona-card:not(.dragging)')];
+
+                    return draggableElements.reduce((closest, child) => {
+                        const box = child.getBoundingClientRect();
+                        const offset = y - box.top - box.height / 2;
+                        
+                        if (offset < 0 && offset > closest.offset) {
+                            return { offset: offset, element: child };
+                        } else {
+                            return closest;
+                        }
+                    }, { offset: Number.NEGATIVE_INFINITY }).element;
+                }
 
                 personaCard.addEventListener('click', () => {
                     // Remove active class from all cards
@@ -646,6 +828,167 @@
 
                 personaList.appendChild(personaCard);
             });
+
+            // Modal functionality
+            const personaModal = document.getElementById('personaModal');
+            const cancelPersonaBtn = document.getElementById('cancelPersonaBtn');
+            const personaForm = document.getElementById('personaForm');
+
+            // Open modal
+            document.getElementById('addPersonaBtn').addEventListener('click', () => {
+                personaModal.style.display = 'block';
+            });
+
+            // Close modal
+            cancelPersonaBtn.addEventListener('click', () => {
+                personaModal.style.display = 'none';
+            });
+
+            // Handle AI persona generation
+            const generatePersonaBtn = document.getElementById('generatePersonaBtn');
+            const aiPersonaPrompt = document.getElementById('aiPersonaPrompt');
+            const aiGenerationStatus = document.getElementById('aiGenerationStatus');
+
+            generatePersonaBtn.addEventListener('click', async () => {
+                const name = document.getElementById('aiPersonaName').value.trim();
+                const prompt = aiPersonaPrompt.value.trim();
+                
+                if (!name) {
+                    aiGenerationStatus.innerHTML = '<p style="color: red;">Please provide a persona name.</p>';
+                    return;
+                }
+
+                if (!prompt) {
+                    aiGenerationStatus.innerHTML = '<p style="color: red;">Please provide a detailed persona description.</p>';
+                    return;
+                }
+
+                // Update status to show generation in progress
+                aiGenerationStatus.innerHTML = '<p>🤖 Generating persona... Please wait.</p>';
+
+                try {
+                    // Placeholder for actual AI persona generation
+                    const generatedPersona = await generatePersonaWithAI(name, prompt);
+
+                    // Update status
+                    aiGenerationStatus.innerHTML = '<p style="color: green;">✅ Persona generated successfully!</p>';
+
+                    // Add the new persona to the list
+                    const personaCard = document.createElement('div');
+                    personaCard.className = 'persona-card';
+                    personaCard.innerHTML = `
+                        <img src="${generatedPersona.headshot}" alt="${generatedPersona.name}" class="persona-headshot">
+                        <div class="persona-details">
+                            <h3>${generatedPersona.name}</h3>
+                            <div class="subtitle">${generatedPersona.subtitle}</div>
+                        </div>
+                        <button class="remove-persona-btn">×</button>
+                    `;
+
+                    const removeBtn = personaCard.querySelector('.remove-persona-btn');
+                    removeBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        personaList.removeChild(personaCard);
+                        
+                        const remainingCards = personaList.querySelectorAll('.persona-card');
+                        if (remainingCards.length === 0) {
+                            personaContent.innerHTML = `
+                                <div class="placeholder-message">
+                                    <p>Click on a persona to view details</p>
+                                </div>
+                            `;
+                        } else {
+                            remainingCards[0].click();
+                        }
+                    });
+
+                    personaCard.addEventListener('click', () => {
+                        document.querySelectorAll('.persona-card').forEach(card => {
+                            card.classList.remove('active');
+                        });
+                        
+                        personaCard.classList.add('active');
+
+                        personaContent.innerHTML = `
+                            <div class="persona-details-full">
+                                <h2>${generatedPersona.name}</h2>
+                                <div class="persona-section">
+                                    <h3>Accessibility Challenges</h3>
+                                    <ul>
+                                        ${generatedPersona.accessibility.challenges.map(challenge => 
+                                            `<li>${challenge}</li>`
+                                        ).join('')}
+                                    </ul>
+                                    <div class="bias-indicator">Potential Accessibility Barriers Detected</div>
+                                </div>
+
+                                <div class="persona-section">
+                                    <h3>Design Recommendations</h3>
+                                    <ul>
+                                        ${generatedPersona.accessibility.recommendations.map(recommendation => 
+                                            `<li>${recommendation}</li>`
+                                        ).join('')}
+                                    </ul>
+                                </div>
+
+                                <div class="persona-section">
+                                    <h3>Cultural Context</h3>
+                                    <p>${generatedPersona.cultural.context}</p>
+                                    <h3>Design Considerations</h3>
+                                    <ul>
+                                        ${generatedPersona.cultural.considerations.map(consideration => 
+                                            `<li>${consideration}</li>`
+                                        ).join('')}
+                                    </ul>
+                                    <div class="cultural-context">Cultural Adaptation Insights</div>
+                                </div>
+                            </div>
+                        `;
+                    });
+
+                    personaList.appendChild(personaCard);
+
+                    // Close modal
+                    personaModal.style.display = 'none';
+                    aiPersonaPrompt.value = '';
+                } catch (error) {
+                    // Handle generation error
+                    aiGenerationStatus.innerHTML = `<p style="color: red;">Error generating persona: ${error.message}</p>`;
+                }
+            });
+
+            // Placeholder AI-driven persona generation function
+            async function generatePersonaWithAI(name, prompt) {
+                // In a real implementation, this would call an AI service to parse the prompt
+                // and generate a detailed persona
+                
+                return {
+                    name: name,
+                    subtitle: prompt.split('.')[0], // Use first sentence as subtitle
+                    headshot: `https://randomuser.me/api/portraits/${name.toLowerCase().includes('woman') ? 'women' : 'men'}/${Math.floor(Math.random() * 100)}.jpg`,
+                    accessibility: {
+                        challenges: [
+                            'Simplified information architecture',
+                            'Clear navigation paths',
+                            'Reduced cognitive load'
+                        ],
+                        recommendations: [
+                            'Streamlined user flows',
+                            'Progressive disclosure',
+                            'Clear, concise language'
+                        ]
+                    },
+                    cultural: {
+                        context: 'Diverse professional background',
+                        considerations: [
+                            'Cultural sensitivity in communication',
+                            'Inclusive design principles',
+                            'Adaptable interface complexity'
+                        ]
+                    }
+                };
+            }
+
         });
     </script>
 </body>
