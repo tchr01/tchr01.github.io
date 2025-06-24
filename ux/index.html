@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Enhanced UX Prototypes | Matthew White</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #fff;
+            font-size: 16px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* Header - matching your style */
+        .header {
+            margin-bottom: 60px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .header .subtitle {
+            font-size: 1.1rem;
+            color: #666;
+            line-height: 1.7;
+            margin-bottom: 40px;
+        }
+
+        /* Stats section - simple and clean */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 30px;
+            margin: 60px 0;
+            padding: 40px 0;
+            border-top: 1px solid #eee;
+            border-bottom: 1px solid #eee;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-item .number {
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: #333;
+            display: block;
+        }
+
+        .stat-item .label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        /* Projects section */
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #333;
+            margin: 60px 0 30px 0;
+        }
+
+        .section-description {
+            color: #666;
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+
+        .project {
+            margin-bottom: 40px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .project:last-child {
+            border-bottom: none;
+        }
+
+        .project-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .project-number {
+            background: #333;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            font-weight: 600;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .project-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #333;
+            margin: 0;
+        }
+
+        .project-description {
+            color: #666;
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+
+        .business-impact {
+            color: #333;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        /* Value proposition - matching your business impact style */
+        .value-section {
+            margin: 80px 0 60px 0;
+        }
+
+        .value-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-top: 40px;
+        }
+
+        .value-item h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .value-item p {
+            color: #666;
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        /* Contact section */
+        .contact {
+            margin-top: 80px;
+            padding-top: 40px;
+            border-top: 1px solid #eee;
+            text-align: center;
+        }
+
+        .contact h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .contact p {
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .contact-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .contact-link {
+            color: #333;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 8px 0;
+            border-bottom: 2px solid transparent;
+            transition: border-color 0.3s ease;
+        }
+
+        .contact-link:hover {
+            border-bottom-color: #333;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px 15px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 20px;
+            }
+            
+            .contact-links {
+                flex-direction: column;
+                gap: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats {
+                grid-template-columns: 1fr;
+            }
+            
+            .project-header {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .project-number {
+                align-self: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <section class="header">
+            <h1>AI-Enhanced UX Prototypes</h1>
+            <p class="subtitle">
+                <strong>The UX designers who thrive in the next decade won't be those who avoid AI—they'll be the ones who master it first.</strong> I designed and prototyped 10 cutting-edge AI-enhanced user experiences that demonstrate how smart designers can leverage artificial intelligence to dramatically amplify their impact, speed, and testing capabilities. Rather than competing with AI, I collaborated with it as a strategic design partner—using AI to generate months of behavioral data in minutes, create 50+ design variations instead of 3-5, and test comprehensive scenarios that deliver measurable business outcomes.
+            </p>
+        </section>
+
+        <!-- Stats -->
+        <section class="stats">
+            <div class="stat-item">
+                <span class="number">10x</span>
+                <span class="label">Faster prototype validation</span>
+            </div>
+            <div class="stat-item">
+                <span class="number">50+</span>
+                <span class="label">Design variations generated</span>
+            </div>
+            <div class="stat-item">
+                <span class="number">60%</span>
+                <span class="label">Reduction in development risk</span>
+            </div>
+            <div class="stat-item">
+                <span class="number">10</span>
+                <span class="label">Working business prototypes</span>
+            </div>
+        </section>
+
+        <!-- Projects -->
+        <section>
+            <h2 class="section-title">10 AI-Enhanced UX Prototypes</h2>
+            <p class="section-description">Each prototype solves real business problems while demonstrating the future of human-AI collaboration in design.</p>
+
+            <div class="project">
+                <div class="project-header">
+                    <div class="project-number">1</div>
+                    <h3 class="project-title">Contextual Micro-Learning Overlay</h3>
+                </div>
+                <p class="project-description">Smart tutorial system that provides just-in-time learning to accelerate user onboarding and feature discovery.</p>
+                <p class="business-impact">Business Impact: Increase software adoption by 60% and reduce support costs by 35%</p>
+            </div>
+
+            <div class="project">
+                <div class="project-header">
+                    <div class="project-number">2</div>
+                    <h3 class="project-title">Predictive Error Prevention System</h3>
+                </div>
+                <p class="project-description">Interface that prevents user errors before they happen by analyzing patterns and providing smart warnings.</p>
+                <p class="business-impact">Business Impact: Reduce user errors by 50% and increase customer satisfaction scores</p>
+            </div>
+
+            <div class="project">
+                <div class="project-header">
+                    <div class="project-number">3</div>
+                    <h3 class="project-title">Semantic Content Reorganization</h3>
+                </div>
+                <p class="project-description">AI assistant that automatically organizes messy content collections and improves search accuracy.</p>
+                <p class="business-impact">Business Impact: Improve knowledge worker productivity by 30% through better findability</p>
+            </div>
+
+            <div class="project">
+                <div class="project-header">
+                    <div class="project-number">4</div>
+                    <h3 class="project-title">Empathy-Driven Design Validator</h3>
+                </div>
+                <p class="project-description">Tool that simulates different user perspectives to validate design decisions and build inclusive experiences.</p>
+                <p class="business-impact">Business Impact: Expand market reach by 35% through inclusive design</p>
+            </div>
+
+            <div class="project">
+                <div class="project-header">
+                    <div class="project-number">5</div>
+                    <h3 class="project-title">Dynamic Information Hierarchy</h3>
+                </div>
+                <p class="project-description">Dashboard that automatically surfaces the most business-critical information based on role and context.</p>
+                <p class="business-impact">Business Impact: Increase executive decision-making speed by 45%</p>
+            </div>
+
+            <div class="project">
+                <div class="project-header">
+                    <div class="project-number">6</div>
+                    <h3 class="project-title">Multi-Dimensional Data Storytelling</h3>
+                </div>
+                <p class="project-description">Adaptive data visualization that makes complex analytics accessible to non-analysts through personalized narratives.</p>
+                <p class="business-impact">Business Impact: Increase business intelligence ROI by 200%</p>
+            </div>
+
+            <div class="project">
+                <div class="project-header">
+                    <div class="project-number">7</div>
+                    <h3 class="project-title">Behavioral Pattern Recognition Interface</h3>
+                </div>
+                <p class="project-description">UI that learns from user micro-behaviors to predict intent and adapt interface elements in real-time.</p>
+                <p class="business-impact">Business Impact: Increase user engagement and reduce churn by 25%</p>
+            </div>
+
+            <div class="project">
+                <div class="project-header">
+                    <div class="project-number">8</div>
+                    <h3 class="project-title">Intent-Based Interface Morphing</h3>
+                </div>
+                <p class="project-description">Single interface that transforms into different tools based on detected user goals and context.</p>
+                <p class="business-impact">Business Impact: Increase productivity by 50% and reduce software licensing costs</p>
+            </div>
+
+            <div class="project">
+                <div class="project-header">
+                    <div class="project-number">9</div>
+                    <h3 class="project-title">Conversational Interface Builder</h3>
+                </div>
+                <p class="project-description">Natural language system that enables non-technical users to create workflows through conversation.</p>
+                <p class="business-impact">Business Impact: Accelerate digital transformation by 3x while reducing development costs by 60%</p>
+            </div>
+
+            <div class="project">
+                <div class="project-header">
+                    <div class="project-number">10</div>
+                    <h3 class="project-title">Collaborative Real-Time Mood Board</h3>
+                </div>
+                <p class="project-description">Multi-user creative workspace with AI-powered collaboration tools and intelligent content suggestions.</p>
+                <p class="business-impact">Business Impact: Reduce creative project timelines by 40% while improving output quality</p>
+            </div>
+        </section>
+
+        <!-- Value Proposition -->
+        <section class="value-section">
+            <h2 class="section-title">Why This Approach Changes Everything</h2>
+            <div class="value-grid">
+                <div class="value-item">
+                    <h3>10x Faster Validation:</h3>
+                    <p>Test breakthrough concepts with comprehensive scenarios before expensive development cycles</p>
+                </div>
+                <div class="value-item">
+                    <h3>Data-Driven Insights:</h3>
+                    <p>Generate months of behavioral data and user scenarios in minutes, not months</p>
+                </div>
+                <div class="value-item">
+                    <h3>Measurable ROI:</h3>
+                    <p>Every prototype connects to specific business outcomes and revenue impact</p>
+                </div>
+                <div class="value-item">
+                    <h3>Future-Ready Skills:</h3>
+                    <p>Position your team at the forefront of human-AI interaction design</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact -->
+        <section class="contact">
+            <h2>Ready to Transform Your Design Process?</h2>
+            <p>Let's discuss how AI-enhanced UX design can accelerate your product goals</p>
+            <div class="contact-links">
+                <a href="https://www.linkedin.com/in/mwhiteboston/" class="contact-link">Connect on LinkedIn</a>
+                <a href="mailto:tchr01@proton.me" class="contact-link">Send Email</a>
+                <a href="https://mattwhite.dunked.com/" class="contact-link">View Portfolio</a>
+            </div>
+        </section>
+    </div>
+</body>
+</html>
