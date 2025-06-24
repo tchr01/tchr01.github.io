@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,7 +12,7 @@
             background: white;
             border: 2px solid #e2e8f0;
             border-radius: 12px;
-            height: 700px;
+            height: 750px;
             position: relative;
             overflow: hidden;
             margin: 40px 0;
@@ -31,65 +32,12 @@
             color: #2d3748;
         }
 
-        .demo-header-right {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-
         .ai-status {
             display: flex;
             align-items: center;
             gap: 8px;
             font-size: 0.8rem;
             color: #4299e1;
-        }
-
-        .demo-controls-header {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .demo-actions {
-            display: flex;
-            gap: 10px;
-        }
-
-        .demo-btn {
-            background: #4299e1;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            font-size: 0.8rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            font-weight: 500;
-        }
-
-        .demo-btn:hover {
-            background: #3182ce;
-            transform: translateY(-1px);
-        }
-
-        .demo-btn.secondary {
-            background: #e2e8f0;
-            color: #4a5568;
-        }
-
-        .demo-btn.secondary:hover {
-            background: #cbd5e0;
-        }
-
-        .progress-indicator {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.75rem;
-            color: #4a5568;
-            padding-left: 15px;
-            border-left: 1px solid #e2e8f0;
         }
 
         .status-indicator {
@@ -108,8 +56,7 @@
 
         .demo-content {
             display: grid;
-            grid-template-columns: 280px 1fr 240px;
-            grid-template-rows: 1fr auto;
+            grid-template-columns: 280px 1fr 240px 320px;
             height: calc(100% - 70px);
         }
 
@@ -265,7 +212,7 @@
             font-weight: 500;
         }
 
-        /* AI Analysis Sidebar - ENHANCED */
+        /* AI Analysis Sidebar */
         .ai-analysis {
             background: #f7fafc;
             border-left: 1px solid #e2e8f0;
@@ -284,13 +231,6 @@
             margin-bottom: 8px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .section-icon {
-            font-size: 1rem;
         }
 
         .analysis-item {
@@ -300,22 +240,6 @@
             border-radius: 4px;
             border-left: 3px solid #4299e1;
             font-size: 0.75rem;
-            transition: all 0.3s ease;
-        }
-
-        .analysis-item:hover {
-            transform: translateX(2px);
-            box-shadow: 0 2px 8px rgba(66, 153, 225, 0.1);
-        }
-
-        .analysis-item.clickable {
-            cursor: pointer;
-            border-left-color: #805ad5;
-        }
-
-        .analysis-item.clickable:hover {
-            background: #faf5ff;
-            border-left-color: #6b46c1;
         }
 
         .confidence-meter {
@@ -331,155 +255,34 @@
             height: 100%;
             background: linear-gradient(90deg, #fc8181, #f6ad55, #68d391);
             border-radius: 2px;
-            transition: width 0.8s ease;
+            transition: width 0.3s ease;
         }
 
-        .confidence-label {
-            font-size: 0.6rem;
-            color: #718096;
-            margin-top: 2px;
-            text-align: right;
-        }
-
-        .guidance-item {
-            background: white;
-            padding: 12px;
-            margin-bottom: 8px;
-            border-radius: 6px;
-            border-left: 3px solid #4299e1;
-            font-size: 0.75rem;
-            line-height: 1.4;
-        }
-
-        .guidance-item.tip {
-            border-left-color: #38a169;
-            background: #f0fff4;
-        }
-
-        .guidance-item.warning {
-            border-left-color: #ed8936;
-            background: #fffbf0;
-        }
-
-        .guidance-item.insight {
-            border-left-color: #805ad5;
-            background: #faf5ff;
-        }
-
-        .guidance-title {
-            font-weight: 600;
-            color: #2d3748;
-            margin-bottom: 6px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .guidance-text {
-            color: #4a5568;
-        }
-
-        .suggestion-item {
-            background: white;
-            padding: 10px;
-            margin-bottom: 6px;
-            border-radius: 6px;
-            border-left: 3px solid #805ad5;
-            font-size: 0.75rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .suggestion-item:hover {
-            background: #faf5ff;
-            transform: translateX(2px);
-            box-shadow: 0 2px 8px rgba(128, 90, 213, 0.1);
-        }
-
-        .suggestion-title {
-            font-weight: 600;
-            color: #553c9a;
-            margin-bottom: 4px;
-        }
-
-        .suggestion-desc {
-            color: #6b7280;
-            line-height: 1.3;
-        }
-
-        .theme-item {
-            position: relative;
-            overflow: hidden;
-        }
-
-        .theme-item .theme-name {
-            font-weight: 500;
-            color: #2d3748;
-            margin-bottom: 4px;
-        }
-
-        .theme-item .theme-count {
-            font-size: 0.6rem;
-            color: #718096;
-            margin-bottom: 6px;
-        }
-
-        /* AI Feedback Log - NEW BOTTOM POSITION */
-        .feedback-log {
-            grid-column: 1 / -1;
+        /* Feedback Pane - NEW */
+        .feedback-pane {
             background: #fafafa;
-            border-top: 2px solid #e2e8f0;
-            max-height: 200px;
-            min-height: 60px;
-            transition: max-height 0.3s ease;
-            overflow: hidden;
-            display: none;
-        }
-
-        .feedback-log.expanded {
-            max-height: 400px;
+            border-left: 1px solid #e2e8f0;
+            padding: 15px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
         }
 
         .feedback-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 12px 20px;
-            background: #f7fafc;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
             border-bottom: 1px solid #e2e8f0;
-            cursor: pointer;
         }
 
         .feedback-header h4 {
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             color: #4a5568;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            margin: 0;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .log-controls {
-            display: flex;
-            gap: 8px;
-            align-items: center;
-        }
-
-        .log-toggle {
-            background: #4299e1;
-            color: white;
-            border: none;
-            padding: 4px 12px;
-            border-radius: 4px;
-            font-size: 0.75rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .log-toggle:hover {
-            background: #3182ce;
+            flex: 1;
         }
 
         .clear-feedback {
@@ -497,54 +300,47 @@
             background: #cbd5e0;
         }
 
-        .feedback-content {
-            height: calc(100% - 49px);
-            overflow-y: auto;
-            padding: 15px 20px;
-        }
-
         .feedback-list {
+            flex: 1;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
         }
 
         .feedback-item {
             background: white;
             border: 1px solid #e2e8f0;
             border-radius: 8px;
-            padding: 12px 16px;
+            padding: 12px;
             font-size: 0.8rem;
             transition: all 0.2s ease;
-            animation: slideInLog 0.3s ease;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            animation: slideInFeedback 0.3s ease;
         }
 
         .feedback-item:hover {
             border-color: #4299e1;
-            box-shadow: 0 2px 8px rgba(66, 153, 225, 0.15);
-            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(66, 153, 225, 0.1);
         }
 
         .feedback-item.analysis {
-            border-left: 4px solid #805ad5;
-            background: linear-gradient(135deg, #faf5ff 0%, #ffffff 100%);
+            border-left: 3px solid #805ad5;
+            background: #faf5ff;
         }
 
         .feedback-item.success {
-            border-left: 4px solid #38a169;
-            background: linear-gradient(135deg, #f0fff4 0%, #ffffff 100%);
+            border-left: 3px solid #38a169;
+            background: #f0fff4;
         }
 
         .feedback-item.info {
-            border-left: 4px solid #4299e1;
-            background: linear-gradient(135deg, #ebf8ff 0%, #ffffff 100%);
+            border-left: 3px solid #4299e1;
+            background: #ebf8ff;
         }
 
         .feedback-title {
             font-weight: 600;
             color: #2d3748;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             display: flex;
             align-items: center;
             gap: 8px;
@@ -553,8 +349,8 @@
         .feedback-badge {
             background: #4299e1;
             color: white;
-            padding: 2px 8px;
-            border-radius: 12px;
+            padding: 2px 6px;
+            border-radius: 8px;
             font-size: 0.65rem;
             font-weight: 500;
         }
@@ -569,35 +365,83 @@
 
         .feedback-reasoning {
             color: #4a5568;
-            line-height: 1.5;
+            line-height: 1.4;
             font-size: 0.75rem;
         }
 
         .feedback-timestamp {
             color: #718096;
             font-size: 0.65rem;
-            margin-top: 8px;
+            margin-top: 6px;
             text-align: right;
-            font-style: italic;
         }
 
         .feedback-empty {
             text-align: center;
             color: #718096;
-            font-size: 0.85rem;
-            padding: 30px 20px;
+            font-size: 0.8rem;
+            padding: 20px;
             font-style: italic;
-            background: white;
+        }
+
+        @keyframes slideInFeedback {
+            from { transform: translateX(20px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Demo Controls */
+        .demo-controls {
+            position: absolute;
+            bottom: 15px;
+            left: 20px;
+            right: 340px; /* Account for feedback pane */
+            background: rgba(255, 255, 255, 0.95);
             border-radius: 8px;
-            border: 1px dashed #cbd5e0;
+            padding: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+            color: #4a5568;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
 
-        @keyframes slideInLog {
-            from { transform: translateY(10px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+        .demo-actions {
+            display: flex;
+            gap: 10px;
         }
 
-        /* Remove old demo controls since they're now in header */
+        .demo-btn {
+            background: #4299e1;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .demo-btn:hover {
+            background: #3182ce;
+            transform: translateY(-1px);
+        }
+
+        .demo-btn.secondary {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+
+        .demo-btn.secondary:hover {
+            background: #cbd5e0;
+        }
+
+        .progress-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.7rem;
+        }
 
         /* Instruction box */
         .demo-instructions {
@@ -641,15 +485,10 @@
         /* Responsive adjustments */
         @media (max-width: 1200px) {
             .demo-content {
-                grid-template-columns: 260px 1fr 220px;
+                grid-template-columns: 260px 1fr 220px 280px;
             }
-            
-            .demo-header-right {
-                gap: 15px;
-            }
-            
-            .progress-indicator {
-                padding-left: 10px;
+            .demo-controls {
+                right: 300px;
             }
         }
 
@@ -659,42 +498,16 @@
                 grid-template-rows: auto auto auto auto;
             }
             
-            .demo-header {
-                flex-direction: column;
-                gap: 15px;
-                align-items: flex-start;
-                padding: 15px;
+            .demo-controls {
+                right: 20px;
+                position: relative;
+                bottom: auto;
+                margin-top: 15px;
             }
             
-            .demo-header-right {
-                width: 100%;
-                flex-direction: column;
-                gap: 12px;
-                align-items: flex-start;
-            }
-            
-            .demo-controls-header {
-                width: 100%;
-                flex-direction: column;
-                gap: 12px;
-                align-items: flex-start;
-            }
-            
-            .demo-actions {
-                width: 100%;
-                justify-content: flex-start;
-            }
-            
-            .progress-indicator {
-                padding-left: 0;
-                border-left: none;
-                border-top: 1px solid #e2e8f0;
-                padding-top: 12px;
-            }
-            
-            .feedback-log {
+            .feedback-pane {
                 order: 4;
-                max-height: 250px;
+                max-height: 300px;
             }
             
             .organization-canvas {
@@ -722,7 +535,7 @@
 
         <!-- Header -->
         <header class="header">
-            <div class="project-number">3</div>
+            <div class="project-number">4</div>
             <h1>Semantic Content Reorganization</h1>
             <p class="subtitle">AI assistant that automatically organizes messy content collections and improves search accuracy, helping teams spend less time searching for information and more time on high-value work.</p>
             
@@ -731,6 +544,21 @@
                 <p>Improve knowledge worker productivity by 30% through better content management and findability</p>
             </div>
         </header>
+
+        <!-- Prerequisites -->
+        <section class="section">
+            <div class="implementation-note">
+                <strong>Prerequisites:</strong> For these experiments, being proficient in HTML, CSS, and Vanilla JS is recommended. Also familiarity with how GitHub works will make you a more speedy publisher!
+            </div>
+        </section>
+
+        <!-- The Innovation -->
+        <section class="section">
+            <div class="innovation-box">
+                <h3>The Innovation</h3>
+                <p>AI analyzes user's content and automatically suggests better organization, relationships, and structure based on semantic understanding and usage patterns. The system processes documents, notes, and files to identify themes, topics, and connections that humans might miss, creating intelligent organizational structures that improve findability and reduce search time.</p>
+            </div>
+        </section>
 
         <!-- Interactive Demo -->
         <section class="section">
@@ -753,25 +581,9 @@
             <div class="demo-app">
                 <div class="demo-header">
                     <div class="demo-title">Content Organization Assistant</div>
-                    <div class="demo-header-right">
-                        <div class="ai-status">
-                            <div class="status-indicator"></div>
-                            AI Content Analysis Active
-                        </div>
-                        <div class="demo-controls-header">
-                            <div class="demo-actions">
-                                <button class="demo-btn" onclick="analyzeContent()">Analyze Content</button>
-                                <button class="demo-btn secondary" onclick="createGroup()">New Group</button>
-                                <button class="demo-btn secondary" onclick="resetOrganization()">Reset</button>
-                            </div>
-                            <div class="progress-indicator">
-                                <span>Progress:</span>
-                                <div style="width: 60px; height: 4px; background: #e2e8f0; border-radius: 2px; overflow: hidden;">
-                                    <div style="width: 0%; height: 100%; background: #4299e1; transition: width 0.3s ease;" id="progressBar"></div>
-                                </div>
-                                <span id="progressText">0%</span>
-                            </div>
-                        </div>
+                    <div class="ai-status">
+                        <div class="status-indicator"></div>
+                        AI Content Analysis Active
                     </div>
                 </div>
                 
@@ -876,50 +688,60 @@
                         </div>
                     </div>
 
-                    <!-- AI Analysis Sidebar - ENHANCED -->
+                    <!-- AI Analysis Sidebar -->
                     <div class="ai-analysis">
                         <div class="analysis-section">
-                            <h4><span class="section-icon">🎯</span>Content Themes</h4>
-                            <div id="themesContainer">
-                                <!-- Dynamic themes will be populated here -->
+                            <h4>Content Themes</h4>
+                            <div class="analysis-item">
+                                Strategy & Planning
+                                <div class="confidence-meter">
+                                    <div class="confidence-fill" style="width: 85%"></div>
+                                </div>
+                            </div>
+                            <div class="analysis-item">
+                                Team Collaboration
+                                <div class="confidence-meter">
+                                    <div class="confidence-fill" style="width: 72%"></div>
+                                </div>
+                            </div>
+                            <div class="analysis-item">
+                                Design & Creative
+                                <div class="confidence-meter">
+                                    <div class="confidence-fill" style="width: 68%"></div>
+                                </div>
                             </div>
                         </div>
 
                         <div class="analysis-section">
-                            <h4><span class="section-icon">🧠</span>AI Guidance</h4>
-                            <div id="guidanceContainer">
-                                <!-- Dynamic guidance will be populated here -->
-                            </div>
+                            <h4>Relationships</h4>
+                            <div class="analysis-item">Marketing → Strategy (Strong)</div>
+                            <div class="analysis-item">Design → Brand (Medium)</div>
+                            <div class="analysis-item">Meetings → Planning (Weak)</div>
                         </div>
 
                         <div class="analysis-section">
-                            <h4><span class="section-icon">💡</span>Suggestions</h4>
-                            <div id="suggestionsContainer">
-                                <!-- Dynamic suggestions will be populated here -->
-                            </div>
+                            <h4>Suggestions</h4>
+                            <div class="analysis-item">Group by project phase</div>
+                            <div class="analysis-item">Separate by content type</div>
+                            <div class="analysis-item">Create timeline view</div>
                         </div>
                     </div>
 
-                    <!-- AI Feedback Log - NEW POSITION -->
-                    <div class="feedback-log" id="feedbackLog">
+                    <!-- Feedback Pane - NEW -->
+                    <div class="feedback-pane">
                         <div class="feedback-header">
-                            <h4><span class="section-icon">📋</span>AI Activity Log</h4>
-                            <div class="log-controls">
-                                <button class="log-toggle" onclick="toggleLogExpanded()" id="logToggle">Expand</button>
-                                <button class="clear-feedback" onclick="clearAllFeedback()">Clear</button>
-                            </div>
+                            <h4>AI Feedback</h4>
+                            <button class="clear-feedback" onclick="clearAllFeedback()">Clear All</button>
                         </div>
-                        <div class="feedback-content" id="feedbackContent">
-                            <div class="feedback-list" id="feedbackList">
-                                <div class="feedback-empty">
-                                    AI activity and reasoning will appear here as you organize content. This log shows you exactly how the AI makes decisions.
-                                </div>
+                        <div class="feedback-list" id="feedbackList">
+                            <div class="feedback-empty">
+                                Start organizing content to see AI feedback and reasoning here.
                             </div>
                         </div>
                     </div>
                 </div>
                 
-                <!-- <div class="demo-controls">
+                <div class="demo-controls">
                     <div class="demo-actions">
                         <button class="demo-btn" onclick="analyzeContent()">Analyze Content</button>
                         <button class="demo-btn secondary" onclick="createGroup()">New Group</button>
@@ -932,13 +754,11 @@
                         </div>
                         <span id="progressText">0%</span>
                     </div>
-                </div> -->
+                </div>
             </div>
         </section>
 
-        <!-- Rest of the page content remains the same... -->
-
-         <!-- Technical Implementation -->
+        <!-- Technical Implementation -->
         <section class="section">
             <h2 class="section-title">Technical Implementation</h2>
             
@@ -1109,31 +929,6 @@
             <a href="empathy-driven-design-validator.html" class="project-nav-link next">Next Project</a>
         </nav>
     </div>
-        
-    </div>
-
-     <div id="toastContainer" class="success-toast">
-    <span class="toast-icon">🤖</span>
-    <span id="toastMessage">AI is thinking...</span>
-  </div>
-
-  
-
-  <script>
-    function showToast(message) {
-      const toast = document.getElementById('toastContainer');
-      const toastMsg = document.getElementById('toastMessage');
-      toastMsg.textContent = message;
-      toast.classList.add('show');
-      setTimeout(() => toast.classList.remove('show'), 3000);
-    }
-
-    // Replacing feedback log with toast only
-    function addFeedback(title, message, type) {
-      showToast(`${title}: ${message}`);
-    }
-  </script>
-
 
     <script>
         // Demo functionality
@@ -1145,7 +940,8 @@
         document.addEventListener('DOMContentLoaded', function() {
             setupDragAndDrop();
             updateProgress();
-            updateAIAnalysis(); // Initialize AI analysis with dynamic content
+            updateRelationships(); // Initialize with default state
+            updateSuggestions(); // Initialize with default state
         });
 
         function setupDragAndDrop() {
@@ -1218,8 +1014,8 @@
                 organizationProgress += 7;
                 updateProgress();
                 
-                // Update AI analysis with dynamic content
-                updateAIAnalysis();
+                // Update AI analysis
+                updateAIAnalysis(group.id, itemType);
                 
                 // Check if this was the last item
                 const remainingItems = document.querySelectorAll('.content-item').length;
@@ -1341,9 +1137,6 @@
                 organizationProgress += organized * 7;
                 updateProgress();
                 
-                // Update AI analysis after organizing
-                updateAIAnalysis();
-                
                 // Check if there are still items left after AI analysis
                 setTimeout(() => {
                     const remainingItems = document.querySelectorAll('.content-item').length;
@@ -1425,9 +1218,6 @@
             newGroup.addEventListener('drop', handleDrop);
             
             canvas.appendChild(newGroup);
-            
-            // Update AI analysis when new group is created
-            updateAIAnalysis();
             
             addFeedback(
                 '📂 Created Custom Group',
@@ -1520,9 +1310,6 @@
             organizationProgress = 0;
             updateProgress();
             
-            // Reset AI analysis
-            updateAIAnalysis();
-            
             addFeedback(
                 '🔄 System Reset',
                 'Reset with 15 content items ready for organization. All previous categorizations cleared and AI analysis ready to begin fresh.',
@@ -1542,311 +1329,100 @@
             }
         }
 
-        // ENHANCED AI ANALYSIS FUNCTION - DYNAMIC CONTENT
-        function updateAIAnalysis() {
-            updateContentThemes();
-            updateGuidance();
-            updateSuggestions();
-        }
-
-        function updateContentThemes() {
-            const themesContainer = document.getElementById('themesContainer');
-            const organizedItems = document.querySelectorAll('.grouped-item');
-            const unorganizedItems = document.querySelectorAll('.content-item');
-            
-            // Count content types
-            const themes = {
-                strategy: { count: 0, confidence: 0, name: 'Strategy & Planning' },
-                meeting: { count: 0, confidence: 0, name: 'Team Collaboration' },
-                analysis: { count: 0, confidence: 0, name: 'Research & Analysis' },
-                design: { count: 0, confidence: 0, name: 'Design & Creative' }
+        function updateAIAnalysis(groupId, itemType) {
+            // Update confidence bars based on what's being organized
+            const themeUpdates = {
+                'strategy': { id: 'strategy-confidence', boost: 5 },
+                'meeting': { id: 'collaboration-confidence', boost: 4 },
+                'analysis': { id: 'analysis-confidence', boost: 6 },
+                'design': { id: 'design-confidence', boost: 3 }
             };
             
-            // Count organized items
-            organizedItems.forEach(item => {
-                const type = item.dataset.type;
-                if (themes[type]) {
-                    themes[type].count++;
+            if (themeUpdates[itemType]) {
+                const confidenceBar = document.getElementById(themeUpdates[itemType].id);
+                if (confidenceBar) {
+                    const currentWidth = parseInt(confidenceBar.style.width) || 0;
+                    const newWidth = Math.min(currentWidth + themeUpdates[itemType].boost, 95);
+                    confidenceBar.style.width = newWidth + '%';
                 }
-            });
-            
-            // Count unorganized items
-            unorganizedItems.forEach(item => {
-                const type = item.dataset.type;
-                if (themes[type]) {
-                    themes[type].count++;
-                }
-            });
-            
-            // Calculate confidence based on organization progress
-            Object.keys(themes).forEach(key => {
-                const theme = themes[key];
-                if (theme.count > 0) {
-                    // Higher confidence when items are organized
-                    const organizedOfType = Array.from(organizedItems).filter(item => item.dataset.type === key).length;
-                    const totalOfType = theme.count;
-                    theme.confidence = Math.round(60 + (organizedOfType / totalOfType) * 35);
-                }
-            });
-            
-            // Generate theme HTML
-            let themesHTML = '';
-            Object.entries(themes).forEach(([key, theme]) => {
-                if (theme.count > 0) {
-                    themesHTML += `
-                        <div class="theme-item analysis-item">
-                            <div class="theme-name">${theme.name}</div>
-                            <div class="theme-count">${theme.count} documents identified</div>
-                            <div class="confidence-meter">
-                                <div class="confidence-fill" style="width: ${theme.confidence}%"></div>
-                            </div>
-                            <div class="confidence-label">${theme.confidence}% confidence</div>
-                        </div>
-                    `;
-                }
-            });
-            
-            if (themesHTML === '') {
-                themesHTML = '<div class="analysis-item">No themes detected yet. Start organizing content to see AI analysis.</div>';
             }
             
-            themesContainer.innerHTML = themesHTML;
+            // Update relationships based on what's being organized
+            updateRelationships();
+            
+            // Update suggestions based on current organization state
+            updateSuggestions();
         }
-
-        function updateGuidance() {
-            const guidanceContainer = document.getElementById('guidanceContainer');
-            const organizedItems = document.querySelectorAll('.grouped-item').length;
-            const unorganizedItems = document.querySelectorAll('.content-item').length;
-            const totalItems = 15;
-            const groups = document.querySelectorAll('.organization-group');
-            const activeGroups = Array.from(groups).filter(group => 
-                group.querySelectorAll('.grouped-item').length > 0
-            ).length;
+        
+        function updateRelationships() {
+            const relationshipsList = document.getElementById('relationshipsList');
+            const relationships = [];
             
-            let guidance = [];
+            // Check what's organized to generate dynamic relationships
+            const strategyItems = document.querySelectorAll('#group1Items .grouped-item').length;
+            const meetingItems = document.querySelectorAll('#group2Items .grouped-item').length;
+            const analysisItems = document.querySelectorAll('#group3Items .grouped-item').length;
+            const designItems = document.querySelectorAll('#designGroup .grouped-item').length;
             
-            if (organizedItems === 0) {
-                // Starting state
-                guidance = [
-                    {
-                        type: 'tip',
-                        title: '🚀 Getting Started',
-                        text: 'AI has detected 4 main content types in your collection. You can organize manually or let AI do the work automatically.'
-                    },
-                    {
-                        type: 'insight',
-                        title: '🎯 Best Approach',
-                        text: 'For fastest results, click "Analyze Content" to see AI organize everything at once with detailed explanations.'
-                    }
-                ];
-            } else if (organizedItems <= 5) {
-                // Early organization
-                guidance = [
-                    {
-                        type: 'tip',
-                        title: '✅ Good Progress',
-                        text: `You've organized ${organizedItems} of ${totalItems} items. AI is learning from your organizational patterns.`
-                    },
-                    {
-                        type: 'insight',
-                        title: '🧠 AI Insight',
-                        text: 'Your choices are helping AI understand your preferred organizational structure. Similar content will be grouped accordingly.'
-                    }
-                ];
-            } else if (organizedItems <= 10) {
-                // Mid-way progress
-                guidance = [
-                    {
-                        type: 'tip',
-                        title: '🎯 Momentum Building',
-                        text: `Great work! ${organizedItems} items organized across ${activeGroups} categories. You're finding a good organizational rhythm.`
-                    },
-                    {
-                        type: 'insight',
-                        title: '📊 Pattern Recognition',
-                        text: 'AI has identified clear patterns in your organization. The remaining items should fit naturally into existing categories.'
-                    }
-                ];
-            } else if (unorganizedItems > 0) {
-                // Near completion
-                guidance = [
-                    {
-                        type: 'tip',
-                        title: '🏁 Almost There',
-                        text: `Only ${unorganizedItems} items remaining! Your organizational structure is solid and nearly complete.`
-                    },
-                    {
-                        type: 'insight',
-                        title: '🎨 Fine-tuning',
-                        text: 'Consider if any remaining items need custom categories, or let AI place them in the most appropriate existing groups.'
-                    }
-                ];
+            if (strategyItems > 0 && analysisItems > 0) {
+                relationships.push('Strategy ↔ Analysis (Strong) - Strategic docs inform research priorities');
+            }
+            
+            if (meetingItems > 0 && strategyItems > 0) {
+                relationships.push('Meetings → Strategy (Medium) - Planning sessions drive strategic decisions');
+            }
+            
+            if (analysisItems > 1) {
+                relationships.push('Research ↔ Feedback (Strong) - Customer insights shape product decisions');
+            }
+            
+            if (designItems > 0 && strategyItems > 0) {
+                relationships.push('Design → Strategy (Medium) - Visual assets support strategic initiatives');
+            }
+            
+            if (relationships.length === 0) {
+                relationshipsList.innerHTML = '<div class="analysis-item">Organize items to see content relationships emerge</div>';
             } else {
-                // Completion state
-                const hasCustomGroups = Array.from(groups).some(group => 
-                    group.classList.contains('user-created') && 
-                    group.querySelectorAll('.grouped-item').length > 0
-                );
-                
-                guidance = [
-                    {
-                        type: 'tip',
-                        title: '🎉 Perfect Organization',
-                        text: `All ${totalItems} items successfully organized into ${activeGroups} logical categories. Content is now highly findable!`
-                    }
-                ];
-                
-                if (hasCustomGroups) {
-                    guidance.push({
-                        type: 'insight',
-                        title: '🧠 Learning Complete',
-                        text: 'AI has learned from your custom categories and will apply these patterns to future content organization tasks.'
-                    });
-                } else {
-                    guidance.push({
-                        type: 'insight',
-                        title: '🔄 Try Different Approaches',
-                        text: 'Click "Reset" to experiment with manual organization or create custom categories to see how AI adapts.'
-                    });
-                }
+                relationshipsList.innerHTML = relationships.map(rel => 
+                    `<div class="analysis-item">${rel}</div>`
+                ).join('');
             }
-            
-            // Add contextual warnings or tips based on current state
-            if (activeGroups === 1 && organizedItems > 3) {
-                guidance.push({
-                    type: 'warning',
-                    title: '⚠️ Consider Variety',
-                    text: 'Most items are in one category. Try spreading content across multiple groups for better organization.'
-                });
-            }
-            
-            if (activeGroups > 6) {
-                guidance.push({
-                    type: 'warning',
-                    title: '📝 Too Many Categories?',
-                    text: 'You have many categories. Consider consolidating similar groups for easier content discovery.'
-                });
-            }
-            
-            // Generate HTML
-            let guidanceHTML = '';
-            guidance.forEach(item => {
-                guidanceHTML += `
-                    <div class="guidance-item ${item.type}">
-                        <div class="guidance-title">${item.title}</div>
-                        <div class="guidance-text">${item.text}</div>
-                    </div>
-                `;
-            });
-            
-            guidanceContainer.innerHTML = guidanceHTML;
         }
-
+        
         function updateSuggestions() {
-            const suggestionsContainer = document.getElementById('suggestionsContainer');
-            const organizedItems = document.querySelectorAll('.grouped-item').length;
-            const unorganizedItems = document.querySelectorAll('.content-item').length;
-            const totalItems = 15;
+            const suggestionsList = document.getElementById('suggestionsList');
+            const suggestions = [];
             
-            let suggestions = [];
+            // Generate smart suggestions based on current organization
+            const totalOrganized = document.querySelectorAll('.grouped-item').length;
+            const unorganizedCount = document.querySelectorAll('.content-item').length;
             
-            if (organizedItems === 0) {
-                // Initial suggestions
-                suggestions = [
-                    {
-                        title: 'Start with AI Analysis',
-                        desc: 'Click "Analyze Content" to let AI automatically organize your documents based on semantic similarity and content themes.'
-                    },
-                    {
-                        title: 'Try Manual Organization',
-                        desc: 'Drag documents into categories to see how AI validates your organizational choices and learns from your decisions.'
-                    },
-                    {
-                        title: 'Create Custom Categories',
-                        desc: 'Use "New Group" to create project-specific or team-specific organizational structures.'
-                    }
-                ];
-            } else if (unorganizedItems > 8) {
-                // Partially organized
-                suggestions = [
-                    {
-                        title: 'Continue with AI',
-                        desc: 'You have good progress! Let AI handle the remaining items to complete the organization quickly.'
-                    },
-                    {
-                        title: 'Group by Project Phase',
-                        desc: 'Consider organizing remaining items by project lifecycle: Planning → Execution → Review.'
-                    },
-                    {
-                        title: 'Add Time-based Groups',
-                        desc: 'Create quarterly or monthly groups to organize content by timeline and project phases.'
-                    }
-                ];
-            } else if (unorganizedItems > 0) {
-                // Almost done
-                suggestions = [
-                    {
-                        title: 'Finish Organization',
-                        desc: 'Only a few items left! Drag them manually or use AI to complete the organizational structure.'
-                    },
-                    {
-                        title: 'Refine Categories',
-                        desc: 'Consider splitting large categories or merging small ones for optimal findability.'
-                    }
-                ];
-            } else {
-                // All organized
-                const groups = document.querySelectorAll('.organization-group');
-                const activeGroups = Array.from(groups).filter(group => 
-                    group.querySelectorAll('.grouped-item').length > 0
-                ).length;
+            if (totalOrganized === 0) {
+                suggestions.push('Start with "Analyze Content" for AI-powered organization');
+                suggestions.push('Or manually drag items to see AI feedback on your choices');
+            } else if (unorganizedCount > 0) {
+                suggestions.push(`${unorganizedCount} items remaining - click "Analyze Content" to auto-organize`);
                 
-                suggestions = [
-                    {
-                        title: 'Perfect Organization!',
-                        desc: `All 15 items organized into ${activeGroups} categories. Your content is now highly findable and well-structured.`
-                    },
-                    {
-                        title: 'Test Different Approaches',
-                        desc: 'Try "Reset" to experiment with alternative organizational strategies or let AI handle everything from the start.'
-                    },
-                    {
-                        title: 'Create Timeline View',
-                        desc: 'Consider adding date-based categories to track content evolution and project progression over time.'
-                    }
-                ];
-            }
-            
-            // Generate HTML
-            let suggestionsHTML = '';
-            suggestions.forEach(suggestion => {
-                suggestionsHTML += `
-                    <div class="suggestion-item" onclick="handleSuggestionClick('${suggestion.title}')">
-                        <div class="suggestion-title">${suggestion.title}</div>
-                        <div class="suggestion-desc">${suggestion.desc}</div>
-                    </div>
-                `;
-            });
-            
-            suggestionsContainer.innerHTML = suggestionsHTML;
-        }
-
-        function handleSuggestionClick(title) {
-            // Handle suggestion clicks
-            if (title.includes('AI Analysis') || title.includes('Continue with AI')) {
-                analyzeContent();
-            } else if (title.includes('Custom') || title.includes('New Group')) {
-                createGroup();
-            } else if (title.includes('Reset') || title.includes('Different Approaches')) {
-                resetOrganization();
+                // Check if they have many strategy items
+                const strategyCount = document.querySelectorAll('#group1Items .grouped-item').length;
+                if (strategyCount >= 2) {
+                    suggestions.push('Consider creating timeline-based sub-groups for strategy documents');
+                }
+                
+                // Check if they need a design group
+                const designItems = document.querySelectorAll('[data-type="design"]').length;
+                if (designItems >= 2 && !document.getElementById('designGroup')) {
+                    suggestions.push('Multiple design items detected - consider creating a Design group');
+                }
             } else {
-                // General suggestion feedback
-                addFeedback(
-                    `💡 Suggestion Selected: ${title}`,
-                    'AI suggestion noted. This organizational approach can help improve content findability and team workflow efficiency.',
-                    'info'
-                );
+                suggestions.push('✅ Perfect organization! Try "Reset" to test different approaches');
+                suggestions.push('Create project-specific groups for better content findability');
+                suggestions.push('Consider adding date-based sub-categories for better timeline tracking');
             }
+            
+            suggestionsList.innerHTML = suggestions.map(suggestion => 
+                `<div class="analysis-item">${suggestion}</div>`
+            ).join('');
         }
 
         function addFeedback(title, reasoning, type = 'info') {
@@ -1866,26 +1442,19 @@
             feedbackItem.innerHTML = `
                 <div class="feedback-title">
                     ${title}
-                    <span class="feedback-badge ${type}">${type === 'analysis' ? 'Analysis' : type === 'success' ? 'Action' : 'Info'}</span>
+                    <span class="feedback-badge ${type}">${type === 'analysis' ? 'Analysis' : type === 'success' ? 'Success' : 'Info'}</span>
                 </div>
                 <div class="feedback-reasoning">${reasoning}</div>
-                <div class="feedback-timestamp">🕒 ${timestamp}</div>
+                <div class="feedback-timestamp">${timestamp}</div>
             `;
             
             // Add to top of list
             feedbackList.insertBefore(feedbackItem, feedbackList.firstChild);
             
-            // Limit to 15 items for better performance
+            // Limit to 10 items
             const items = feedbackList.querySelectorAll('.feedback-item');
-            if (items.length > 15) {
+            if (items.length > 10) {
                 items[items.length - 1].remove();
-            }
-            
-            // Auto-expand log when new activity occurs
-            const feedbackLog = document.getElementById('feedbackLog');
-            if (!feedbackLog.classList.contains('expanded')) {
-                feedbackLog.classList.add('expanded');
-                document.getElementById('logToggle').textContent = 'Collapse';
             }
         }
 
@@ -1893,22 +1462,9 @@
             const feedbackList = document.getElementById('feedbackList');
             feedbackList.innerHTML = `
                 <div class="feedback-empty">
-                    AI activity and reasoning will appear here as you organize content. This log shows you exactly how the AI makes decisions.
+                    Start organizing content to see AI feedback and reasoning here.
                 </div>
             `;
-        }
-
-        function toggleLogExpanded() {
-            const feedbackLog = document.getElementById('feedbackLog');
-            const toggleBtn = document.getElementById('logToggle');
-            
-            if (feedbackLog.classList.contains('expanded')) {
-                feedbackLog.classList.remove('expanded');
-                toggleBtn.textContent = 'Expand';
-            } else {
-                feedbackLog.classList.add('expanded');
-                toggleBtn.textContent = 'Collapse';
-            }
         }
 
         function editGroupTitle(titleElement) {
@@ -1938,9 +1494,6 @@
                 
                 // Replace input with title
                 input.parentNode.replaceChild(newTitleElement, input);
-                
-                // Update AI analysis when title changes
-                updateAIAnalysis();
                 
                 // Add feedback if title was changed
                 if (newTitle !== currentTitle && newTitle !== currentTitle.trim()) {
@@ -1976,8 +1529,6 @@
         window.resetOrganization = resetOrganization;
         window.clearAllFeedback = clearAllFeedback;
         window.editGroupTitle = editGroupTitle;
-        window.handleSuggestionClick = handleSuggestionClick;
-        window.toggleLogExpanded = toggleLogExpanded;
     </script>
 </body>
 </html>
