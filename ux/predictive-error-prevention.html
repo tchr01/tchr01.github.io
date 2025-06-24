@@ -1,0 +1,1485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predictive Error Prevention System | AI-Enhanced UX Prototypes</title>
+    <link rel="stylesheet" href="./style.css">
+    <style>
+        /* Demo-specific styles */
+        .demo-app {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            min-height: 650px;
+            position: relative;
+            overflow: hidden;
+            margin: 40px 0;
+        }
+
+        .demo-header {
+            background: #f7fafc;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .demo-title {
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .error-prevention-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8rem;
+            color: #38a169;
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            background: #38a169;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .demo-content {
+            padding: 30px;
+            position: relative;
+        }
+
+        .form-container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #2d3748;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #4299e1;
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+        }
+
+        .form-input.warning {
+            border-color: #f6ad55;
+            background: #fffbf5;
+        }
+
+        .form-input.error {
+            border-color: #fc8181;
+            background: #fed7d7;
+        }
+
+        .form-input.success {
+            border-color: #68d391;
+            background: #f0fff4;
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            background: white;
+            cursor: pointer;
+        }
+
+        /* Smart Warning System */
+        .smart-warning {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: linear-gradient(135deg, #f6ad55 0%, #ed8936 100%);
+            color: white;
+            padding: 12px 16px;
+            border-radius: 0 0 8px 8px;
+            font-size: 0.85rem;
+            line-height: 1.4;
+            transform: translateY(-10px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        .smart-warning.show {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: all;
+        }
+
+        .smart-warning.error {
+            background: linear-gradient(135deg, #fc8181 0%, #e53e3e 100%);
+        }
+
+        .smart-warning.success {
+            background: linear-gradient(135deg, #68d391 0%, #38a169 100%);
+        }
+
+        .warning-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .warning-icon {
+            font-size: 1rem;
+        }
+
+        .warning-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .warning-btn {
+            background: rgba(255, 255, 255, 0.9);
+            color: #2d3748;
+            border: none;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .warning-btn:hover {
+            background: white;
+        }
+
+        /* Pattern Analysis Visualization */
+        .pattern-analyzer {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 10px 12px;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            font-family: monospace;
+            z-index: 500;
+            max-width: 200px;
+        }
+
+        .pattern-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 4px;
+        }
+
+        .pattern-value {
+            color: #68d391;
+        }
+
+        .pattern-value.warning {
+            color: #f6ad55;
+        }
+
+        .pattern-value.error {
+            color: #fc8181;
+        }
+
+        /* Submit Button */
+        .submit-btn {
+            background: #4299e1;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .submit-btn:hover {
+            background: #3182ce;
+            transform: translateY(-1px);
+        }
+
+        .submit-btn:disabled {
+            background: #a0aec0;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Demo Controls */
+        .demo-controls {
+            position: absolute;
+            bottom: 15px;
+            left: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 8px;
+            padding: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+            color: #4a5568;
+        }
+
+        .error-stats {
+            display: flex;
+            gap: 20px;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .stat-number {
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .stat-label {
+            font-size: 0.7rem;
+            color: #718096;
+        }
+
+        /* Prediction Confidence */
+        .confidence-meter {
+            width: 100px;
+            height: 4px;
+            background: #e2e8f0;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .confidence-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #fc8181, #f6ad55, #68d391);
+            border-radius: 2px;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        /* Demo instructions */
+        .demo-instructions {
+            background: #e6fffa;
+            border: 2px solid #38b2ac;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .demo-instructions h4 {
+            color: #234e52;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .demo-instructions ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .demo-instructions li {
+            color: #2c5282;
+            margin-bottom: 8px;
+            padding-left: 20px;
+            position: relative;
+            line-height: 1.4;
+        }
+
+        .demo-instructions li::before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: #38b2ac;
+            font-weight: bold;
+        }
+
+        /* Pattern analyzer enhancements */
+        .pattern-analyzer {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-family: monospace;
+            z-index: 500;
+            max-width: 220px;
+            border: 2px solid #4299e1;
+        }
+
+        .analyzer-title {
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #4299e1;
+            font-size: 0.8rem;
+            text-align: center;
+        }
+
+        .pattern-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+            padding: 2px 0;
+        }
+
+        .pattern-label {
+            color: #a0aec0;
+        }
+
+        .pattern-value {
+            color: #68d391;
+            font-weight: bold;
+        }
+
+        .pattern-value.warning {
+            color: #f6ad55;
+            animation: pulse-warning 1s infinite;
+        }
+
+        .pattern-value.error {
+            color: #fc8181;
+            animation: pulse-error 1s infinite;
+        }
+
+        @keyframes pulse-warning {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        @keyframes pulse-error {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Enhanced smart warning system */
+        .smart-warning {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: linear-gradient(135deg, #f6ad55 0%, #ed8936 100%);
+            color: white;
+            padding: 16px;
+            border-radius: 0 0 8px 8px;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            transform: translateY(-10px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            pointer-events: none;
+            z-index: 100;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .smart-warning.show {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: all;
+            animation: warningSlideIn 0.3s ease;
+        }
+
+        @keyframes warningSlideIn {
+            0% {
+                transform: translateY(-10px);
+                opacity: 0;
+            }
+            100% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .smart-warning.error {
+            background: linear-gradient(135deg, #fc8181 0%, #e53e3e 100%);
+        }
+
+        .smart-warning.success {
+            background: linear-gradient(135deg, #68d391 0%, #38a169 100%);
+        }
+
+        .warning-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .warning-icon {
+            font-size: 1.1rem;
+            animation: bounce 1s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-3px); }
+            60% { transform: translateY(-2px); }
+        }
+
+        /* Enhanced demo controls */
+        .demo-controls {
+            position: absolute;
+            bottom: 15px;
+            left: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.08);
+            border-radius: 10px;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            color: #4a5568;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .error-stats {
+            display: flex;
+            gap: 25px;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-number {
+            font-weight: 700;
+            color: #2d3748;
+            font-size: 1.1rem;
+        }
+
+        .stat-label {
+            font-size: 0.7rem;
+            color: #718096;
+            text-align: center;
+        }
+
+        /* Real-time feedback indicators */
+        .typing-indicator {
+            position: absolute;
+            top: -8px;
+            right: 10px;
+            background: #4299e1;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 500;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .typing-indicator.show {
+            opacity: 1;
+        }
+
+        .form-input.analyzing {
+            border-color: #4299e1;
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+        }
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 15px 0;
+        }
+
+        .tech-tag {
+            background: #333;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 16px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .code-block {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Fira Code', 'Monaco', 'Cascadia Code', 'Roboto Mono', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+
+        .code-block .comment {
+            color: #718096;
+        }
+
+        .code-block .keyword {
+            color: #63b3ed;
+        }
+
+        .code-block .string {
+            color: #68d391;
+        }
+
+        .implementation-note {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 20px 0;
+            font-size: 0.9rem;
+        }
+
+        .implementation-note strong {
+            color: #856404;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Navigation -->
+        <nav class="nav">
+            <a href="index.html">Back to All Projects</a>
+        </nav>
+
+        <!-- Header -->
+        <header class="header">
+            <div class="project-number">2</div>
+            <h1>Predictive Error Prevention System</h1>
+            <p class="subtitle">Interface that prevents costly mistakes before they happen by analyzing user patterns and providing smart warnings, turning potential failures into learning opportunities.</p>
+            
+            <div class="business-impact">
+                <h3>Business Impact:</h3>
+                <p>Reduce user errors by 50% and increase task completion rates to improve customer satisfaction scores</p>
+            </div>
+        </header>
+
+        <!-- The Innovation -->
+        <section class="section">
+            <div class="innovation-box">
+                <h3>The Innovation</h3>
+                <p>AI-powered system that analyzes user behavior patterns in real-time to predict and prevent errors before they occur. By detecting hesitation, unusual input patterns, and contextual mismatches, the system provides intelligent warnings with corrective actions, secure confirmation workflows, and clear success feedback that builds user confidence throughout critical transactions.</p>
+            </div>
+        </section>
+
+        <!-- Interactive Demo -->
+        <section class="section">
+            <h2 class="section-title">Interactive Demo</h2>
+            <p class="section-description">Experience how AI prevents errors in real-time while providing secure confirmation and clear success feedback. The system analyzes your patterns, prevents mistakes, and guides you through safe completion.</p>
+            
+            <div class="demo-instructions">
+                <h4>🧪 Try These Error Prevention Scenarios:</h4>
+                <ul>
+                    <li><strong>Account Number:</strong> Try "123456" or "000000" to see placeholder detection and correction</li>
+                    <li><strong>Amount:</strong> Enter "50000" to trigger large transfer warnings and smart suggestions</li>
+                    <li><strong>Transfer Type:</strong> Select "Wire Transfer" to see contextual fee and timing warnings</li>
+                    <li><strong>Typing Patterns:</strong> Type slowly or use backspace frequently to see AI hesitation detection</li>
+                    <li><strong>Complete Flow:</strong> Fill out the form completely to experience the secure confirmation modal and success notification</li>
+                </ul>
+            </div>
+            
+            <!-- Demo Container -->
+            <div class="demo-app">
+                <div class="demo-header">
+                    <div class="demo-title">Financial Transfer Form</div>
+                    <div class="error-prevention-status">
+                        <div class="status-indicator"></div>
+                        AI Error Prevention Active
+                    </div>
+                </div>
+                
+                <div class="demo-content">
+                    <div class="pattern-analyzer" id="patternAnalyzer">
+                        <div class="analyzer-title">🤖 AI Analysis</div>
+                        <div class="pattern-item">
+                            <span class="pattern-label">Typing Speed:</span>
+                            <span class="pattern-value" id="typingSpeed">Normal</span>
+                        </div>
+                        <div class="pattern-item">
+                            <span class="pattern-label">Hesitation:</span>
+                            <span class="pattern-value" id="hesitation">Low</span>
+                        </div>
+                        <div class="pattern-item">
+                            <span class="pattern-label">Error Risk:</span>
+                            <span class="pattern-value" id="errorRisk">Low</span>
+                        </div>
+                        <div class="pattern-item">
+                            <span class="pattern-label">Confidence:</span>
+                            <span class="pattern-value" id="confidence">85%</span>
+                        </div>
+                        <div class="pattern-item">
+                            <span class="pattern-label">Status:</span>
+                            <span class="pattern-value" id="aiStatus">Monitoring</span>
+                        </div>
+                    </div>
+                    
+                    <form class="form-container" id="demoForm">
+                        <div class="form-group">
+                            <label class="form-label" for="accountNumber">Account Number</label>
+                            <input type="text" class="form-input" id="accountNumber" placeholder="Enter account number">
+                            <div class="typing-indicator" id="accountTyping">AI Analyzing...</div>
+                            <div class="smart-warning" id="accountWarning"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="amount">Transfer Amount ($)</label>
+                            <input type="text" class="form-input" id="amount" placeholder="0.00">
+                            <div class="typing-indicator" id="amountTyping">AI Analyzing...</div>
+                            <div class="smart-warning" id="amountWarning"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="transferType">Transfer Type</label>
+                            <select class="form-select" id="transferType">
+                                <option value="">Select transfer type</option>
+                                <option value="checking">Checking to Checking</option>
+                                <option value="savings">Checking to Savings</option>
+                                <option value="external">External Bank Transfer</option>
+                                <option value="wire">Wire Transfer</option>
+                            </select>
+                            <div class="smart-warning" id="typeWarning"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="memo">Transfer Memo</label>
+                            <input type="text" class="form-input" id="memo" placeholder="Optional description">
+                            <div class="typing-indicator" id="memoTyping">AI Analyzing...</div>
+                            <div class="smart-warning" id="memoWarning"></div>
+                        </div>
+
+                        <button type="button" class="submit-btn" id="submitBtn" onclick="handleSubmitClick()">Process Transfer</button>
+                    </form>
+                </div>
+                
+                <div class="demo-controls">
+                    <div class="error-stats">
+                        <div class="stat-item">
+                            <span class="stat-number" id="errorsPreventedCount">0</span>
+                            <span class="stat-label">Errors Prevented</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" id="warningsShownCount">0</span>
+                            <span class="stat-label">Warnings Shown</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" id="accuracyRate">95%</span>
+                            <span class="stat-label">Accuracy Rate</span>
+                        </div>
+                    </div>
+                    <div>
+                        Prediction Confidence: 
+                        <div class="confidence-meter">
+                            <div class="confidence-fill" id="confidenceFill"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Confirmation Modal -->
+        <div class="confirmation-modal" id="confirmationModal" style="display: none;">
+            <div class="modal-content">
+                <span class="modal-icon">🔒</span>
+                <h3 class="modal-title">Confirm Transfer</h3>
+                <p class="modal-description">
+                    You are about to process a financial transfer. Please review the details carefully before confirming.
+                    <br><br>
+                    <strong>Account:</strong> <span id="confirmAccount"></span><br>
+                    <strong>Amount:</strong> $<span id="confirmAmount"></span><br>
+                    <strong>Type:</strong> <span id="confirmType"></span>
+                </p>
+                <div class="modal-actions">
+                    <button type="button" class="modal-btn primary" onclick="confirmSubmission()">Confirm Transfer</button>
+                    <button type="button" class="modal-btn secondary" onclick="cancelSubmission()">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Success Toast -->
+        <div class="success-toast" id="successToast">
+            <span class="toast-icon">✅</span>
+            <span>Transfer processed successfully! No errors detected.</span>
+        </div>
+
+        <!-- Technical Implementation -->
+        <section class="section">
+            <h2 class="section-title">Technical Implementation</h2>
+            
+            <h4>Built With</h4>
+            <div class="tech-stack">
+                <span class="tech-tag">React</span>
+                <span class="tech-tag">TensorFlow.js</span>
+                <span class="tech-tag">Pattern Recognition</span>
+                <span class="tech-tag">Smart Validation</span>
+            </div>
+
+            <h4>Key Implementation</h4>
+            <div class="code-block">
+<span class="comment">// Predictive error detection system</span>
+<span class="keyword">const</span> analyzeUserPattern = (inputData, userBehavior) => {
+  <span class="keyword">const</span> riskFactors = {
+    <span class="string">typingSpeed</span>: calculateTypingDeviation(userBehavior.speed),
+    <span class="string">hesitation</span>: detectHesitationPattern(userBehavior.pauses),
+    <span class="string">contextMismatch</span>: validateContextualLogic(inputData)
+  };
+  
+  <span class="keyword">const</span> errorProbability = predictErrorLikelihood(riskFactors);
+  
+  <span class="keyword">if</span> (errorProbability > 0.7) {
+    showPreventiveWarning(generateContextualWarning(inputData));
+  }
+};
+            </div>
+
+            <div class="implementation-note">
+                <strong>AI Enhancement:</strong> Machine learning algorithms analyze typing patterns, input validation, and contextual logic to predict errors before they occur, providing perfectly-timed interventions.
+            </div>
+
+            <h4>Resources</h4>
+            <div class="section-content">
+                <p><a href="#" target="_blank">View Source Code →</a></p>
+                <p><a href="#" target="_blank">Try Live Demo →</a></p>
+                <p><a href="#" target="_blank">Design Files →</a></p>
+            </div>
+        </section>
+
+        <!-- Project Description -->
+        <section class="section">
+            <h2 class="section-title">Project Overview</h2>
+            <div class="section-content">
+                <p>User errors in critical applications like financial services, healthcare, and e-commerce can lead to significant financial losses, compliance violations, and customer churn. Traditional validation only catches errors after they happen, creating frustration and requiring costly recovery processes.</p>
+                
+                <p>This predictive error prevention system uses AI to analyze user behavior patterns—typing speed variations, hesitation patterns, unusual input sequences—to identify potential errors before they occur. The system provides contextual warnings with actionable "Fix It" suggestions that automatically correct problematic inputs, building user confidence through immediate problem resolution.</p>
+                
+                <p>Beyond error prevention, the system ensures user confidence through secure confirmation dialogs that let users review their decisions before final submission, followed by clear success notifications that confirm completion. This comprehensive approach transforms error-prone interactions into confident, guided experiences that reduce support costs while increasing user satisfaction and task completion rates.</p>
+            </div>
+        </section>
+
+        <!-- Value Proposition -->
+        <section class="section">
+            <h2 class="section-title">Value for UX Designers</h2>
+            <div class="section-content">
+                <p>This prototype demonstrates advanced UX capabilities in predictive design, behavioral analytics, and confidence-building user flows—skills that position designers as strategic partners in reducing business risk while improving user trust through transparent, secure interaction patterns.</p>
+                
+                <p>The system showcases expertise in error psychology, pattern recognition, contextual intervention timing, and most importantly, designing complete user confidence journeys from error prevention through secure confirmation to success acknowledgment—competencies that differentiate strategic UX practitioners who understand the full psychology of high-stakes user interactions.</p>
+                
+                <p>Designers who can build systems that not only prevent errors but also build user confidence through clear confirmation workflows and success feedback demonstrate mastery of trust-building UX patterns essential for financial services, healthcare, and other critical applications where user confidence directly impacts business success.</p>
+            </div>
+        </section>
+
+        <!-- Efficiency Gains -->
+        <section class="section">
+            <h2 class="section-title">Efficiency Gains</h2>
+            <div class="section-content">
+                <p><strong>Time Savings:</strong> AI predicts 100+ error scenarios versus manually identifying 10-15, while automatically generating context-appropriate warning language that adapts to different user contexts and error types.</p>
+                
+                <p><strong>Quality Improvements:</strong> Machine learning optimizes intervention timing based on actual user behavior patterns, creating more effective and less intrusive error prevention than static validation rules.</p>
+                
+                <p><strong>Scope Expansion:</strong> AI enables testing of complex error prediction scenarios, false positive analysis, and domain-specific accuracy validation that would be impossible to conduct manually across diverse user populations and use cases.</p>
+            </div>
+        </section>
+
+        <!-- Strategy for UX Designers -->
+        <section class="section">
+            <h2 class="section-title">Implementation Strategy for UX Designers</h2>
+            
+            <div class="strategy-grid">
+                <div class="strategy-item">
+                    <h4>AI Enhancement Strategy</h4>
+                    <ul>
+                        <li>ChatGPT generates comprehensive error scenarios and prevention strategies</li>
+                        <li>Claude creates contextual warning copy that feels helpful, not annoying</li>
+                        <li>Perplexity researches error psychology to optimize intervention timing</li>
+                        <li>Testing Ready: Figma with error state variants + ProtoPie sensors for error triggers</li>
+                    </ul>
+                </div>
+
+                <div class="strategy-item">
+                    <h4>No-Code Implementation</h4>
+                    <ul>
+                        <li>Figma: Error state component variants with smart warning overlays</li>
+                        <li>ProtoPie: Advanced input sensors for detecting typing patterns and hesitation</li>
+                        <li>FormStack: Form analytics integration for error pattern analysis</li>
+                        <li>LogRocket: Session replay for near-miss error detection and prevention validation</li>
+                    </ul>
+                </div>
+
+                <div class="strategy-item">
+                    <h4>Testing & Validation</h4>
+                    <ul>
+                        <li>Amplitude: Error occurrence rate tracking with/without predictive prevention</li>
+                        <li>UserReport: Real-time feedback on warning effectiveness and timing</li>
+                        <li>Zendesk: Support ticket reduction measurement when error prevention is active</li>
+                        <li>A/B Testing: False positive vs. false negative optimization studies</li>
+                    </ul>
+                </div>
+
+                <div class="strategy-item">
+                    <h4>Business Impact Measurement</h4>
+                    <ul>
+                        <li>Error reduction rates: Track 50% decrease in user mistakes and form errors</li>
+                        <li>User confidence metrics: Measure completion confidence through confirmation dialog usage</li>
+                        <li>Success acknowledgment effectiveness: Track user satisfaction with clear completion feedback</li>
+                        <li>Support cost reduction: Monitor decreased help requests and error recovery assistance</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Implementation Steps -->
+        <section class="section">
+            <h2 class="section-title">Step-by-Step Implementation</h2>
+            
+            <div class="steps-list">
+                <div class="step-item">
+                    <h4>Setup & Planning</h4>
+                    <p>Install behavior tracking libraries (mouse tracking, keystroke analysis), set up pattern recognition algorithms, and create error taxonomy for your specific domain and user workflows.</p>
+                </div>
+
+                <div class="step-item">
+                    <h4>AI Integration</h4>
+                    <p>Implement TensorFlow.js for pattern analysis, connect OpenAI API for contextual warning generation, and create machine learning pipeline for improving prediction accuracy over time.</p>
+                </div>
+
+                <div class="step-item">
+                    <h4>Prototype Development</h4>
+                    <p>Build smart validation system with predictive capabilities, implement contextual warning overlays with corrective actions, create secure confirmation workflows that build user confidence, and develop clear success feedback systems that acknowledge completion.</p>
+                </div>
+
+                <div class="step-item">
+                    <h4>Testing & Validation</h4>
+                    <p>Conduct false positive vs. false negative analysis, optimize warning timing and confirmation flow effectiveness, validate user confidence building through security dialogs and success notifications, and test prediction accuracy across different task types and user segments.</p>
+                </div>
+
+                <div class="step-item">
+                    <h4>Iteration & Improvement</h4>
+                    <p>Refine prediction algorithms based on real user data, optimize intervention timing to minimize warning fatigue, and scale successful patterns across additional form and workflow contexts.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Call to Action -->
+        <section class="cta-section">
+            <h3>Ready to Build This Prototype?</h3>
+            <p>Transform your UX process with AI-enhanced design capabilities</p>
+            <div class="cta-links">
+                <a href="mailto:tchr01@proton.me" class="cta-link">Get Implementation Guide</a>
+                <a href="https://www.linkedin.com/in/mwhiteboston/" class="cta-link secondary">Connect on LinkedIn</a>
+            </div>
+        </section>
+
+        <!-- Project Navigation -->
+        <nav class="project-nav">
+            <a href="contextual-micro-learning.html" class="project-nav-link prev">Previous Project</a>
+            <a href="semantic-content-reorganization.html" class="project-nav-link next">Next Project</a>
+        </nav>
+    </div>
+
+    <script>
+        // Demo functionality
+        let errorsPreventedCount = 0;
+        let warningsShownCount = 0;
+        let userBehavior = {
+            typingSpeed: 1,
+            hesitation: 0,
+            errorRisk: 0.1,
+            confidence: 0.85
+        };
+
+        // Error patterns and warnings
+        const errorPatterns = {
+            accountNumber: {
+                invalidFormat: {
+                    pattern: /[^0-9-]/,
+                    warning: "Account numbers should only contain numbers and dashes. Check for typos or extra characters.",
+                    type: "error"
+                },
+                tooShort: {
+                    pattern: (value) => value.length > 0 && value.length < 8,
+                    warning: "This account number seems short. Most account numbers are 8-12 digits. Please verify.",
+                    type: "warning"
+                },
+                commonMistake: {
+                    pattern: /^123|^000|^111/,
+                    warning: "This looks like a test or placeholder number. Please enter your actual account number.",
+                    type: "error"
+                }
+            },
+            amount: {
+                invalidFormat: {
+                    pattern: /[^0-9.,]/,
+                    warning: "Amount should only contain numbers, commas, and decimal points.",
+                    type: "error"
+                },
+                tooHigh: {
+                    pattern: (value) => parseFloat(value.replace(/[,$]/g, '')) > 10000,
+                    warning: "Large transfer detected ($10,000+). Please verify this amount is correct.",
+                    type: "warning"
+                },
+                microAmount: {
+                    pattern: (value) => parseFloat(value.replace(/[,$]/g, '')) < 0.01,
+                    warning: "Very small transfer amount. This might not process correctly.",
+                    type: "warning"
+                }
+            }
+        };
+
+        // Initialize demo
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, setting up event listeners...');
+            setupEventListeners();
+            updatePatternAnalyzer();
+            startBehaviorSimulation();
+        });
+
+        function setupEventListeners() {
+            console.log('Setting up event listeners...');
+            
+            // Form input monitoring
+            document.querySelectorAll('.form-input').forEach(input => {
+                input.addEventListener('input', handleInputChange);
+                input.addEventListener('focus', handleInputFocus);
+                input.addEventListener('keydown', handleKeyDown);
+            });
+
+            document.getElementById('transferType').addEventListener('change', handleSelectChange);
+            
+            console.log('Event listeners setup complete');
+        }
+
+        function handleInputChange(e) {
+            const inputId = e.target.id;
+            const value = e.target.value;
+            
+            // Show typing indicator
+            showTypingIndicator(inputId);
+            e.target.classList.add('analyzing');
+            
+            // Update AI status
+            updateAIStatus('Analyzing input...');
+            
+            // Simulate typing speed analysis
+            updateTypingBehavior();
+            
+            // Check for error patterns with delay to show analysis
+            setTimeout(() => {
+                checkErrorPatterns(inputId, value, e.target);
+                hideTypingIndicator(inputId);
+                e.target.classList.remove('analyzing');
+                updateAIStatus('Monitoring');
+            }, 500);
+            
+            // Update UI
+            updatePatternAnalyzer();
+        }
+
+        function showTypingIndicator(inputId) {
+            const indicator = document.getElementById(inputId + 'Typing');
+            if (indicator) {
+                indicator.classList.add('show');
+            }
+        }
+
+        function hideTypingIndicator(inputId) {
+            const indicator = document.getElementById(inputId + 'Typing');
+            if (indicator) {
+                indicator.classList.remove('show');
+            }
+        }
+
+        function updateAIStatus(status) {
+            const statusEl = document.getElementById('aiStatus');
+            if (statusEl) {
+                statusEl.textContent = status;
+                if (status === 'Monitoring') {
+                    statusEl.className = 'pattern-value';
+                } else if (status.includes('Warning')) {
+                    statusEl.className = 'pattern-value warning';
+                } else if (status.includes('Error')) {
+                    statusEl.className = 'pattern-value error';
+                } else {
+                    statusEl.className = 'pattern-value warning';
+                }
+            }
+        }
+
+        function handleInputFocus(e) {
+            // Simulate hesitation detection
+            setTimeout(() => {
+                if (document.activeElement === e.target && e.target.value === '') {
+                    userBehavior.hesitation += 0.1;
+                    updatePatternAnalyzer();
+                }
+            }, 3000);
+        }
+
+        function handleKeyDown(e) {
+            // Simulate backspace pattern detection
+            if (e.key === 'Backspace') {
+                userBehavior.errorRisk += 0.05;
+                updatePatternAnalyzer();
+            }
+        }
+
+        function checkErrorPatterns(inputId, value, element) {
+            const patterns = errorPatterns[inputId];
+            if (!patterns || !value) {
+                hideWarning(inputId);
+                return;
+            }
+
+            let warningShown = false;
+            
+            for (const [patternName, config] of Object.entries(patterns)) {
+                let matches = false;
+                
+                if (config.pattern instanceof RegExp) {
+                    matches = config.pattern.test(value);
+                } else if (typeof config.pattern === 'function') {
+                    matches = config.pattern(value);
+                }
+                
+                if (matches && !warningShown) {
+                    showWarning(inputId, config.warning, config.type, element);
+                    warningShown = true;
+                    warningsShownCount++;
+                    updateStats();
+                    break;
+                }
+            }
+            
+            if (!warningShown) {
+                hideWarning(inputId);
+                element.classList.remove('warning', 'error');
+                element.classList.add('success');
+            }
+        }
+
+        function showWarning(inputId, message, type, element) {
+            const warningEl = document.getElementById(inputId + 'Warning');
+            if (!warningEl) return;
+
+            // Update AI status
+            updateAIStatus(type === 'error' ? 'Error Detected!' : type === 'warning' ? 'Warning Issued' : 'Success Confirmed');
+
+            const iconMap = {
+                'error': '🚨',
+                'warning': '⚠️',
+                'success': '✅'
+            };
+
+            const titleMap = {
+                'error': 'Error Detected',
+                'warning': 'Smart Suggestion',
+                'success': 'Looking Good'
+            };
+
+            // Different content for success vs. warnings/errors
+            let actionsHTML = '';
+            if (type === 'success') {
+                // No buttons for success messages - just positive feedback
+                actionsHTML = '';
+            } else {
+                // Show action buttons for warnings and errors
+                actionsHTML = `
+                    <div class="warning-actions">
+                        <button type="button" class="warning-btn" onclick="acceptSuggestion('${inputId}')">Fix It</button>
+                        <button type="button" class="warning-btn" onclick="dismissWarning('${inputId}')">Dismiss</button>
+                    </div>
+                `;
+            }
+
+            warningEl.innerHTML = `
+                <div class="warning-header">
+                    <span class="warning-icon">${iconMap[type]}</span>
+                    <span>${titleMap[type]}</span>
+                </div>
+                <div>${message}</div>
+                ${actionsHTML}
+            `;
+            
+            warningEl.className = `smart-warning ${type} show`;
+            element.classList.add(type);
+            
+            // Update behavior metrics
+            if (type === 'success') {
+                userBehavior.errorRisk = 0.1;
+            } else {
+                userBehavior.errorRisk = type === 'error' ? 0.8 : 0.4;
+            }
+            updatePatternAnalyzer();
+
+            // Auto-hide success messages after 3 seconds
+            if (type === 'success') {
+                setTimeout(() => hideWarning(inputId), 3000);
+            }
+        }
+
+        function hideWarning(inputId) {
+            const warningEl = document.getElementById(inputId + 'Warning');
+            if (warningEl) {
+                warningEl.classList.remove('show');
+            }
+        }
+
+        function acceptSuggestion(inputId) {
+            event.preventDefault(); // Prevent any form submission
+            const element = document.getElementById(inputId);
+            hideWarning(inputId);
+            errorsPreventedCount++;
+            userBehavior.errorRisk = 0.1;
+            updateAIStatus('Error Prevented ✓');
+            updateStats();
+            updatePatternAnalyzer();
+            
+            // Apply actual fixes based on the input type
+            if (element) {
+                if (inputId === 'accountNumber') {
+                    if (element.value.match(/^123|^000|^111/)) {
+                        element.value = '4567891234'; // Replace with realistic account number
+                    } else if (element.value.length < 8) {
+                        element.value = element.value.padEnd(10, '0'); // Pad short numbers
+                    }
+                } else if (inputId === 'amount') {
+                    const numValue = parseFloat(element.value.replace(/[,$]/g, ''));
+                    if (numValue > 10000) {
+                        element.value = '1000.00'; // Suggest more reasonable amount
+                    } else if (numValue < 0.01) {
+                        element.value = '10.00'; // Suggest minimum amount
+                    }
+                }
+                
+                element.classList.remove('warning', 'error');
+                element.classList.add('success');
+                
+                // Show brief success feedback
+                setTimeout(() => {
+                    showWarning(inputId, 'Input corrected successfully! AI helped prevent a potential error.', 'success', element);
+                }, 100);
+            }
+            return false; // Prevent any navigation
+        }
+
+        function dismissWarning(inputId) {
+            event.preventDefault(); // Prevent any form submission
+            hideWarning(inputId);
+            updateAIStatus('Warning Dismissed');
+            
+            const element = document.getElementById(inputId);
+            if (element) {
+                element.classList.remove('warning', 'error');
+            }
+            return false; // Prevent any navigation
+        }
+
+        function updateTypingBehavior() {
+            // Simulate typing speed variations
+            userBehavior.typingSpeed = Math.max(0.5, Math.min(2, userBehavior.typingSpeed + (Math.random() - 0.5) * 0.1));
+            userBehavior.confidence = Math.max(0.6, Math.min(0.95, userBehavior.confidence + (Math.random() - 0.5) * 0.02));
+        }
+
+        function updatePatternAnalyzer() {
+            // Update typing speed display
+            const speedEl = document.getElementById('typingSpeed');
+            if (userBehavior.typingSpeed < 0.8) {
+                speedEl.textContent = 'Slow';
+                speedEl.className = 'pattern-value warning';
+            } else if (userBehavior.typingSpeed > 1.5) {
+                speedEl.textContent = 'Fast';
+                speedEl.className = 'pattern-value warning';
+            } else {
+                speedEl.textContent = 'Normal';
+                speedEl.className = 'pattern-value';
+            }
+
+            // Update hesitation display
+            const hesitationEl = document.getElementById('hesitation');
+            if (userBehavior.hesitation > 0.3) {
+                hesitationEl.textContent = 'High';
+                hesitationEl.className = 'pattern-value error';
+            } else if (userBehavior.hesitation > 0.1) {
+                hesitationEl.textContent = 'Medium';
+                hesitationEl.className = 'pattern-value warning';
+            } else {
+                hesitationEl.textContent = 'Low';
+                hesitationEl.className = 'pattern-value';
+            }
+
+            // Update error risk display
+            const riskEl = document.getElementById('errorRisk');
+            if (userBehavior.errorRisk > 0.6) {
+                riskEl.textContent = 'High';
+                riskEl.className = 'pattern-value error';
+            } else if (userBehavior.errorRisk > 0.3) {
+                riskEl.textContent = 'Medium';
+                riskEl.className = 'pattern-value warning';
+            } else {
+                riskEl.textContent = 'Low';
+                riskEl.className = 'pattern-value';
+            }
+
+            // Update confidence display
+            const confidenceEl = document.getElementById('confidence');
+            const confidencePercent = Math.round(userBehavior.confidence * 100);
+            confidenceEl.textContent = confidencePercent + '%';
+            
+            if (confidencePercent < 70) {
+                confidenceEl.className = 'pattern-value error';
+            } else if (confidencePercent < 85) {
+                confidenceEl.className = 'pattern-value warning';
+            } else {
+                confidenceEl.className = 'pattern-value';
+            }
+
+            // Update confidence meter
+            const confidenceFill = document.getElementById('confidenceFill');
+            confidenceFill.style.width = confidencePercent + '%';
+        }
+
+        function updateStats() {
+            document.getElementById('errorsPreventedCount').textContent = errorsPreventedCount;
+            document.getElementById('warningsShownCount').textContent = warningsShownCount;
+            
+            // Calculate and update accuracy rate
+            const totalInteractions = errorsPreventedCount + warningsShownCount;
+            const accuracyRate = totalInteractions > 0 ? Math.round((errorsPreventedCount / totalInteractions) * 100) : 95;
+            document.getElementById('accuracyRate').textContent = accuracyRate + '%';
+        }
+
+        function handleSelectChange(e) {
+            const value = e.target.value;
+            if (value === 'wire') {
+                showWarning('transferType', 'Wire transfers have higher fees and longer processing times. Consider checking to savings if this is an internal transfer.', 'warning', e.target);
+            } else if (value === 'external') {
+                showWarning('transferType', 'External transfers typically take 1-3 business days. Verify the account number is correct as external transfers cannot be easily reversed.', 'warning', e.target);
+            } else {
+                hideWarning('transferType');
+            }
+        }
+
+        // Direct onclick handler for submit button
+        function handleSubmitClick() {
+            console.log('Submit button clicked via onclick!');
+            
+            // Validate all fields
+            const form = document.getElementById('demoForm');
+            const inputs = form.querySelectorAll('.form-input, .form-select');
+            let hasErrors = false;
+            let formData = {};
+            
+            console.log('Validating form fields...');
+            
+            inputs.forEach(input => {
+                console.log('Checking field:', input.id, 'value:', input.value);
+                if (!input.value.trim()) {
+                    hasErrors = true;
+                    input.classList.add('error');
+                    console.log('Field', input.id, 'is empty - adding error');
+                } else {
+                    input.classList.remove('error');
+                    formData[input.id] = input.value;
+                }
+            });
+            
+            if (hasErrors) {
+                console.log('Form has errors, showing validation message');
+                updateAIStatus('Validation Failed');
+                alert('Please fill out all fields before submitting.');
+                return;
+            }
+            
+            console.log('Form is valid, showing confirmation modal');
+            console.log('Form data:', formData);
+            
+            // Show confirmation modal
+            showConfirmationModal(formData);
+        }
+
+        function showConfirmationModal(formData) {
+            console.log('showConfirmationModal called with data:', formData);
+            const modal = document.getElementById('confirmationModal');
+            
+            if (!modal) {
+                console.error('Confirmation modal not found!');
+                alert('Confirmation modal missing - but form data is: ' + JSON.stringify(formData));
+                return;
+            }
+            
+            console.log('Modal found, checking current classes:', modal.className);
+            console.log('Modal computed style display:', window.getComputedStyle(modal).display);
+            console.log('Modal computed style visibility:', window.getComputedStyle(modal).visibility);
+            console.log('Modal computed style opacity:', window.getComputedStyle(modal).opacity);
+            
+            // Populate confirmation details
+            const accountEl = document.getElementById('confirmAccount');
+            const amountEl = document.getElementById('confirmAmount');
+            const typeEl = document.getElementById('confirmType');
+            
+            if (accountEl) accountEl.textContent = formData.accountNumber || 'N/A';
+            if (amountEl) amountEl.textContent = formData.amount || '0.00';
+            if (typeEl) typeEl.textContent = getTransferTypeText(formData.transferType);
+            
+            console.log('Data populated, showing modal...');
+            
+            // Force visibility for debugging
+            modal.style.display = 'flex';
+            modal.style.visibility = 'visible';
+            modal.style.opacity = '1';
+            modal.style.zIndex = '9999';
+            modal.classList.add('show');
+            
+            console.log('Modal classes after show:', modal.className);
+            console.log('Modal style after show:', modal.style.cssText);
+            
+            updateAIStatus('Awaiting Confirmation');
+            
+            console.log('Modal should now be visible');
+        }
+
+        function getTransferTypeText(value) {
+            const typeMap = {
+                'checking': 'Checking to Checking',
+                'savings': 'Checking to Savings',
+                'external': 'External Bank Transfer',
+                'wire': 'Wire Transfer'
+            };
+            return typeMap[value] || 'Unknown';
+        }
+
+        function confirmSubmission() {
+            const modal = document.getElementById('confirmationModal');
+            modal.classList.remove('show');
+            
+            updateAIStatus('Processing Transfer...');
+            
+            // Simulate processing delay
+            setTimeout(() => {
+                showSuccessToast();
+                resetForm();
+                updateAIStatus('Transfer Complete ✓');
+            }, 1500);
+        }
+
+        function cancelSubmission() {
+            const modal = document.getElementById('confirmationModal');
+            modal.classList.remove('show');
+            updateAIStatus('Transfer Cancelled');
+        }
+
+        function showSuccessToast() {
+            const toast = document.getElementById('successToast');
+            toast.classList.add('show');
+            
+            // Auto-hide after 4 seconds
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 4000);
+        }
+
+        function resetForm() {
+            const form = document.getElementById('demoForm');
+            const formContainer = document.querySelector('.form-container');
+            
+            // Add reset animation
+            formContainer.classList.add('resetting');
+            
+            setTimeout(() => {
+                // Reset form
+                form.reset();
+                
+                // Clear all warnings and styling
+                document.querySelectorAll('.smart-warning').forEach(warning => {
+                    warning.classList.remove('show');
+                });
+                document.querySelectorAll('.form-input, .form-select').forEach(input => {
+                    input.classList.remove('warning', 'error', 'success');
+                });
+                
+                // Reset behavior tracking
+                userBehavior = {
+                    typingSpeed: 1,
+                    hesitation: 0,
+                    errorRisk: 0.1,
+                    confidence: 0.85
+                };
+                
+                // Complete reset animation
+                formContainer.classList.remove('resetting');
+                formContainer.classList.add('reset-complete');
+                
+                setTimeout(() => {
+                    formContainer.classList.remove('reset-complete');
+                    updateAIStatus('Ready for New Transfer');
+                }, 300);
+                
+                updatePatternAnalyzer();
+            }, 300);
+        }
+
+        function startBehaviorSimulation() {
+            // Simulate gradual behavior changes
+            setInterval(() => {
+                userBehavior.hesitation = Math.max(0, userBehavior.hesitation - 0.01);
+                userBehavior.errorRisk = Math.max(0.1, userBehavior.errorRisk - 0.02);
+                updatePatternAnalyzer();
+            }, 2000);
+        }
+
+        // Global functions for button actions
+        window.acceptSuggestion = acceptSuggestion;
+        window.dismissWarning = dismissWarning;
+        window.confirmSubmission = confirmSubmission;
+        window.cancelSubmission = cancelSubmission;
+        window.handleSubmitClick = handleSubmitClick;
+        window.confirmSubmissionNew = confirmSubmissionNew;
+        window.cancelSubmissionNew = cancelSubmissionNew;
+    </script>
+</body>
+</html>
