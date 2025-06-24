@@ -23,6 +23,29 @@ body {
     padding: 40px 20px;
 }
 
+.success-toast {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: linear-gradient(135deg, #68d391 0%, #38a169 100%);
+      color: white;
+      padding: 16px 20px;
+      border-radius: 12px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      z-index: 1000;
+      transform: translateX(400px);
+      opacity: 0;
+      transition: all 0.3s ease;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .success-toast.show {
+      transform: translateX(0);
+      opacity: 1;
+    }
+
 /* ==================================================
    NAVIGATION STYLES
    ================================================== */
