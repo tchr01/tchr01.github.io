@@ -489,10 +489,26 @@
                         },
                         recommendationLogic: (role) => {
                             const recommendations = {
-                                ceo: 'Develop comprehensive market entry strategy. Assess geopolitical risks and potential partnership opportunities.',
-                                cfo: 'Conduct detailed financial risk assessment. Analyze currency exchange implications and investment requirements.',
-                                cto: 'Evaluate technological infrastructure and localization needs for new market.',
-                                coo: 'Create operational playbook for market entry. Identify local talent acquisition and supply chain strategies.'
+                                ceo: {
+                                    high: 'Develop comprehensive market entry strategy with immediate geopolitical risk assessment.',
+                                    medium: 'Explore potential strategic partnerships in Southeast Asia.',
+                                    low: 'Conduct preliminary market research and competitive analysis.'
+                                },
+                                cfo: {
+                                    high: 'Perform detailed financial risk assessment of new market investment.',
+                                    medium: 'Analyze currency exchange implications and investment requirements.',
+                                    low: 'Monitor long-term financial trends in the target region.'
+                                },
+                                cto: {
+                                    high: 'Evaluate critical technological infrastructure for market localization.',
+                                    medium: 'Identify potential technology integration challenges.',
+                                    low: 'Research local tech ecosystem and potential collaboration opportunities.'
+                                },
+                                coo: {
+                                    high: 'Create comprehensive operational playbook for market entry.',
+                                    medium: 'Develop talent acquisition and supply chain strategies.',
+                                    low: 'Establish initial cross-functional communication protocols.'
+                                }
                             };
                             return recommendations[role];
                         }
@@ -509,10 +525,26 @@
                         },
                         recommendationLogic: (role) => {
                             const recommendations = {
-                                ceo: 'Develop retention and expansion strategies for new enterprise clients. Consider creating a dedicated enterprise success team.',
-                                cfo: 'Analyze customer acquisition cost and lifetime value. Optimize sales and marketing spend.',
-                                cto: 'Identify technological features that attracted these enterprise clients. Develop targeted product roadmap.',
-                                coo: 'Create scalable onboarding and support processes for enterprise client segment.'
+                                ceo: {
+                                    high: 'Develop comprehensive retention and expansion strategies for enterprise clients.',
+                                    medium: 'Create dedicated enterprise success team with strategic focus.',
+                                    low: 'Conduct quarterly client satisfaction and engagement surveys.'
+                                },
+                                cfo: {
+                                    high: 'Perform in-depth analysis of customer acquisition cost and lifetime value.',
+                                    medium: 'Optimize sales and marketing spend allocation.',
+                                    low: 'Develop predictive financial models for client acquisition.'
+                                },
+                                cto: {
+                                    high: 'Identify critical technological features that attracted enterprise clients.',
+                                    medium: 'Develop targeted product roadmap based on client technology preferences.',
+                                    low: 'Conduct competitive technology benchmarking.'
+                                },
+                                coo: {
+                                    high: 'Design scalable onboarding and support processes for enterprise segment.',
+                                    medium: 'Create cross-functional collaboration mechanisms for client success.',
+                                    low: 'Develop initial client engagement and retention protocols.'
+                                }
                             };
                             return recommendations[role];
                         }
@@ -529,10 +561,26 @@
                         },
                         recommendationLogic: (role) => {
                             const recommendations = {
-                                ceo: 'Review overall cost optimization strategies. Ensure technological investments align with long-term business goals.',
-                                cfo: 'Continue identifying cost-saving opportunities. Develop comprehensive technology spend analysis.',
-                                cto: 'Explore further optimization techniques. Investigate emerging cost-efficient technologies.',
-                                coo: 'Implement best practices from cloud optimization across other operational domains.'
+                                ceo: {
+                                    high: 'Conduct comprehensive review of cost optimization strategies across all technological investments.',
+                                    medium: 'Align technological spending with long-term business strategic goals.',
+                                    low: 'Monitor emerging cost-efficiency trends in technology infrastructure.'
+                                },
+                                cfo: {
+                                    high: 'Perform detailed cost-saving opportunity analysis for technology spend.',
+                                    medium: 'Develop comprehensive technology budget optimization framework.',
+                                    low: 'Create predictive financial models for technology infrastructure costs.'
+                                },
+                                cto: {
+                                    high: 'Investigate and implement advanced cost optimization techniques.',
+                                    medium: 'Explore emerging cost-efficient cloud and infrastructure technologies.',
+                                    low: 'Conduct comparative analysis of technology infrastructure providers.'
+                                },
+                                coo: {
+                                    high: 'Implement best practices from cloud optimization across operational domains.',
+                                    medium: 'Create cross-functional cost efficiency task force.',
+                                    low: 'Develop initial cost tracking and optimization protocols.'
+                                }
                             };
                             return recommendations[role];
                         }
