@@ -4,17 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contextual Micro-Learning Overlay | AI-Enhanced UX Prototypes</title>
-    <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="../style.css">
     <style>
         /* Demo-specific styles */
         .demo-app {
             background: white;
             border: 2px solid #e2e8f0;
             border-radius: 12px;
-            min-height: 600px;
+            min-height: 400px;
             position: relative;
             overflow: hidden;
-            margin: 40px 0;
         }
 
         .demo-toolbar {
@@ -180,7 +179,6 @@
             font-size: 0.7rem;
             font-family: monospace;
             opacity: 0.7;
-            z-index: 500;
         }
 
         .progress-bar {
@@ -267,60 +265,6 @@
             background: #4299e1;
             color: white;
         }
-
-        /* Tech stack and code styling */
-        .tech-stack {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin: 15px 0;
-        }
-
-        .tech-tag {
-            background: #333;
-            color: white;
-            padding: 4px 12px;
-            border-radius: 16px;
-            font-size: 0.8rem;
-            font-weight: 500;
-        }
-
-        .code-block {
-            background: #2d3748;
-            color: #e2e8f0;
-            padding: 20px;
-            border-radius: 8px;
-            font-family: 'Fira Code', 'Monaco', 'Cascadia Code', 'Roboto Mono', monospace;
-            font-size: 0.9rem;
-            line-height: 1.5;
-            overflow-x: auto;
-            margin: 20px 0;
-        }
-
-        .code-block .comment {
-            color: #718096;
-        }
-
-        .code-block .keyword {
-            color: #63b3ed;
-        }
-
-        .code-block .string {
-            color: #68d391;
-        }
-
-        .implementation-note {
-            background: #fff3cd;
-            border: 1px solid #ffeaa7;
-            border-radius: 6px;
-            padding: 15px;
-            margin: 20px 0;
-            font-size: 0.9rem;
-        }
-
-        .implementation-note strong {
-            color: #856404;
-        }
     </style>
 </head>
 <body>
@@ -350,77 +294,114 @@
             </div>
         </section>
 
-        <!-- Interactive Demo -->
-        <section class="section">
-            <h2 class="section-title">Interactive Demo</h2>
-            <p class="section-description">Click multiple times on any feature card to trigger AI-powered learning assistance. Change skill levels to see content adaptation in real-time.</p>
-            
-            <!-- Demo Container -->
-            <div class="demo-app">
-                <div class="demo-toolbar">
-                    <button class="demo-button" id="createBtn">Create Project</button>
-                    <button class="demo-button" id="uploadBtn">Upload File</button>
-                    <button class="demo-button advanced" id="automateBtn">Automate Workflow</button>
-                    <button class="demo-button advanced" id="analyzeBtn">Advanced Analytics</button>
-                </div>
+        <!-- Two Column Layout -->
+        <div class="two-column-layout">
+            <!-- Left Column: Content -->
+            <div class="content-column">
+                <!-- Project Description -->
+                <section class="section">
+                    <h2 class="section-title">Project Overview</h2>
+                    <div class="section-content">
+                        <p>Traditional onboarding tutorials are static, overwhelming, and quickly forgotten. Users either skip them entirely or complete them without retention. This prototype demonstrates how AI-powered micro-learning can transform feature discovery by delivering contextual guidance exactly when users need it most.</p>
+                        
+                        <p>The system tracks user behavior patterns—hesitation, multiple clicks, error states—and uses these signals to identify optimal learning moments. AI generates adaptive content that matches the user's skill level, from beginner explanations to advanced power-user tips, ensuring every interaction builds genuine competency.</p>
+                        
+                        <p>This approach transforms software adoption from a frustrating learning curve into an engaging discovery process, where users naturally evolve from casual users to power users through contextualized, bite-sized learning experiences.</p>
+                    </div>
+                </section>
+
+                <!-- Value Proposition -->
+                <section class="section">
+                    <h2 class="section-title">Value for UX Designers</h2>
+                    <div class="section-content">
+                        <p>This prototype showcases essential skills for the AI-enhanced UX future: behavioral pattern recognition, adaptive content systems, and intelligent user assistance. These capabilities position designers as strategic partners who can create experiences that learn and improve over time.</p>
+                        
+                        <p>Beyond technical skills, this demonstrates mastery of learning psychology, progressive disclosure, and user behavior analytics—competencies that differentiate strategic UX practitioners from basic interface designers in an AI-driven market.</p>
+                        
+                        <p>The ability to design self-improving educational experiences shows stakeholders how UX can directly impact business metrics like feature adoption, support costs, and user lifetime value through intelligent, data-driven design decisions.</p>
+                    </div>
+                </section>
+
+                <!-- Efficiency Gains -->
+                <section class="section">
+                    <h2 class="section-title">Efficiency Gains</h2>
+                    <div class="section-content">
+                        <p><strong>Time Savings:</strong> AI generates 50+ contextual help scenarios in minutes versus weeks of manual content creation, while automatically adapting explanations for different skill levels.</p>
+                        
+                        <p><strong>Quality Improvements:</strong> Machine learning identifies optimal intervention timing based on actual user struggle patterns, creating more helpful and less intrusive guidance than traditional help systems.</p>
+                        
+                        <p><strong>Scope Expansion:</strong> AI enables testing of complex learning pathways, adaptive content variations, and personalized tutorial sequences that would be impossible to validate manually across diverse user types.</p>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Right Column: Interactive Demo & Code -->
+            <div class="code-column">
+                <h3>Interactive Demo</h3>
                 
-                <div class="demo-content">
-                    <div class="behavior-tracker" id="behaviorTracker">
-                        Tracking: Clicks, Hesitation, Patterns
+                <!-- Demo Container -->
+                <div class="demo-app">
+                    <div class="demo-toolbar">
+                        <button class="demo-button" id="createBtn">Create Project</button>
+                        <button class="demo-button" id="uploadBtn">Upload File</button>
+                        <button class="demo-button advanced" id="automateBtn">Automate Workflow</button>
+                        <button class="demo-button advanced" id="analyzeBtn">Advanced Analytics</button>
                     </div>
                     
-                    <div class="feature-card" id="feature1">
-                        <div class="click-counter" id="counter1">0</div>
-                        <h4>Project Templates</h4>
-                        <p>Start with pre-built templates for faster project setup</p>
-                    </div>
-                    
-                    <div class="feature-card" id="feature2">
-                        <div class="click-counter" id="counter2">0</div>
-                        <h4>Collaboration Tools</h4>
-                        <p>Invite team members and manage permissions</p>
-                    </div>
-                    
-                    <div class="feature-card" id="feature3">
-                        <div class="click-counter" id="counter3">0</div>
-                        <h4>Advanced Automation</h4>
-                        <p>Set up complex workflows and triggers</p>
-                    </div>
-                    
-                    <!-- Learning Progress -->
-                    <div class="adaptation-note" id="adaptationNote" style="display: none;">
-                        <strong>AI Adaptation:</strong> <span id="adaptationText"></span>
-                    </div>
-                </div>
-                
-                <div class="demo-controls">
-                    <div>
-                        <strong>User Skill Level:</strong>
-                        <div class="skill-level-selector">
-                            <button class="skill-btn active" data-skill="beginner">Beginner</button>
-                            <button class="skill-btn" data-skill="intermediate">Intermediate</button>
-                            <button class="skill-btn" data-skill="advanced">Advanced</button>
+                    <div class="demo-content">
+                        <div class="behavior-tracker" id="behaviorTracker">
+                            Tracking: Clicks, Hesitation, Patterns
+                        </div>
+                        
+                        <div class="feature-card" id="feature1">
+                            <div class="click-counter" id="counter1">0</div>
+                            <h4>Project Templates</h4>
+                            <p>Start with pre-built templates for faster project setup</p>
+                        </div>
+                        
+                        <div class="feature-card" id="feature2">
+                            <div class="click-counter" id="counter2">0</div>
+                            <h4>Collaboration Tools</h4>
+                            <p>Invite team members and manage permissions</p>
+                        </div>
+                        
+                        <div class="feature-card" id="feature3">
+                            <div class="click-counter" id="counter3">0</div>
+                            <h4>Advanced Automation</h4>
+                            <p>Set up complex workflows and triggers</p>
+                        </div>
+                        
+                        <!-- Learning Progress -->
+                        <div class="adaptation-note" id="adaptationNote" style="display: none;">
+                            <strong>AI Adaptation:</strong> <span id="adaptationText"></span>
                         </div>
                     </div>
-                    <div>Progress: <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div></div>
+                    
+                    <div class="demo-controls">
+                        <div>
+                            <strong>User Skill Level:</strong>
+                            <div class="skill-level-selector">
+                                <button class="skill-btn active" data-skill="beginner">Beginner</button>
+                                <button class="skill-btn" data-skill="intermediate">Intermediate</button>
+                                <button class="skill-btn" data-skill="advanced">Advanced</button>
+                            </div>
+                        </div>
+                        <div>Progress: <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div></div>
+                    </div>
                 </div>
-            </div>
-        </section>
 
-        <!-- Technical Implementation -->
-        <section class="section">
-            <h2 class="section-title">Technical Implementation</h2>
-            
-            <h4>Built With</h4>
-            <div class="tech-stack">
-                <span class="tech-tag">React</span>
-                <span class="tech-tag">OpenAI API</span>
-                <span class="tech-tag">Behavior Analytics</span>
-                <span class="tech-tag">Adaptive UI</span>
-            </div>
+                <!-- Tech Stack -->
+                <h4>Built With</h4>
+                <div class="tech-stack">
+                    <span class="tech-tag">React</span>
+                    <span class="tech-tag">OpenAI API</span>
+                    <span class="tech-tag">Behavior Analytics</span>
+                    <span class="tech-tag">Adaptive UI</span>
+                </div>
 
-            <h4>Key Implementation</h4>
-            <div class="code-block">
+                <!-- Key Code Examples -->
+                <h4>Key Implementation</h4>
+                <div class="code-block">
 <span class="comment">// Behavior pattern detection</span>
 <span class="keyword">const</span> detectLearningOpportunity = (userEvent) => {
   <span class="keyword">const</span> pattern = {
@@ -433,58 +414,25 @@
     showContextualTooltip(generateContent());
   }
 };
-            </div>
+                </div>
 
-            <div class="implementation-note">
-                <strong>AI Enhancement:</strong> Content adapts in real-time based on user skill level and behavior patterns, creating personalized learning experiences.
-            </div>
+                <!-- Implementation Notes -->
+                <div class="implementation-note">
+                    <strong>AI Enhancement:</strong> Content adapts in real-time based on user skill level and behavior patterns, creating personalized learning experiences.
+                </div>
 
-            <h4>Resources</h4>
-            <div class="section-content">
-                <p><a href="#" target="_blank">View Source Code →</a></p>
-                <p><a href="#" target="_blank">Try Live Demo →</a></p>
-                <p><a href="#" target="_blank">Design Files →</a></p>
+                <!-- GitHub/Demo Links -->
+                <h4>Resources</h4>
+                <div class="section-content">
+                    <p><a href="#" target="_blank">View Source Code →</a></p>
+                    <p><a href="#" target="_blank">Try Live Demo →</a></p>
+                    <p><a href="#" target="_blank">Design Files →</a></p>
+                </div>
             </div>
-        </section>
+        </div>
 
-        <!-- Project Description -->
-        <section class="section">
-            <h2 class="section-title">Project Overview</h2>
-            <div class="section-content">
-                <p>Traditional onboarding tutorials are static, overwhelming, and quickly forgotten. Users either skip them entirely or complete them without retention. This prototype demonstrates how AI-powered micro-learning can transform feature discovery by delivering contextual guidance exactly when users need it most.</p>
-                
-                <p>The system tracks user behavior patterns—hesitation, multiple clicks, error states—and uses these signals to identify optimal learning moments. AI generates adaptive content that matches the user's skill level, from beginner explanations to advanced power-user tips, ensuring every interaction builds genuine competency.</p>
-                
-                <p>This approach transforms software adoption from a frustrating learning curve into an engaging discovery process, where users naturally evolve from casual users to power users through contextualized, bite-sized learning experiences.</p>
-            </div>
-        </section>
-
-        <!-- Value Proposition -->
-        <section class="section">
-            <h2 class="section-title">Value for UX Designers</h2>
-            <div class="section-content">
-                <p>This prototype showcases essential skills for the AI-enhanced UX future: behavioral pattern recognition, adaptive content systems, and intelligent user assistance. These capabilities position designers as strategic partners who can create experiences that learn and improve over time.</p>
-                
-                <p>Beyond technical skills, this demonstrates mastery of learning psychology, progressive disclosure, and user behavior analytics—competencies that differentiate strategic UX practitioners from basic interface designers in an AI-driven market.</p>
-                
-                <p>The ability to design self-improving educational experiences shows stakeholders how UX can directly impact business metrics like feature adoption, support costs, and user lifetime value through intelligent, data-driven design decisions.</p>
-            </div>
-        </section>
-
-        <!-- Efficiency Gains -->
-        <section class="section">
-            <h2 class="section-title">Efficiency Gains</h2>
-            <div class="section-content">
-                <p><strong>Time Savings:</strong> AI generates 50+ contextual help scenarios in minutes versus weeks of manual content creation, while automatically adapting explanations for different skill levels.</p>
-                
-                <p><strong>Quality Improvements:</strong> Machine learning identifies optimal intervention timing based on actual user struggle patterns, creating more helpful and less intrusive guidance than traditional help systems.</p>
-                
-                <p><strong>Scope Expansion:</strong> AI enables testing of complex learning pathways, adaptive content variations, and personalized tutorial sequences that would be impossible to validate manually across diverse user types.</p>
-            </div>
-        </section>
-
-        <!-- Strategy for UX Designers -->
-        <section class="section">
+        <!-- Strategy for UX Designers - Full Width -->
+        <section class="section full-width-section">
             <h2 class="section-title">Implementation Strategy for UX Designers</h2>
             
             <div class="strategy-grid">
@@ -530,8 +478,8 @@
             </div>
         </section>
 
-        <!-- Implementation Steps -->
-        <section class="section">
+        <!-- Implementation Steps - Full Width -->
+        <section class="section full-width-section">
             <h2 class="section-title">Step-by-Step Implementation</h2>
             
             <div class="steps-list">
