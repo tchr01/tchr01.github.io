@@ -64,30 +64,64 @@
                 </ul>
             </div>
 
-            <div id="dynamicDashboard" class="dynamic-dashboard">
-                <div class="dashboard-controls">
-                    <select id="userRoleSelector">
-                        <option value="ceo">CEO</option>
-                        <option value="cfo">CFO</option>
-                        <option value="cto">CTO</option>
-                        <option value="coo">COO</option>
-                    </select>
-                    <div class="time-context">
-                        <span id="currentTime"></span>
-                        <span id="currentProject">Q3 Strategic Planning</span>
+            <div class="dynamic-dashboard-container">
+                <div id="dynamicDashboard" class="dynamic-dashboard">
+                    <div class="dashboard-controls">
+                        <select id="userRoleSelector">
+                            <option value="ceo">CEO</option>
+                            <option value="cfo">CFO</option>
+                            <option value="cto">CTO</option>
+                            <option value="coo">COO</option>
+                        </select>
+                        <div class="time-context">
+                            <span id="currentTime"></span>
+                            <span id="currentProject">Q3 Strategic Planning</span>
+                        </div>
+                    </div>
+                    <div id="dashboardWidgets" class="dashboard-widgets">
+                        <!-- Widgets will be dynamically generated -->
                     </div>
                 </div>
-                <div id="dashboardWidgets" class="dashboard-widgets">
-                    <!-- Widgets will be dynamically generated -->
+                <div class="saved-recommendations-sidebar">
+                    <h3>Saved Recommendations</h3>
+                    <div id="savedRecommendationsList" class="saved-recommendations-list">
+                        <!-- Saved recommendations will be dynamically added here -->
+                    </div>
                 </div>
             </div>
 
             <style>
-                .dynamic-dashboard {
+                .dynamic-dashboard-container {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 20px;
                     background-color: #f4f6f9;
                     border-radius: 12px;
                     padding: 20px;
                     margin-top: 20px;
+                }
+                .toast-notification {
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background-color: #48bb78;
+                    color: white;
+                    padding: 10px 15px;
+                    border-radius: 4px;
+                    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                    z-index: 1000;
+                    opacity: 0;
+                    transition: opacity 0.3s ease-in-out;
+                }
+                .toast-notification.show {
+                    opacity: 1;
+                }
+                .toast-notification.remove {
+                    background-color: #e53e3e;
+                }
+                .dynamic-dashboard {
+                    background-color: white;
+                    border-radius: 12px;
                 }
                 .dashboard-controls {
                     display: flex;
@@ -98,6 +132,27 @@
                     display: grid;
                     grid-template-columns: repeat(3, 1fr);
                     gap: 15px;
+                    padding: 15px;
+                }
+                .saved-recommendations-sidebar {
+                    background-color: #f0f4f8;
+                    border-radius: 12px;
+                    padding: 15px;
+                }
+                .saved-recommendations-list {
+                    max-height: 600px;
+                    overflow-y: auto;
+                }
+                .saved-recommendation-item {
+                    background-color: white;
+                    border-radius: 6px;
+                    padding: 10px;
+                    margin-bottom: 10px;
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+                }
+                .widget-chart {
+                    height: 100px;
+                    margin-bottom: 10px;
                 }
                 .widget {
                     background-color: white;
@@ -362,10 +417,26 @@
                         },
                         recommendationLogic: (role) => {
                             const recommendations = {
-                                ceo: 'Consider accelerating investment in high-growth market segments. Explore potential strategic acquisitions to maintain momentum.',
-                                cfo: 'Analyze revenue streams for optimization. Investigate tax efficiency and potential cost reduction strategies.',
-                                cto: 'Identify technology investments that could further drive revenue growth.',
-                                coo: 'Align operational strategies to support continued revenue expansion.'
+                                ceo: {
+                                    high: 'Immediately accelerate investment in high-growth market segments.',
+                                    medium: 'Explore potential strategic partnerships to maintain revenue momentum.',
+                                    low: 'Conduct quarterly review of market expansion strategies.'
+                                },
+                                cfo: {
+                                    high: 'Perform comprehensive tax efficiency and cost reduction analysis.',
+                                    medium: 'Optimize revenue streams through strategic financial planning.',
+                                    low: 'Monitor long-term financial trend indicators.'
+                                },
+                                cto: {
+                                    high: 'Identify critical technology investments to drive revenue growth.',
+                                    medium: 'Develop innovation roadmap for emerging technological opportunities.',
+                                    low: 'Conduct technology trend research and competitive analysis.'
+                                },
+                                coo: {
+                                    high: 'Implement immediate operational strategies to support revenue expansion.',
+                                    medium: 'Create cross-functional alignment for operational efficiency.',
+                                    low: 'Develop continuous improvement process for operational workflows.'
+                                }
                             };
                             return recommendations[role];
                         }
@@ -382,10 +453,26 @@
                         },
                         recommendationLogic: (role) => {
                             const recommendations = {
-                                ceo: 'Evaluate potential market impact of AI feature sprint. Consider early investor briefing on technological innovations.',
-                                cfo: 'Assess resource allocation and potential return on investment for AI development.',
-                                cto: 'Accelerate feature completion. Identify potential optimization or integration opportunities.',
-                                coo: 'Prepare cross-functional teams for feature launch and potential operational adjustments.'
+                                ceo: {
+                                    high: 'Immediately evaluate market impact of AI feature sprint for potential strategic pivots.',
+                                    medium: 'Prepare early investor briefing on technological innovations.',
+                                    low: 'Monitor competitive landscape for emerging AI technologies.'
+                                },
+                                cfo: {
+                                    high: 'Conduct comprehensive ROI analysis for AI development investment.',
+                                    medium: 'Develop resource allocation strategy for AI initiatives.',
+                                    low: 'Track long-term financial implications of AI projects.'
+                                },
+                                cto: {
+                                    high: 'Accelerate feature completion with aggressive optimization strategies.',
+                                    medium: 'Identify potential integration opportunities for AI features.',
+                                    low: 'Conduct thorough technical feasibility and scalability assessment.'
+                                },
+                                coo: {
+                                    high: 'Immediately prepare cross-functional teams for AI feature launch.',
+                                    medium: 'Develop operational adjustment strategies for new AI capabilities.',
+                                    low: 'Create knowledge transfer and training plans for AI feature integration.'
+                                }
                             };
                             return recommendations[role];
                         }
@@ -544,14 +631,17 @@
                                         recommendationPanel.innerHTML = `
                                             <div class="recommendation-subcards">
                                                 <div class="recommendation-subcard high-risk">
+                                                    <input type="checkbox" class="recommendation-checkbox" data-risk="high" data-widget="${widget.title}">
                                                     <div class="recommendation-subcard-title">High Risk</div>
                                                     ${recommendations.high}
                                                 </div>
                                                 <div class="recommendation-subcard medium-risk">
+                                                    <input type="checkbox" class="recommendation-checkbox" data-risk="medium" data-widget="${widget.title}">
                                                     <div class="recommendation-subcard-title">Medium Risk</div>
                                                     ${recommendations.medium}
                                                 </div>
                                                 <div class="recommendation-subcard low-risk">
+                                                    <input type="checkbox" class="recommendation-checkbox" data-risk="low" data-widget="${widget.title}">
                                                     <div class="recommendation-subcard-title">Low Risk</div>
                                                     ${recommendations.low}
                                                 </div>
@@ -597,6 +687,122 @@
                     const currentRole = userRoleSelector.value;
                     renderDashboard(currentRole);
                 }, 30000);
+
+                // Toast Notification Function
+                function showToast(message, isRemove = false) {
+                    const toast = document.createElement('div');
+                    toast.classList.add('toast-notification');
+                    if (isRemove) {
+                        toast.classList.add('remove');
+                    }
+                    toast.textContent = message;
+                    document.body.appendChild(toast);
+                    
+                    // Show toast
+                    setTimeout(() => {
+                        toast.classList.add('show');
+                    }, 10);
+                    
+                    // Remove toast after 3 seconds
+                    setTimeout(() => {
+                        toast.classList.remove('show');
+                        setTimeout(() => {
+                            document.body.removeChild(toast);
+                        }, 300);
+                    }, 3000);
+                }
+
+                // Saved Recommendations Functionality
+                const savedRecommendationsList = document.getElementById('savedRecommendationsList');
+
+                dashboardWidgets.addEventListener('change', function(event) {
+                    console.log('Checkbox change event triggered');
+                    
+                    if (event.target.classList.contains('recommendation-checkbox')) {
+                        const checkbox = event.target;
+                        console.log('Checkbox checked:', checkbox.checked);
+                        
+                        const recommendationSubcard = checkbox.closest('.recommendation-subcard');
+                        console.log('Recommendation subcard:', recommendationSubcard);
+                        
+                        // Explicitly extract full recommendation text
+                        const titleElement = recommendationSubcard.querySelector('.recommendation-subcard-title');
+                        let recommendationText = '';
+                        
+                        if (titleElement) {
+                            // Find all text nodes after the title, excluding checkbox
+                            const textNodes = Array.from(recommendationSubcard.childNodes)
+                                .filter(node => 
+                                    node.nodeType === Node.TEXT_NODE && 
+                                    node.textContent.trim() !== '' ||
+                                    (node.nodeType === Node.ELEMENT_NODE && 
+                                     !node.classList.contains('recommendation-subcard-title') && 
+                                     !node.classList.contains('recommendation-checkbox'))
+                                );
+                            
+                            recommendationText = textNodes.length > 0 
+                                ? textNodes.map(node => node.textContent.trim()).join(' ')
+                                : 'No recommendation details found';
+                        } else {
+                            recommendationText = 'No recommendation details found';
+                        }
+                        
+                        console.log('Full recommendation text:', recommendationText);
+                        
+                        console.log('Recommendation text:', recommendationText);
+                        
+                        const widget = checkbox.getAttribute('data-widget');
+                        const risk = checkbox.getAttribute('data-risk');
+                        
+                        console.log('Widget:', widget);
+                        console.log('Risk:', risk);
+
+                        if (checkbox.checked) {
+                            const savedRecommendation = document.createElement('div');
+                            savedRecommendation.classList.add('saved-recommendation-item');
+                            savedRecommendation.innerHTML = `
+                                <strong>${widget} - ${risk.charAt(0).toUpperCase() + risk.slice(1)} Risk</strong>
+                                <p>${recommendationText}</p>
+                                <button class="remove-recommendation-btn">Remove</button>
+                            `;
+
+                            // Add remove functionality
+                            const removeBtn = savedRecommendation.querySelector('.remove-recommendation-btn');
+                            removeBtn.addEventListener('click', () => {
+                                savedRecommendationsList.removeChild(savedRecommendation);
+                                
+                                // Uncheck the corresponding checkbox
+                                const originalCheckbox = document.querySelector(
+                                    `.recommendation-checkbox[data-widget="${widget}"][data-risk="${risk}"]`
+                                );
+                                if (originalCheckbox) {
+                                    originalCheckbox.checked = false;
+                                }
+                                
+                                // Show remove toast
+                                showToast(`Recommendation removed: ${widget} - ${risk.charAt(0).toUpperCase() + risk.slice(1)} Risk`, true);
+                            });
+
+                            savedRecommendationsList.appendChild(savedRecommendation);
+                            console.log('Recommendation added to saved list');
+                            
+                            // Show add toast
+                            showToast(`Recommendation saved: ${widget} - ${risk.charAt(0).toUpperCase() + risk.slice(1)} Risk`);
+                        } else {
+                            // Remove from saved recommendations if unchecked
+                            const existingRecommendation = Array.from(savedRecommendationsList.children).find(
+                                item => item.querySelector('strong').textContent === `${widget} - ${risk.charAt(0).toUpperCase() + risk.slice(1)} Risk`
+                            );
+                            if (existingRecommendation) {
+                                savedRecommendationsList.removeChild(existingRecommendation);
+                                console.log('Recommendation removed from saved list');
+                                
+                                // Show remove toast
+                                showToast(`Recommendation removed: ${widget} - ${risk.charAt(0).toUpperCase() + risk.slice(1)} Risk`, true);
+                            }
+                        }
+                    }
+                });
 
                 console.log('Dynamic Information Hierarchy: Script completed successfully');
             } catch (error) {
