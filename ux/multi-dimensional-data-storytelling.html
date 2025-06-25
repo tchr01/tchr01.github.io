@@ -30,6 +30,7 @@
             justify-content: center;
             align-items: center;
             margin-bottom: 20px;
+            padding-top:20px;
         }
 
         .complexity-selector label {
@@ -181,7 +182,7 @@
 
         <!-- Header -->
         <header class="header">
-            <div class="project-number">8</div>
+            <div class="project-number">6</div>
             <h1>Multi-Dimensional Data Storytelling</h1>
             <p class="subtitle">Business Goal: Improve data-driven decision making across all departments and increase business intelligence ROI by 200%. Design an adaptive data visualization system that makes complex analytics accessible to non-analysts, democratizing data insights and enabling every employee to make evidence-based decisions that drive business growth.</p>
             
@@ -203,6 +204,63 @@
             <div class="innovation-box">
                 <h3>The Innovation</h3>
                 <p>Complex data transforms into interactive narratives that adapt to user's comprehension level, creating personalized data exploration experiences. By leveraging AI to dynamically adjust complexity and presentation, the system makes sophisticated analytics accessible to every employee.</p>
+            </div>
+        </section>
+
+                <!-- UX Interactive Prototype -->
+        <section class="section">
+            <h2 class="section-title">UX Interactive Prototype: Adaptive Data Storytelling</h2>
+            
+            <div class="prototype-instructions">
+                <h3>🚀 How to Use the Adaptive Data Storytelling Prototype</h3>
+                <ol>
+                    <li><strong>Select Expertise Level:</strong> Choose your current understanding of data analysis (Beginner, Intermediate, or Expert).</li>
+                    <li><strong>Observe Transformation:</strong> Watch how the narrative and visualization change automatically based on your selected complexity level.</li>
+                    <li><strong>Get AI Insights:</strong> Click "AI Insights" to receive additional recommendations and analysis.</li>
+                    <li><strong>Experiment:</strong> Try different expertise levels to see how the same data can be presented differently.</li>
+                </ol>
+            </div>
+
+            <div class="demo-app" id="dataStorytellingDemo">
+                <div class="complexity-selector">
+                    <label>Select User Expertise Level:</label>
+                    <select id="complexityLevel">
+                        <option value="beginner">Beginner</option>
+                        <option value="intermediate" selected>Intermediate</option>
+                        <option value="expert">Expert</option>
+                    </select>
+                </div>
+
+                <div class="insights-container">
+                    <div class="data-story-container">
+                        <div id="dataStoryContent" class="data-story-content">
+                            <div class="initial-story">
+                                <h3>Company Revenue Growth Analysis</h3>
+                                <p>Select an expertise level to begin your personalized data journey.</p>
+                            </div>
+                        </div>
+                        <div class="story-actions">
+                            <button id="aiInsightsBtn" class="ai-insights-btn">AI Insights</button>
+                        </div>
+                    </div>
+
+                    <div class="visualization-container">
+                        <div id="dataVisualization" class="data-visualization"></div>
+                    </div>
+                </div>
+
+                <div class="insights-log-container">
+                    <h3>Insights Log</h3>
+                    <div id="insightsLog" class="insights-log"></div>
+                    <div class="insights-log-actions">
+                        <button id="convertToPptBtn" class="convert-ppt-btn">Convert to PowerPoint</button>
+                        <p class="log-instructions">
+                            🤖 AI generates additional insights each time you click "AI Insights". 
+                            Use the "Convert to PowerPoint" button to transform logged insights 
+                            into a branded presentation template.
+                        </p>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -274,62 +332,7 @@
             </div>
         </section>
 
-        <!-- UX Interactive Prototype -->
-        <section class="section">
-            <h2 class="section-title">UX Interactive Prototype: Adaptive Data Storytelling</h2>
-            
-            <div class="prototype-instructions">
-                <h3>🚀 How to Use the Adaptive Data Storytelling Prototype</h3>
-                <ol>
-                    <li><strong>Select Expertise Level:</strong> Choose your current understanding of data analysis (Beginner, Intermediate, or Expert).</li>
-                    <li><strong>Observe Transformation:</strong> Watch how the narrative and visualization change automatically based on your selected complexity level.</li>
-                    <li><strong>Get AI Insights:</strong> Click "AI Insights" to receive additional recommendations and analysis.</li>
-                    <li><strong>Experiment:</strong> Try different expertise levels to see how the same data can be presented differently.</li>
-                </ol>
-            </div>
 
-            <div class="demo-app" id="dataStorytellingDemo">
-                <div class="complexity-selector">
-                    <label>Select User Expertise Level:</label>
-                    <select id="complexityLevel">
-                        <option value="beginner">Beginner</option>
-                        <option value="intermediate" selected>Intermediate</option>
-                        <option value="expert">Expert</option>
-                    </select>
-                </div>
-
-                <div class="insights-container">
-                    <div class="data-story-container">
-                        <div id="dataStoryContent" class="data-story-content">
-                            <div class="initial-story">
-                                <h3>Company Revenue Growth Analysis</h3>
-                                <p>Select an expertise level to begin your personalized data journey.</p>
-                            </div>
-                        </div>
-                        <div class="story-actions">
-                            <button id="aiInsightsBtn" class="ai-insights-btn">AI Insights</button>
-                        </div>
-                    </div>
-
-                    <div class="visualization-container">
-                        <div id="dataVisualization" class="data-visualization"></div>
-                    </div>
-                </div>
-
-                <div class="insights-log-container">
-                    <h3>Insights Log</h3>
-                    <div id="insightsLog" class="insights-log"></div>
-                    <div class="insights-log-actions">
-                        <button id="convertToPptBtn" class="convert-ppt-btn">Convert to PowerPoint</button>
-                        <p class="log-instructions">
-                            🤖 AI generates additional insights each time you click "AI Insights". 
-                            Use the "Convert to PowerPoint" button to transform logged insights 
-                            into a branded presentation template.
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </section>
 
         <!-- Project Description -->
         <section class="section">
