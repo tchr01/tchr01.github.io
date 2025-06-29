@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Matthew White - Blog</title>
     <link rel="stylesheet" href="blog.css">
+    <script src="whiteboard.js" defer></script>
 </head>
 <body>
     <div class="container">
@@ -34,7 +35,16 @@
         </div>
         
         <div class="right-panel">
-            <img src="buckminster-fuller.jpg" alt="Buckminster Fuller in profile, wearing glasses" />
+            <div class="whiteboard-container">
+                <div class="whiteboard-header">
+                    <p class="whiteboard-instruction">Draw something if you want! -Matt</p>
+                    <div class="whiteboard-controls">
+                        <button id="clear-board">Clear</button>
+                        <button id="download-board">Download</button>
+                    </div>
+                </div>
+                <canvas id="whiteboard"></canvas>
+            </div>
         </div>
     </div>
 </body>

@@ -39,6 +39,55 @@ body {
     display: none;
 }
 
+.whiteboard-container {
+    background-color: white;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.whiteboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+}
+
+.whiteboard-instruction {
+    color: #666;
+    font-style: italic;
+    text-align: left;
+    margin: 0;
+    font-size: 0.8rem;
+}
+
+#whiteboard {
+    flex-grow: 1;
+    width: 100%;
+    cursor: crosshair;
+}
+
+.whiteboard-controls {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    padding: 10px;
+}
+
+#clear-board, #download-board {
+    background-color: #dc187a;
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    border-radius: 4px;
+}
+
+#clear-board:hover, #download-board:hover {
+    background-color: #b01462;
+}
+
 .blog-content {
     max-width: 800px;
     margin: 0 auto;
@@ -179,5 +228,15 @@ sup a:hover {
     
     .left-panel, .right-panel {
         padding: 40px 20px;
+    }
+
+    .blog-preview {
+        flex-direction: column;
+    }
+
+    .blog-thumbnail {
+        width: 100%;
+        height: auto;
+        margin-bottom: 15px;
     }
 }
