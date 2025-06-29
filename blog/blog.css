@@ -19,6 +19,7 @@ body {
     position: relative;
     background-size: cover;
     background-position: center;
+    background-color: black;
 }
 
 .left-panel {
@@ -125,6 +126,50 @@ sup a:hover {
     font-style: italic;
     margin-top: -10px;
     margin-bottom: 20px;
+}
+
+.blog-list {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.blog-preview {
+    display: flex;
+    align-items: start;
+    gap: 20px;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.blog-thumbnail {
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.blog-preview-content {
+    flex-grow: 1;
+}
+
+.blog-preview-content h2 {
+    margin-bottom: 10px;
+}
+
+.blog-preview-content h2 a {
+    color: #ffffff;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.blog-preview-content h2 a:hover {
+    color: #dc187a;
+}
+
+.blog-preview-content p {
+    color: #cccccc;
 }
 
 @media (max-width: 1024px) {
