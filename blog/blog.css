@@ -1,0 +1,132 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    background: #ffffff;
+    color: #000000;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+}
+
+.container {
+    display: grid;
+    grid-template-columns: 3fr 2fr;
+    min-height: 100vh;
+    position: relative;
+    background-image: url('buckminster-fuller.jpg');
+    background-size: cover;
+    background-position: center;
+}
+
+.left-panel {
+    background: rgba(0, 0, 0, 0.9);
+    color: #ffffff;
+    padding: 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.right-panel {
+    background: transparent;
+}
+
+.right-panel img {
+    display: none;
+}
+
+.blog-content {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 60px 60px 60px 0;
+}
+
+h1 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+    line-height: 1.2;
+}
+
+h3 {
+    font-size: 1.2rem;
+    margin-top: 30px;
+    margin-bottom: 15px;
+}
+
+p, ul, ol {
+    margin-bottom: 20px;
+}
+
+ul, ol {
+    padding-left: 40px;
+}
+
+a {
+    color: #dc187a;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+.nav-links a {
+    color: #ffffff;
+    margin-right: 15px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.nav-links a.active {
+    color: #dc187a;
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #ffffff;
+    text-decoration: none;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+}
+
+.highlight {
+    background: #dc187a;
+    color: #ffffff;
+    padding: 2px 4px;
+    font-weight: 500;
+}
+
+ol li em {
+    font-style: italic;
+}
+
+sup a {
+    color: #dc187a;
+    text-decoration: none;
+    font-size: 0.7em;
+    vertical-align: super;
+}
+
+sup a:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 1024px) {
+    .container {
+        grid-template-columns: 1fr;
+    }
+    
+    .left-panel, .right-panel {
+        padding: 40px 20px;
+    }
+}
