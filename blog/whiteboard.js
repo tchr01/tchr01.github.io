@@ -19,20 +19,41 @@ document.addEventListener('DOMContentLoaded', () => {
     let lastX = 0;
     let lastY = 0;
     
+    function getCoordinates(e) {
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+        
+        let x, y;
+        if (e.type.startsWith('mouse')) {
+            x = (e.clientX - rect.left) * scaleX;
+            y = (e.clientY - rect.top) * scaleY;
+        } else if (e.type.startsWith('touch')) {
+            const touch = e.touches[0] || e.changedTouches[0];
+            x = (touch.clientX - rect.left) * scaleX;
+            y = (touch.clientY - rect.top) * scaleY;
+        }
+        return [x, y];
+    }
+    
     function startDrawing(e) {
+        e.preventDefault(); // Prevent scrolling
         isDrawing = true;
-        [lastX, lastY] = [e.offsetX, e.offsetY];
+        [lastX, lastY] = getCoordinates(e);
     }
     
     function draw(e) {
         if (!isDrawing) return;
         
+        e.preventDefault(); // Prevent scrolling
+        const [x, y] = getCoordinates(e);
+        
         ctx.beginPath();
         ctx.moveTo(lastX, lastY);
-        ctx.lineTo(e.offsetX, e.offsetY);
+        ctx.lineTo(x, y);
         ctx.stroke();
         
-        [lastX, lastY] = [e.offsetX, e.offsetY];
+        [lastX, lastY] = [x, y];
     }
     
     function stopDrawing() {
@@ -48,11 +69,17 @@ document.addEventListener('DOMContentLoaded', () => {
     ctx.lineWidth = 2;
     ctx.lineCap = 'round';
     
-    // Event listeners
+    // Mouse event listeners
     canvas.addEventListener('mousedown', startDrawing);
     canvas.addEventListener('mousemove', draw);
     canvas.addEventListener('mouseup', stopDrawing);
     canvas.addEventListener('mouseout', stopDrawing);
+    
+    // Touch event listeners
+    canvas.addEventListener('touchstart', startDrawing, { passive: false });
+    canvas.addEventListener('touchmove', draw, { passive: false });
+    canvas.addEventListener('touchend', stopDrawing);
+    canvas.addEventListener('touchcancel', stopDrawing);
     
     clearBtn.addEventListener('click', clearBoard);
     
