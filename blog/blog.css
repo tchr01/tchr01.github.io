@@ -188,7 +188,7 @@ sup a:hover {
     align-items: start;
     gap: 20px;
     background: rgba(0, 0, 0, 0.5);
-    padding: 20px;
+    padding: 20px 20px 20px 0;
     border-radius: 8px;
 }
 
@@ -197,6 +197,8 @@ sup a:hover {
     height: 200px;
     object-fit: cover;
     border-radius: 8px;
+    border-top: 5px solid #dc187a;
+    margin-top:10px;
 }
 
 .blog-preview-content {
@@ -239,4 +241,26 @@ sup a:hover {
         height: auto;
         margin-bottom: 15px;
     }
+}
+
+blockquote {
+    border-left: 4px solid #dc187a;
+    padding: 10px 15px 10px 20px;
+    font-style: italic;
+    color: #cccccc;
+    margin: 20px 0;
+    border-radius: 4px;
+    position: relative;
+    font-size: 1.2em;
+    line-height: 1.8;
+}
+
+blockquote::before {
+    content: '"';
+    font-size: 2em;
+    color: #dc187a;
+    position: absolute;
+    left: -15px;
+    top: -10px;
+    opacity: 0.2;
 }
