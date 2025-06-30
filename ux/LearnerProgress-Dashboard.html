@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AI-powered learning progress dashboard demonstrating intelligent tracking and personalized insights for educational administrators">
+    <meta name="keywords" content="learning management, progress tracking, AI insights, educational technology, student performance">
+
+    <title>LearnerProgress Dashboard | AI-Enhanced Educational Insights</title>
+    <link rel="stylesheet" href="./style.css">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes slideIn {
+            from { 
+                opacity: 0; 
+                transform: translateY(20px); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0); 
+            }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+        .animate-slide-in {
+            animation: slideIn 0.5s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mx-auto px-4 py-8">
+        <!-- Navigation -->
+        <nav class="nav mb-8">
+            <a href="index.html" class="text-blue-600 hover:text-blue-800">Back to All Projects</a>
+        </nav>
+
+        <!-- Header -->
+        <header class="header mb-8">
+            <div class="project-number text-gray-500 mb-2">8</div>
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">Learning Empowerment Platform</h1>
+            <p class="subtitle text-gray-600">Transforming Educational Data into Personalized Learning Acceleration: From Tracking to Transformative Guidance</p>
+        </header>
+
+        <!-- Dashboard Section -->
+        <div class="grid grid-cols-4 gap-4">
+            <!-- Cohort Information -->
+            <div class="col-span-4 bg-blue-50 p-4 rounded-lg mb-4">
+                <div id="cohortInfo">
+                    <!-- Cohort information will be dynamically rendered here -->
+                </div>
+            </div>
+
+            <!-- Learner Selection Panel -->
+            <div class="col-span-1 bg-gray-50 p-4 rounded-lg space-y-4">
+                <div>
+                    <h3 class="text-lg font-bold mb-4">Learners</h3>
+                    <div id="learnerSelection" class="space-y-2">
+                        <!-- Learner cards will be dynamically rendered here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content Area -->
+            <div class="col-span-3 space-y-4">
+                <section class="section">
+                    <h2 class="section-title text-xl font-semibold text-gray-800 mb-2">Intelligent Learner Tracking</h2>
+                    <p class="section-description text-gray-600 mb-4">Explore how AI can provide nuanced, actionable insights into student progress and performance</p>
+                    
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <h3 class="text-lg font-bold mb-4">Learning Journey</h3>
+                        <div id="activityTimeline" class="space-y-4">
+                            <!-- Activity timeline will be dynamically rendered here -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- AI Assistant Chatbot -->
+                <div id="aiChatbot" class="fixed bottom-4 right-4 w-80 bg-white rounded-lg shadow-lg border transition-all duration-300 transform translate-y-full">
+                    <div class="bg-blue-500 text-white p-3 rounded-t-lg flex justify-between items-center">
+                        <h3 class="text-lg font-bold">AI Learning Assistant</h3>
+                        <button id="toggleChatbot" class="hover:bg-blue-600 rounded-full p-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div id="chatbotMessages" class="h-64 overflow-y-auto p-4 space-y-2">
+                        <!-- Chat messages will be dynamically inserted here -->
+                    </div>
+                    <div class="p-4 border-t flex">
+                        <input type="text" id="chatbotInput" class="flex-grow p-2 border rounded-l-lg" placeholder="Type your message...">
+                        <button id="chatbotSend" class="bg-blue-500 text-white px-4 py-2 rounded-r-lg">Send</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const cohortData = {
+            "Summer 2025 Web Development Bootcamp": {
+                description: "Intensive 12-week program focusing on full-stack web development",
+                startDate: "2025-06-01",
+                endDate: "2025-08-24",
+                totalLearners: 7,
+                averageProgress: 0.65,
+                performanceMetrics: {
+                    successRate: 0.78,
+                    completionRate: 0.92
+                }
+            }
+        };
+
+        const learnerData = [
+            {
+                id: 1,
+                name: "Emily Rodriguez",
+                avatar: "https://randomuser.me/api/portraits/women/44.jpg",
+                course: "Advanced Web Development",
+                cohort: "Summer 2025 Web Development Bootcamp",
+                progress: 0.75,
+                completedModules: 6,
+                totalModules: 8,
+                lastActivity: "2 hours ago",
+                performanceScore: 0.88,
+                email: "emily.rodriguez@example.com",
+                xapiActivities: [
+                    {
+                        verb: "launched",
+                        activity: "JavaScript Basics Review",
+                        timestamp: "2023-06-14T09:00:00Z",
+                        result: { success: true, duration: "PT45M", score: 0.85 }
+                    },
+                    {
+                        verb: "completed",
+                        activity: "ES6 Advanced Concepts",
+                        timestamp: "2023-06-15T10:30:00Z",
+                        result: { success: true, duration: "PT1H", score: 0.90 }
+                    },
+                    {
+                        verb: "launched",
+                        activity: "React State Management",
+                        timestamp: "2023-06-16T14:15:00Z",
+                        result: { success: true, duration: "PT2H", score: 0.88 }
+                    },
+                    {
+                        verb: "attempted",
+                        activity: "Redux Complex Challenge",
+                        timestamp: "2023-06-18T15:20:00Z",
+                        result: { success: false, duration: "PT1H", score: 0.65, needsIntervention: true }
+                    },
+                    {
+                        verb: "launched",
+                        activity: "Performance Optimization",
+                        timestamp: "2023-06-19T10:00:00Z",
+                        result: { success: true, duration: "PT1H45M", score: 0.85 }
+                    },
+                    {
+                        verb: "completed",
+                        activity: "Advanced Component Design",
+                        timestamp: "2023-06-17T11:45:00Z",
+                        result: { success: true, duration: "PT1H30M", score: 0.92 }
+                    },
+                    {
+                        verb: "launched",
+                        activity: "Full Stack Project",
+                        timestamp: "2023-06-20T16:30:00Z",
+                        result: { success: true, duration: "PT3H", score: 0.95 }
+                    }
+                ]
+            },
+            {
+                id: 2,
+                name: "Michael Chen",
+                avatar: "https://randomuser.me/api/portraits/men/32.jpg",
+                course: "Data Science Fundamentals",
+                cohort: "Summer 2025 Web Development Bootcamp",
+                progress: 0.45,
+                completedModules: 3,
+                totalModules: 7,
+                lastActivity: "Yesterday",
+                performanceScore: 0.62,
+                email: "michael.chen@example.com",
+                xapiActivities: [
+                    {
+                        verb: "launched",
+                        activity: "Python Syntax Basics",
+                        timestamp: "2023-06-14T09:00:00Z",
+                        result: { success: true, duration: "PT1H", score: 0.75 }
+                    },
+                    {
+                        verb: "completed",
+                        activity: "Data Structures Intro",
+                        timestamp: "2023-06-15T14:30:00Z",
+                        result: { success: true, duration: "PT1H30M", score: 0.80 }
+                    },
+                    {
+                        verb: "launched",
+                        activity: "NumPy Fundamentals",
+                        timestamp: "2023-06-16T11:15:00Z",
+                        result: { success: true, duration: "PT1H", score: 0.70 }
+                    },
+                    {
+                        verb: "attempted",
+                        activity: "Pandas Data Manipulation",
+                        timestamp: "2023-06-17T15:45:00Z",
+                        result: { success: false, duration: "PT45M", score: 0.55, needsIntervention: true }
+                    },
+                    {
+                        verb: "launched",
+                        activity: "Statistical Analysis",
+                        timestamp: "2023-06-18T10:30:00Z",
+                        result: { success: true, duration: "PT2H", score: 0.65 }
+                    },
+                    {
+                        verb: "completed",
+                        activity: "Data Visualization",
+                        timestamp: "2023-06-19T16:00:00Z",
+                        result: { success: true, duration: "PT1H45M", score: 0.85 }
+                    },
+                    {
+                        verb: "launched",
+                        activity: "Machine Learning Intro",
+                        timestamp: "2023-06-20T13:15:00Z",
+                        result: { success: true, duration: "PT1H30M", score: 0.75 }
+                    }
+                ]
+            },
+            {
+                id: 3,
+                name: "Sarah Thompson",
+                avatar: "https://randomuser.me/api/portraits/women/65.jpg",
+                course: "UX Design Mastery",
+                cohort: "Summer 2025 Web Development Bootcamp",
+                progress: 0.95,
+                completedModules: 7,
+                totalModules: 8,
+                lastActivity: "30 minutes ago",
+                performanceScore: 0.95,
+                email: "sarah.thompson@example.com",
+                xapiActivities: [
+                    {
+                        verb: "launched",
+                        activity: "Design Thinking Intro",
+                        timestamp: "2023-06-14T10:00:00Z",
+                        result: { success: true, duration: "PT1H", score: 0.85 }
+                    },
+                    {
+                        verb: "completed",
+                        activity: "User Research Methods",
+                        timestamp: "2023-06-15T14:30:00Z",
+                        result: { success: true, duration: "PT2H", score: 0.95 }
+                    },
+                    {
+                        verb: "launched",
+                        activity: "Interaction Design",
+                        timestamp: "2023-06-16T11:15:00Z",
+                        result: { success: true, duration: "PT1H30M", score: 0.90 }
+                    },
+                    {
+                        verb: "completed",
+                        activity: "Wireframing Workshop",
+                        timestamp: "2023-06-17T15:45:00Z",
+                        result: { success: true, duration: "PT1H45M", score: 0.95 }
+                    },
+                    {
+                        verb: "launched",
+                        activity: "Prototyping Tools",
+                        timestamp: "2023-06-18T10:30:00Z",
+                        result: { success: true, duration: "PT1H", score: 0.85 }
+                    },
+                    {
+                        verb: "attempted",
+                        activity: "Advanced Interaction Prototype",
+                        timestamp: "2023-06-19T16:00:00Z",
+                        result: { success: false, duration: "PT2H", score: 0.60, needsIntervention: true }
+                    },
+                    {
+                        verb: "launched",
+                        activity: "UX Portfolio Development",
+                        timestamp: "2023-06-20T13:15:00Z",
+                        result: { success: true, duration: "PT3H", score: 0.95 }
+                    }
+                ]
+            }
+        ];
+
+        let currentLearnerId = 1;
+
+        function renderCohortInfo() {
+            const cohortInfoContainer = document.getElementById('cohortInfo');
+            const currentLearner = learnerData.find(l => l.id === currentLearnerId);
+            const cohort = cohortData[currentLearner.cohort];
+
+            cohortInfoContainer.innerHTML = `
+                <div class="grid grid-cols-3 gap-4">
+                    <div>
+                        <h3 class="text-lg font-bold text-blue-800 mb-2">${currentLearner.cohort}</h3>
+                        <p class="text-sm text-blue-700">${cohort.description}</p>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <strong>Start Date:</strong> ${new Date(cohort.startDate).toLocaleDateString()}
+                        </div>
+                        <div>
+                            <strong>End Date:</strong> ${new Date(cohort.endDate).toLocaleDateString()}
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <strong>Total Learners:</strong> ${cohort.totalLearners}
+                        </div>
+                        <div>
+                            <strong>Average Progress:</strong> ${Math.round(cohort.averageProgress * 100)}%
+                        </div>
+                        <div>
+                            <strong>Success Rate:</strong> ${Math.round(cohort.performanceMetrics.successRate * 100)}%
+                        </div>
+                        <div>
+                            <strong>Completion Rate:</strong> ${Math.round(cohort.performanceMetrics.completionRate * 100)}%
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderLearnerSelection() {
+            const learnerSelectionContainer = document.getElementById('learnerSelection');
+            learnerSelectionContainer.innerHTML = '';
+
+            learnerData.forEach(learner => {
+                const learnerCard = document.createElement('div');
+                learnerCard.className = `cursor-pointer p-2 rounded-lg flex items-center ${currentLearnerId === learner.id ? 'bg-blue-100' : 'hover:bg-gray-100'}`;
+                learnerCard.innerHTML = `
+                    <img src="${learner.avatar}" alt="${learner.name}" class="w-12 h-12 rounded-full mr-4 ">
+                    <div>
+                        <h3 class="font-bold text-gray-800">${learner.name}</h3>
+                        <p class="text-sm text-gray-600">${learner.course}</p>
+                    </div>
+                `;
+                learnerCard.onclick = () => {
+                    currentLearnerId = learner.id;
+                    renderLearnerSelection();
+                    renderActivityTimeline();
+                    renderCohortInfo();
+                };
+                learnerSelectionContainer.appendChild(learnerCard);
+            });
+        }
+
+        function renderActivityTimeline() {
+            const currentLearner = learnerData.find(l => l.id === currentLearnerId);
+            const timelineContainer = document.getElementById('activityTimeline');
+            
+            timelineContainer.innerHTML = `
+                <div class="relative">
+                    <div class="absolute inset-0 w-1 bg-gray-200 left-4 transform -translate-x-1/2" style="margin-left: -7px;"></div>
+                    ${currentLearner.xapiActivities.map((activity, index) => {
+                        let statusColor = !activity.result.success ? 'red' : 
+                                          activity.result.score < 0.7 ? 'yellow' : 'green';
+                        
+                        let interventionIndicator = activity.result.needsIntervention ? 
+                            `<span class="ml-2 bg-red-500 text-white text-xs px-2 py-1 rounded-full">Needs Intervention</span>` : '';
+
+                        return `
+                        <div class="relative pl-8 pb-4">
+                            <div class="absolute w-4 h-4 rounded-full bg-${statusColor}-500 left-2 top-0 transform -translate-x-1/2"></div>
+                            <div class="bg-white p-2 rounded-lg shadow-sm">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm font-semibold text-gray-800">${activity.activity}</span>
+                                    <span class="text-xs text-gray-500">${new Date(activity.timestamp).toLocaleDateString()}</span>
+                                </div>
+                                <div class="text-xs text-gray-600 mt-1">
+                                    Score: ${Math.round(activity.result.score * 100)}% 
+                                    <span class="text-${statusColor}-600">
+                                        (${!activity.result.success ? 'Failed' : 
+                                           activity.result.score < 0.7 ? 'Needs Improvement' : 'Successful'})
+                                    </span>
+                                    ${interventionIndicator}
+                                    <button onclick="openAIAssistantSidebar(${currentLearnerId}, ${index})" 
+                                            class="ml-2 bg-blue-500 text-white p-1 rounded-full hover:bg-blue-600 transition-colors text-xs">
+                                        AI
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `}).join('')}
+                </div>
+            `;
+        }
+
+        function openAIAssistantSidebar(learnerId, activityIndex) {
+            const learner = learnerData.find(l => l.id === learnerId);
+            const activity = learner.xapiActivities[activityIndex];
+            
+            const chatbot = document.getElementById('aiChatbot');
+            const chatbotMessages = document.getElementById('chatbotMessages');
+
+            // Reverse scroll behavior
+            chatbotMessages.style.flexDirection = 'column-reverse';
+
+            // Clear previous messages
+            chatbotMessages.innerHTML = '';
+
+            // Loading indicator
+            const loadingIndicator = document.createElement('div');
+            loadingIndicator.className = 'flex justify-center items-center my-4';
+            loadingIndicator.innerHTML = `
+                <div class="animate-spin rounded-full h-8 w-8 border-t-4 border-b-4 border-blue-500"></div>
+                <span class="ml-3 text-gray-600">Analyzing learner data...</span>
+            `;
+            chatbotMessages.appendChild(loadingIndicator);
+
+            // Simulate AI processing
+            setTimeout(() => {
+                // Remove loading indicator
+                chatbotMessages.removeChild(loadingIndicator);
+
+                // Add administrative context message
+                const contextMessage = document.createElement('div');
+                contextMessage.className = 'bg-blue-50 p-3 rounded-lg mb-2 text-blue-800 animate-slide-in';
+                contextMessage.innerHTML = `
+                    <strong>Learner Performance Analysis: ${learner.name}</strong><br>
+                    Activity: ${activity.activity}<br>
+                    Performance Metrics: ${Math.round(activity.result.score * 100)}%<br>
+                    Status: ${activity.result.success ? 'Successful' : 'Requires Intervention'}
+                `;
+                chatbotMessages.appendChild(contextMessage);
+
+                // Scroll to top (bottom of reversed container)
+                chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+            }, 3500);
+
+            // Ensure chatbot is visible
+            chatbot.classList.remove('translate-y-full');
+        }
+
+        // Initialize dashboard on page load
+        window.onload = () => {
+            renderLearnerSelection();
+            renderActivityTimeline();
+            renderCohortInfo();
+        };
+    </script>
+</body>
+</html>

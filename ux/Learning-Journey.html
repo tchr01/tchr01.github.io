@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AI-powered password intelligence prototype demonstrating intelligent password strength analysis and security guidance">
+    <meta name="keywords" content="password security, AI guidance, cybersecurity, password strength, user experience, intelligent design">
+
+    <title>SecureGuard Password Intelligence | AI-Enhanced UX Prototypes</title>
+    <link rel="stylesheet" href="./style.css">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://tchr01.github.io/ux/SecureGuard-Password-Intelligence.html">
+    <meta property="og:title" content="SecureGuard Password Intelligence | AI-Enhanced UX Prototypes">
+    <meta property="og:description" content="An AI-powered prototype demonstrating intelligent password strength analysis and empathetic security guidance.">
+    <meta property="og:image" content="https://tchr01.github.io/ux/7.png">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://tchr01.github.io/ux/SecureGuard-Password-Intelligence.html">
+    <meta property="twitter:title" content="SecureGuard Password Intelligence | AI-Enhanced UX Prototypes">
+    <meta property="twitter:description" content="An AI-powered prototype demonstrating intelligent password strength analysis and empathetic security guidance.">
+    <meta property="twitter:image" content="https://tchr01.github.io/ux/7.png">
+
+    <style>
+        /* Inherit styles from semantic-content-reorganization.html */
+        /* Additional custom styles can be added here if needed */
+    </style>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes slideIn {
+            from { 
+                opacity: 0; 
+                transform: translateY(20px); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0); 
+            }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+        .animate-slide-in {
+            animation: slideIn 0.5s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Navigation -->
+        <nav class="nav">
+            <a href="index.html">Back to All Projects</a>
+        </nav>
+
+        <!-- Header -->
+        <header class="header">
+            <div class="project-number">7</div>
+            <h1>Learning Empowerment Platform</h1>
+            <p class="subtitle">Transforming Educational Data into Personalized Learning Acceleration: From Tracking to Transformative Guidance</p>
+            
+            <div class="business-impact">
+                <h3>Business Impact:</h3>
+                <p>Reduce password-related security breaches by 81% through intelligent, user-friendly guidance</p>
+            </div>
+        </header>
+
+        <!-- Interactive Demo -->
+        <section class="section">
+            <h2 class="section-title">Interactive Demo</h2>
+
+            <!-- Dashboard Section -->
+        <div class="grid grid-cols-4 gap-4">
+            <!-- Cohort Information -->
+            <div class="col-span-4 bg-blue-50 p-4 rounded-lg mb-4">
+                <div id="cohortInfo">
+                    <!-- Cohort information will be dynamically rendered here -->
+                </div>
+            </div>
+
+            <!-- Learner Selection Panel -->
+            <div class="col-span-1 bg-gray-50 p-4 rounded-lg space-y-4">
+                <div>
+                    <h3 class="text-lg font-bold mb-4">Learners</h3>
+                    <div id="learnerSelection" class="space-y-2">
+                        <!-- Learner cards will be dynamically rendered here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content Area -->
+            <div class="col-span-3 space-y-4">
+                <section class="section">
+                    <h2 class="section-title text-xl font-semibold text-gray-800 mb-2">Intelligent Learner Tracking</h2>
+                    <p class="section-description text-gray-600 mb-4">Explore how AI can provide nuanced, actionable insights into student progress and performance</p>
+                    
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <h3 class="text-lg font-bold mb-4">Learning Journey</h3>
+                        <div id="activityTimeline" class="space-y-4">
+                            <!-- Activity timeline will be dynamically rendered here -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- AI Assistant Chatbot -->
+<div id="aiChatbot" class="fixed bottom-4 right-4 w-80 bg-white rounded-lg shadow-lg border transition-all duration-300 transform translate-y-full">
+    <div class="bg-blue-500 text-white p-3 rounded-t-lg flex justify-between items-center">
+        <h3 class="text-lg font-bold">AI Learning Assistant</h3>
+        <button id="toggleChatbot" class="hover:bg-blue-600 rounded-full p-1" onclick="toggleChatbotVisibility()">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+        </button>
+    </div>
+                    <div id="chatbotMessages" class="h-64 overflow-y-auto p-4 space-y-2">
+                        <!-- Chat messages will be dynamically inserted here -->
+                    </div>
+                    <div class="p-4 border-t flex">
+                        <input type="text" id="chatbotInput" class="flex-grow p-2 border rounded-l-lg" placeholder="Type your message...">
+                        <button id="chatbotSend" class="bg-blue-500 text-white px-4 py-2 rounded-r-lg">Send</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+            </section>
+        <div class="section">
+            <h2 class="section-title">The Password Security Crisis</h2>
+            <div class="strategy-grid">
+                <div class="strategy-item">
+                    <h4>Traditional Password Approaches</h4>
+                    <ul>
+                        <li>Rigid, complex requirements</li>
+                        <li>User frustration and anxiety</li>
+                        <li>High abandonment rates</li>
+                        <li>Limited user education</li>
+                    </ul>
+                </div>
+                <div class="strategy-item">
+                    <h4>AI-Powered Password Intelligence</h4>
+                    <ul>
+                        <li>Empathetic, real-time guidance</li>
+                        <li>Personalized security insights</li>
+                        <li>Contextual recommendations</li>
+                        <li>Continuous user learning</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">Conceptualizing User-Centric Security</h2>
+            <div class="section-content">
+                <p>The challenge began with a fundamental question: "Why do password requirements feel like punishment?"</p>
+                
+                <div class="implementation-note">
+                    <strong>Initial exploration:</strong> "Security tools intimidate users instead of empowering them. What if password creation felt like having a supportive coach?"
+                </div>
+                
+                <p>Key insights emerged about user psychology and security behavior:</p>
+                <ul>
+                    <li><strong>Cognitive load:</strong> Complex requirements overwhelm users</li>
+                    <li><strong>Emotional barrier:</strong> Security feels threatening, not helpful</li>
+                    <li><strong>Knowledge gap:</strong> Users don't understand why certain practices matter</li>
+                    <li><strong>Motivation challenge:</strong> No clear benefit to creating strong passwords</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">Prototyping Intelligent Guidance</h2>
+            <div class="section-content">
+                <p>The goal was to transform password creation from a dreaded task to an engaging, educational experience.</p>
+                
+                <div class="implementation-note">
+                    <strong>Design Challenge:</strong> Create an AI companion that provides real-time, supportive password guidance without being patronizing
+                </div>
+                
+                <p>Key design principles emerged through iterative prototyping:</p>
+            </div>
+        </div>
+
+        <div class="steps-list">
+            <div class="step-item">
+                <h4>"Passwords feel like a punishment"</h4>
+                <p>Developed conversational, encouraging language that feels supportive, not critical</p>
+            </div>
+            <div class="step-item">
+                <h4>"I don't understand why this matters"</h4>
+                <p>Added contextual explanations that make security concepts accessible</p>
+            </div>
+            <div class="step-item">
+                <h4>"These requirements are impossible"</h4>
+                <p>Created dynamic guidance that helps users improve step-by-step</p>
+            </div>
+            <div class="step-item">
+                <h4>"I keep forgetting complex passwords"</h4>
+                <p>Implemented passphrase generation with memorable, secure alternatives</p>
+            </div>
+            <div class="step-item">
+                <h4>"Am I doing this right?"</h4>
+                <p>Added real-time visual feedback and strength indicators</p>
+            </div>
+        </div>
+
+        <div class="stats">
+            <div class="stat-item">
+                <span class="number">81%</span>
+                <span class="label">Potential Breach Reduction</span>
+            </div>
+            <div class="stat-item">
+                <span class="number">95%</span>
+                <span class="label">Stronger Password Creation</span>
+            </div>
+            <div class="stat-item">
+                <span class="number">67%</span>
+                <span class="label">User Confidence Increase</span>
+            </div>
+            <div class="stat-item">
+                <span class="number">40%</span>
+                <span class="label">Password Manager Adoption</span>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">Design Breakthroughs</h2>
+            <div class="value-grid">
+                <div class="value-item">
+                    <h3>Empathetic AI</h3>
+                    <p>Guidance that feels supportive, not punitive</p>
+                </div>
+                <div class="value-item">
+                    <h3>Real-Time Feedback</h3>
+                    <p>Instant, visual password strength assessment</p>
+                </div>
+                <div class="value-item">
+                    <h3>Educational Approach</h3>
+                    <p>Transform security from a chore to a learning experience</p>
+                </div>
+                <div class="value-item">
+                    <h3>Personalized Insights</h3>
+                    <p>Tailored recommendations based on individual password patterns</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="cta-section">
+            <h3>Reimagining Password Security</h3>
+            <p>This prototype demonstrates how AI can transform password creation from a frustrating task into an empowering, educational experience. The future of cybersecurity is not about strict rules, but supportive guidance.</p>
+            <p><strong>Security should feel like a superpower, not a burden.</strong></p>
+            
+            <div class="cta-links">
+                <a href="https://www.linkedin.com/in/mwhiteboston/" target="_blank" class="cta-link">Connect with Matt</a>
+            </div>
+            <span><p><br/>tchr01@proton.me</span>
+        </div>
+    </div>
+      <script>
+        const cohortData = {
+            "Summer 2025 Web Development Bootcamp": {
+                description: "Intensive 12-week program focusing on full-stack web development",
+                startDate: "2025-06-01",
+                endDate: "2025-08-24",
+                totalLearners: 7,
+                averageProgress: 0.65,
+                performanceMetrics: {
+                    successRate: 0.78,
+                    completionRate: 0.92
+                }
+            }
+        };
+
+        const learnerData = [
+            {
+                id: 1,
+                name: "Emily Rodriguez",
+                avatar: "https://randomuser.me/api/portraits/women/44.jpg",
+                course: "Advanced Web Development",
+                cohort: "Summer 2025 Web Development Bootcamp",
+                progress: 0.75,
+                completedModules: 6,
+                totalModules: 8,
+                lastActivity: "2 hours ago",
+                performanceScore: 0.88,
+                email: "emily.rodriguez@example.com",
+                xapiActivities: [
+                    {
+                        verb: "launched",
+                        activity: "JavaScript Basics Review",
+                        timestamp: "2023-06-14T09:00:00Z",
+                        result: { success: true, duration: "PT45M", score: 0.85 }
+                    },
+                    {
+                        verb: "completed",
+                        activity: "ES6 Advanced Concepts",
+                        timestamp: "2023-06-15T10:30:00Z",
+                        result: { success: true, duration: "PT1H", score: 0.90 }
+                    },
+                    {
+                        verb: "launched",
+                        activity: "React State Management",
+                        timestamp: "2023-06-16T14:15:00Z",
+                        result: { success: true, duration: "PT2H", score: 0.88 }
+                    },
+                    {
+                        verb: "attempted",
+                        activity: "Redux Complex Challenge",
+                        timestamp: "2023-06-18T15:20:00Z",
+                        result: { success: false, duration: "PT1H", score: 0.65, needsIntervention: true }
+                    },
+                    {
+                        verb: "launched",
+                        activity: "Performance Optimization",
+                        timestamp: "2023-06-19T10:00:00Z",
+                        result: { success: true, duration: "PT1H45M", score: 0.85 }
+                    },
+                    {
+                        verb: "completed",
+                        activity: "Advanced Component Design",
+                        timestamp: "2023-06-17T11:45:00Z",
+                        result: { success: true, duration: "PT1H30M", score: 0.92 }
+                    },
+                    {
+                        verb: "launched",
+                        activity: "Full Stack Project",
+                        timestamp: "2023-06-20T16:30:00Z",
+                        result: { success: true, duration: "PT3H", score: 0.95 }
+                    }
+                ]
+            },
+            {
+                id: 2,
+                name: "Michael Chen",
+                avatar: "https://randomuser.me/api/portraits/men/32.jpg",
+                course: "Data Science Fundamentals",
+                cohort: "Summer 2025 Web Development Bootcamp",
+                progress: 0.45,
+                completedModules: 3,
+                totalModules: 7,
+                lastActivity: "Yesterday",
+                performanceScore: 0.62,
+                email: "michael.chen@example.com",
+                xapiActivities: [
+                    {
+                        verb: "launched",
+                        activity: "Python Syntax Basics",
+                        timestamp: "2023-06-14T09:00:00Z",
+                        result: { success: true, duration: "PT1H", score: 0.75 }
+                    },
+                    {
+                        verb: "completed",
+                        activity: "Data Structures Intro",
+                        timestamp: "2023-06-15T14:30:00Z",
+                        result: { success: true, duration: "PT1H30M", score: 0.80 }
+                    },
+                    {
+                        verb: "launched",
+                        activity: "NumPy Fundamentals",
+                        timestamp: "2023-06-16T11:15:00Z",
+                        result: { success: true, duration: "PT1H", score: 0.70 }
+                    },
+                    {
+                        verb: "attempted",
+                        activity: "Pandas Data Manipulation",
+                        timestamp: "2023-06-17T15:45:00Z",
+                        result: { success: false, duration: "PT45M", score: 0.55, needsIntervention: true }
+                    },
+                    {
+                        verb: "launched",
+                        activity: "Statistical Analysis",
+                        timestamp: "2023-06-18T10:30:00Z",
+                        result: { success: true, duration: "PT2H", score: 0.65 }
+                    },
+                    {
+                        verb: "completed",
+                        activity: "Data Visualization",
+                        timestamp: "2023-06-19T16:00:00Z",
+                        result: { success: true, duration: "PT1H45M", score: 0.85 }
+                    },
+                    {
+                        verb: "launched",
+                        activity: "Machine Learning Intro",
+                        timestamp: "2023-06-20T13:15:00Z",
+                        result: { success: true, duration: "PT1H30M", score: 0.75 }
+                    }
+                ]
+            },
+            {
+                id: 3,
+                name: "Sarah Thompson",
+                avatar: "https://randomuser.me/api/portraits/women/65.jpg",
+                course: "UX Design Mastery",
+                cohort: "Summer 2025 Web Development Bootcamp",
+                progress: 0.95,
+                completedModules: 7,
+                totalModules: 8,
+                lastActivity: "30 minutes ago",
+                performanceScore: 0.95,
+                email: "sarah.thompson@example.com",
+                xapiActivities: [
+                    {
+                        verb: "launched",
+                        activity: "Design Thinking Intro",
+                        timestamp: "2023-06-14T10:00:00Z",
+                        result: { success: true, duration: "PT1H", score: 0.85 }
+                    },
+                    {
+                        verb: "completed",
+                        activity: "User Research Methods",
+                        timestamp: "2023-06-15T14:30:00Z",
+                        result: { success: true, duration: "PT2H", score: 0.95 }
+                    },
+                    {
+                        verb: "launched",
+                        activity: "Interaction Design",
+                        timestamp: "2023-06-16T11:15:00Z",
+                        result: { success: true, duration: "PT1H30M", score: 0.90 }
+                    },
+                    {
+                        verb: "completed",
+                        activity: "Wireframing Workshop",
+                        timestamp: "2023-06-17T15:45:00Z",
+                        result: { success: true, duration: "PT1H45M", score: 0.95 }
+                    },
+                    {
+                        verb: "launched",
+                        activity: "Prototyping Tools",
+                        timestamp: "2023-06-18T10:30:00Z",
+                        result: { success: true, duration: "PT1H", score: 0.85 }
+                    },
+                    {
+                        verb: "attempted",
+                        activity: "Advanced Interaction Prototype",
+                        timestamp: "2023-06-19T16:00:00Z",
+                        result: { success: false, duration: "PT2H", score: 0.60, needsIntervention: true }
+                    },
+                    {
+                        verb: "launched",
+                        activity: "UX Portfolio Development",
+                        timestamp: "2023-06-20T13:15:00Z",
+                        result: { success: true, duration: "PT3H", score: 0.95 }
+                    }
+                ]
+            }
+        ];
+
+        let currentLearnerId = 1;
+
+        function renderCohortInfo() {
+            const cohortInfoContainer = document.getElementById('cohortInfo');
+            const currentLearner = learnerData.find(l => l.id === currentLearnerId);
+            const cohort = cohortData[currentLearner.cohort];
+
+            cohortInfoContainer.innerHTML = `
+                <div class="grid grid-cols-3 gap-4">
+                    <div>
+                        <h3 class="text-lg font-bold text-blue-800 mb-2">${currentLearner.cohort}</h3>
+                        <p class="text-sm text-blue-700">${cohort.description}</p>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <strong>Start Date:</strong> ${new Date(cohort.startDate).toLocaleDateString()}
+                        </div>
+                        <div>
+                            <strong>End Date:</strong> ${new Date(cohort.endDate).toLocaleDateString()}
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <strong>Total Learners:</strong> ${cohort.totalLearners}
+                        </div>
+                        <div>
+                            <strong>Average Progress:</strong> ${Math.round(cohort.averageProgress * 100)}%
+                        </div>
+                        <div>
+                            <strong>Success Rate:</strong> ${Math.round(cohort.performanceMetrics.successRate * 100)}%
+                        </div>
+                        <div>
+                            <strong>Completion Rate:</strong> ${Math.round(cohort.performanceMetrics.completionRate * 100)}%
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderLearnerSelection() {
+            const learnerSelectionContainer = document.getElementById('learnerSelection');
+            learnerSelectionContainer.innerHTML = '';
+
+            learnerData.forEach(learner => {
+                const learnerCard = document.createElement('div');
+                learnerCard.className = `cursor-pointer p-2 rounded-lg flex items-center ${currentLearnerId === learner.id ? 'bg-blue-100' : 'hover:bg-gray-100'}`;
+                learnerCard.innerHTML = `
+                    <img src="${learner.avatar}" alt="${learner.name}" class="w-12 h-12 rounded-full mr-4 ">
+                    <div>
+                        <h3 class="font-bold text-gray-800">${learner.name}</h3>
+                        <p class="text-sm text-gray-600">${learner.course}</p>
+                    </div>
+                `;
+                learnerCard.onclick = () => {
+                    currentLearnerId = learner.id;
+                    renderLearnerSelection();
+                    renderActivityTimeline();
+                    renderCohortInfo();
+                };
+                learnerSelectionContainer.appendChild(learnerCard);
+            });
+        }
+
+        function renderActivityTimeline() {
+            const currentLearner = learnerData.find(l => l.id === currentLearnerId);
+            const timelineContainer = document.getElementById('activityTimeline');
+            
+            timelineContainer.innerHTML = `
+                <div class="relative">
+                    <div class="absolute inset-0 w-1 bg-gray-200 left-4 transform -translate-x-1/2" style="margin-left: -7px;"></div>
+                    ${currentLearner.xapiActivities.map((activity, index) => {
+                        let statusColor = !activity.result.success ? 'red' : 
+                                          activity.result.score < 0.7 ? 'yellow' : 'green';
+                        
+                        let interventionIndicator = activity.result.needsIntervention ? 
+                            `<span class="ml-2 bg-red-500 text-white text-xs px-2 py-1 rounded-full">Needs Intervention</span>` : '';
+
+                        return `
+                        <div class="relative pl-8 pb-4">
+                            <div class="absolute w-4 h-4 rounded-full bg-${statusColor}-500 left-2 top-0 transform -translate-x-1/2"></div>
+                            <div class="bg-white p-2 rounded-lg shadow-sm">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm font-semibold text-gray-800">${activity.activity}</span>
+                                    <span class="text-xs text-gray-500">${new Date(activity.timestamp).toLocaleDateString()}</span>
+                                </div>
+                                <div class="text-xs text-gray-600 mt-1">
+                                    Score: ${Math.round(activity.result.score * 100)}% 
+                                    <span class="text-${statusColor}-600">
+                                        (${!activity.result.success ? 'Failed' : 
+                                           activity.result.score < 0.7 ? 'Needs Improvement' : 'Successful'})
+                                    </span>
+                                    ${interventionIndicator}
+                                    <button onclick="openAIAssistantSidebar(${currentLearnerId}, ${index})" 
+                                            class="ml-2 bg-blue-500 text-white p-1 rounded-full hover:bg-blue-600 transition-colors text-xs">
+                                        AI
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `}).join('')}
+                </div>
+            `;
+        }
+
+        function toggleChatbotVisibility() {
+            const chatbot = document.getElementById('aiChatbot');
+            const chatbotMessages = document.getElementById('chatbotMessages');
+            
+            // Toggle visibility
+            chatbot.classList.toggle('translate-y-full');
+            
+            // If opening chatbot, add suggestion prompts
+            if (!chatbot.classList.contains('translate-y-full')) {
+                chatbotMessages.innerHTML = '';
+                const suggestionPrompts = [
+                    {
+                        title: "Early Warning Intervention",
+                        description: "Proactively support learners showing early signs of struggle",
+                        steps: [
+                            "Identify learners with performance scores below 70%",
+                            "Schedule 1-on-1 coaching sessions",
+                            "Provide additional learning resources",
+                            "Create personalized study plans"
+                        ]
+                    },
+                    {
+                        title: "Targeted Learning Support",
+                        description: "Address specific module challenges",
+                        steps: [
+                            "Analyze module-specific failure points",
+                            "Develop supplementary learning materials",
+                            "Create focused skill-building workshops",
+                            "Pair struggling learners with mentors"
+                        ]
+                    },
+                    {
+                        title: "Motivation and Engagement Boost",
+                        description: "Reinvigorate learner enthusiasm and progress",
+                        steps: [
+                            "Recognize and celebrate small achievements",
+                            "Provide clear, achievable milestone goals",
+                            "Offer real-world project connections",
+                            "Create peer support and study groups"
+                        ]
+                    },
+                    {
+                        title: "Adaptive Learning Strategies",
+                        description: "Customize learning approach for individual needs",
+                        steps: [
+                            "Conduct individual learning style assessments",
+                            "Recommend personalized learning resources",
+                            "Adjust module difficulty dynamically",
+                            "Provide multiple learning pathways"
+                        ]
+                    }
+                ];
+
+                suggestionPrompts.forEach(prompt => {
+                    const promptElement = document.createElement('div');
+                    promptElement.className = 'bg-blue-50 p-3 rounded-lg mb-2 text-blue-800 cursor-pointer hover:bg-blue-100 transition-colors';
+                    promptElement.innerHTML = `
+                        <strong>${prompt.title}</strong><br>
+                        <p class="text-sm text-blue-700 mb-2">${prompt.description}</p>
+                        <ul class="text-xs text-blue-600 list-disc list-inside">
+                            ${prompt.steps.map(step => `<li>${step}</li>`).join('')}
+                        </ul>
+                    `;
+                    chatbotMessages.appendChild(promptElement);
+                });
+            }
+        }
+
+        function openAIAssistantSidebar(learnerId, activityIndex) {
+            const learner = learnerData.find(l => l.id === learnerId);
+            const activity = learner.xapiActivities[activityIndex];
+            
+            const chatbot = document.getElementById('aiChatbot');
+            const chatbotMessages = document.getElementById('chatbotMessages');
+
+            // Reverse scroll behavior
+            chatbotMessages.style.flexDirection = 'column-reverse';
+
+            // Clear previous messages
+            chatbotMessages.innerHTML = '';
+
+            // Loading indicator
+            const loadingIndicator = document.createElement('div');
+            loadingIndicator.className = 'flex justify-center items-center my-4';
+            loadingIndicator.innerHTML = `
+                <div class="animate-spin rounded-full h-8 w-8 border-t-4 border-b-4 border-blue-500"></div>
+                <span class="ml-3 text-gray-600">Analyzing learner data...</span>
+            `;
+            chatbotMessages.appendChild(loadingIndicator);
+
+            // Simulate AI processing
+            setTimeout(() => {
+                // Remove loading indicator
+                chatbotMessages.removeChild(loadingIndicator);
+
+                // Add administrative context message
+                const contextMessage = document.createElement('div');
+                contextMessage.className = 'bg-blue-50 p-3 rounded-lg mb-2 text-blue-800 animate-slide-in';
+                contextMessage.innerHTML = `
+                    <strong>Learner Performance Analysis: ${learner.name}</strong><br>
+                    Activity: ${activity.activity}<br>
+                    Performance Metrics: ${Math.round(activity.result.score * 100)}%<br>
+                    Status: ${activity.result.success ? 'Successful' : 'Requires Intervention'}
+                `;
+                chatbotMessages.appendChild(contextMessage);
+
+                // Scroll to top (bottom of reversed container)
+                chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+            }, 3500);
+
+            // Ensure chatbot is visible
+            chatbot.classList.remove('translate-y-full');
+        }
+
+        // Initialize dashboard on page load
+        window.onload = () => {
+            renderLearnerSelection();
+            renderActivityTimeline();
+            renderCohortInfo();
+        };
+    </script>
+</body>
+</html>

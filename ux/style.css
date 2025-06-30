@@ -20,7 +20,7 @@ body {
 ul, ol { padding-left:20px;}
 
 .container {
-    max-width: 1200px;
+    max-width: 1200px !important;
     margin: 0 auto;
     padding: 40px 20px;
 }
