@@ -6,21 +6,21 @@
     <meta name="description" content="AI-powered learning management prototype demonstrating how UX designers can leverage xAPI data to create intuitive administrative interfaces for proactive learner support">
     <meta name="keywords" content="xAPI data, learning analytics, UX design, AI learning assistant, learner tracking, educational technology, learning management, intervention strategies">
 
-    <title>SecureGuard Password Intelligence | AI-Enhanced UX Prototypes</title>
+    <title>Learning Empowerment Platform | AI-Enhanced Learning Management</title>
     <link rel="stylesheet" href="./style.css">
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://tchr01.github.io/ux/SecureGuard-Password-Intelligence.html">
-    <meta property="og:title" content="Learning Empowerment Platform Feature | AI-Enhanced UX Prototypes">
-    <meta property="og:description" content="Transforming xAPI Learning Data into Intuitive Administrative Interfaces: From Complex Analytics to Actionable Insights">
+    <meta property="og:url" content="https://tchr01.github.io/ux/Learning-Journey.html">
+    <meta property="og:title" content="Learning Empowerment Platform | AI-Enhanced Learning Management">
+    <meta property="og:description" content="AI-powered learning management prototype demonstrating how UX designers can leverage xAPI data to create intuitive administrative interfaces for proactive learner support">
     <meta property="og:image" content="https://tchr01.github.io/ux/8.png">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://tchr01.github.io/ux/SecureGuard-Password-Intelligence.html">
-    <meta property="twitter:title" content="Learning Empowerment Platform Feature | AI-Enhanced UX Prototypes">
-    <meta property="twitter:description"  content="Transforming xAPI Learning Data into Intuitive Administrative Interfaces: From Complex Analytics to Actionable Insights">
+    <meta property="twitter:url" content="https://tchr01.github.io/ux/Learning-Journey.html">
+    <meta property="twitter:title" content="Learning Empowerment Platform | AI-Enhanced Learning Management">
+    <meta property="twitter:description" content="AI-powered learning management prototype demonstrating how UX designers can leverage xAPI data to create intuitive administrative interfaces for proactive learner support">
     <meta property="twitter:image" content="https://tchr01.github.io/ux/8.png">
 
     <style>
@@ -50,15 +50,16 @@
             animation: slideIn 0.5s ease-out;
         }
     </style>
+    
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-82TH1BLLSF"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-82TH1BLLSF');
+    </script>
 </head>
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-82TH1BLLSF"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-82TH1BLLSF');
-</script>
 <body>
     <div class="container">
         <!-- Navigation -->
@@ -68,7 +69,7 @@
 
         <!-- Header -->
         <header class="header">
-            <div class="project-number">8</div>
+            <div class="project-number">7</div>
             <h1>Learning Empowerment Platform Feature</h1>
             <p class="subtitle">Transforming xAPI Learning Data into Intuitive Administrative Interfaces: From Complex Analytics to Actionable Insights</p>
             
@@ -483,6 +484,21 @@
             }
         ];
 
+        // Convert ISO duration to human readable format
+        function formatDuration(isoDuration) {
+            const matches = isoDuration.match(/PT(?:(\d+)H)?(?:(\d+)M)?/);
+            if (!matches) return isoDuration;
+            
+            const hours = parseInt(matches[1]) || 0;
+            const minutes = parseInt(matches[2]) || 0;
+            
+            const parts = [];
+            if (hours > 0) parts.push(`${hours} hour${hours > 1 ? 's' : ''}`);
+            if (minutes > 0) parts.push(`${minutes} minute${minutes > 1 ? 's' : ''}`);
+            
+            return parts.join(' ');
+        }
+
         let currentLearnerId = 1;
 
         function renderCohortInfo() {
@@ -649,7 +665,7 @@
                             <div class="bg-white p-3 rounded-lg mb-3">
                                 <h4 class="font-semibold text-gray-800 mb-2">Current Status</h4>
                                 <p class="text-sm text-gray-600">Score: ${Math.round(activity.result.score * 100)}%</p>
-                                <p class="text-sm text-gray-600">Time Spent: ${activity.result.duration}</p>
+                                <p class="text-sm text-gray-600">Time Spent: ${formatDuration(activity.result.duration)}</p>
                             </div>
                         </div>
 
