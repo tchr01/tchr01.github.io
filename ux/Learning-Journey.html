@@ -328,25 +328,29 @@
                         verb: "launched",
                         activity: "JavaScript Basics Review",
                         timestamp: "2023-06-14T09:00:00Z",
-                        result: { success: true, duration: "PT45M", score: 0.85 }
+                        result: { success: true, duration: "PT45M", score: 0.85 },
+                        type: "course"
                     },
                     {
                         verb: "completed",
                         activity: "ES6 Advanced Concepts",
                         timestamp: "2023-06-15T10:30:00Z",
-                        result: { success: true, duration: "PT1H", score: 0.90 }
+                        result: { success: true, duration: "PT1H", score: 0.90 },
+                        type: "workshop"
                     },
                     {
                         verb: "launched",
                         activity: "React State Management",
                         timestamp: "2023-06-16T14:15:00Z",
-                        result: { success: true, duration: "PT2H", score: 0.88 }
+                        result: { success: true, duration: "PT2H", score: 0.88 },
+                        type: "course"
                     },
                     {
                         verb: "attempted",
                         activity: "Redux Complex Challenge",
                         timestamp: "2023-06-18T15:20:00Z",
-                        result: { success: false, duration: "PT1H", score: 0.65, needsIntervention: true }
+                        result: { success: false, duration: "PT1H", score: 0.65, needsIntervention: true },
+                        type: "assessment"
                     },
                     {
                         verb: "launched",
@@ -594,7 +598,10 @@
                             <div class="absolute w-4 h-4 rounded-full bg-${statusColor}-500 left-2 top-0 transform -translate-x-1/2"></div>
                             <div class="bg-white p-2 rounded-lg shadow-sm">
                                 <div class="flex justify-between items-center">
-                                    <span class="text-sm font-semibold text-gray-800">${activity.activity}</span>
+                                    <div>
+                                        <span class="text-sm font-semibold text-gray-800">${activity.activity}</span>
+                                        <span class="block text-xs text-gray-500 mt-1">${activity.type || 'activity'}</span>
+                                    </div>
                                     <span class="text-xs text-gray-500">${new Date(activity.timestamp).toLocaleDateString()}</span>
                                 </div>
                                 <div class="text-xs text-gray-600 mt-1">
