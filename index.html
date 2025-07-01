@@ -50,38 +50,38 @@
         	border: 0;
         	color: #fff;
         	font-weight: bold;
-        	margin-bottom:20px;
+        	margin-bottom: 15px;
         	text-decoration: none;
         	text-align: center;
         	transition: background 0.3s ease-in-out;
             cursor: pointer;
-
-
+            display: block;
         }
         a.button:hover {
         	background: #7e003f;
             cursor: pointer;
         }
 
-        a.button2 {
-        	max-width: 35%;
-        	padding: 12px 16px;
-        	font-size: 16px;
-        	border-radius: 10px;
-        	background: #18a1dc;
-        	border: 0;
-        	color: #fff;
-        	font-weight: bold;
-        	margin-bottom:20px;
+        a.button-secondary {
+        	max-width: 45%;
+        	padding: 10px 16px;
+        	font-size: 14px;
+        	border-radius: 8px;
+        	background: transparent;
+        	border: 1px solid #ffffff;
+        	color: #ffffff;
+        	font-weight: 500;
+        	margin-bottom: 12px;
+        	margin-right: 12px;
         	text-decoration: none;
         	text-align: center;
-        	transition: background 0.3s ease-in-out;
+        	transition: all 0.3s ease-in-out;
             cursor: pointer;
-
-
+            display: inline-block;
         }
-        a.button2:hover {
-        	background-color: #106c9a;
+        a.button-secondary:hover {
+        	background: #ffffff;
+        	color: #000000;
             cursor: pointer;
         }
         small {float: left;}
@@ -98,6 +98,64 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
+        }
+
+        .section {
+            margin-bottom: 40px;
+        }
+
+        .section:last-child {
+            margin-bottom: 0;
+        }
+
+        .contact-info {
+            font-size: 14px;
+            margin-bottom: 30px;
+            line-height: 1.8;
+        }
+
+        .contact-info a {
+            color: #ffffff;
+            text-decoration: underline;
+        }
+
+        .latest-work {
+            margin-bottom: 35px;
+        }
+
+        .latest-work h3 {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .achievement-item {
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #333;
+        }
+
+        .achievement-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .achievement-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #dc187a;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .achievement-desc {
+            font-size: 14px;
+            line-height: 1.5;
+            color: #cccccc;
         }
 
         .right-panel {
@@ -215,13 +273,31 @@
                 height: 280px;
             }
             
-            .stats {
-                grid-template-columns: 1fr;
-                gap: 20px;
+            .section {
+                margin-bottom: 30px;
             }
             
-            .stat-number {
-                font-size: 36px;
+            .button-secondary {
+                max-width: 48%;
+                font-size: 12px;
+                padding: 8px 12px;
+            }
+            
+            .latest-work h3 {
+                font-size: 14px;
+            }
+            
+            .achievement-item {
+                margin-bottom: 20px;
+                padding-bottom: 15px;
+            }
+            
+            .achievement-title {
+                font-size: 12px;
+            }
+            
+            .achievement-desc {
+                font-size: 13px;
             }
         }
     </style>
@@ -238,32 +314,51 @@
 <body>
     <div class="grid">
         <div class="left-panel">
-            <h1 class="name">Matthew<br>White</h1>
-            <p class="tagline">UX / Brand / Strategy | 18+ Years</p>
-            <a class="button" href="https://mattwhite.dunked.com">View Portfolio &rarr;</a> <small>Get in touch for the password. tchr01@proton.me / <a href="https://www.linkedin.com/in/mwhiteboston/">LinkedIn</a>  
-                <p>&nbsp;</p><hr/>
-                <p>&nbsp;</p>
-                <h3>Follow my quest for transforming and enhancing my design practice with AI</h3>
-                <div><br/><a class="button2" href="https://tchr01.github.io/ux/index.html" target="_blank">AI-Enhanced UX Prototypes</a><div style="margin-top:15px;"><br/><a class="button2" href="/blog/" target="_blank">Blog</a></div></div>
-                
-            	
-                <p>&nbsp;</p>
-                <p>&nbsp;</p>
-            	<hr />
-            	<p>&nbsp;</p>
-             <p class="description">
-                I'm a versatile and agile Product Designer who takes products from initial concept and user testing all the way through to sales enablement for Fortune 500 clients and fast-growing SaaS companies. <span class="highlight">I love moving quickly</span> across the entire design process while working with everyone from executives to developers, creating AI-driven experiences and design systems that boost brand equity, and cut sales cycles from months down to weeks.</span>
-            </p>
-        
-            
-            <div class="stats">
+            <div class="section">
+                <h1 class="name">Matthew<br>White</h1>
+                <p class="tagline">UX / Brand / Strategy | 18+ Years</p>
+            </div>
 
-            	<div class="stat">
-                <h3>AI-Powered UX: </h3>Leveraged AI insights to create user-centered experiences across EdTech, cybersecurity, and Fortune 500 companies</div>
+            <div class="section">
+                <a class="button" href="https://mattwhite.dunked.com">View Portfolio &rarr;</a>
+                <div class="contact-info">
+                    Get in touch for the password<br>
+                    <a href="mailto:tchr01@proton.me">tchr01@proton.me</a> • <a href="https://www.linkedin.com/in/mwhiteboston/">LinkedIn</a>
+                </div>
+            </div>
 
-                <div class="stat"><h3>Enterprise Scale: </h3>Partnered with cross-functional teams to design scalable component systems for banks, healthcare, and tech firms while streamlining design cycles</div>
-<div class="stat"><h3>Strategic Design Leadership: </h3>Developed design/brand strategy with C-suite executives, boosting qualified leads by 25-30%</div>
-<div class="stat"><h3>Global Reach:</h3> Designed scalable creative production solutions serving 100k+ users with 50% improved production throughput</div>
+            <div class="section latest-work">
+                <h3>Latest Work</h3>
+                <a class="button-secondary" href="https://tchr01.github.io/ux/index.html" target="_blank">AI-Enhanced UX Prototypes</a>
+                <a class="button-secondary" href="/blog/" target="_blank">Blog</a>
+            </div>
+
+            <div class="section">
+                <p class="description">
+                    I'm a versatile and agile Product Designer who takes products from initial concept and user testing all the way through to sales enablement for Fortune 500 clients and fast-growing SaaS companies. <span class="highlight">I love moving quickly</span> across the entire design process while working with everyone from executives to developers, creating AI-driven experiences and design systems that boost brand equity, and cut sales cycles from months down to weeks.
+                </p>
+            </div>
+
+            <div class="section">
+                <div class="achievement-item">
+                    <div class="achievement-title">AI-Powered UX</div>
+                    <div class="achievement-desc">Leveraged AI insights to create user-centered experiences across EdTech, cybersecurity, and Fortune 500 companies</div>
+                </div>
+
+                <div class="achievement-item">
+                    <div class="achievement-title">Enterprise Scale</div>
+                    <div class="achievement-desc">Partnered with cross-functional teams to design scalable component systems for banks, healthcare, and tech firms while streamlining design cycles</div>
+                </div>
+
+                <div class="achievement-item">
+                    <div class="achievement-title">Strategic Design Leadership</div>
+                    <div class="achievement-desc">Developed design/brand strategy with C-suite executives, boosting qualified leads by 25-30%</div>
+                </div>
+
+                <div class="achievement-item">
+                    <div class="achievement-title">Global Reach</div>
+                    <div class="achievement-desc">Designed scalable creative production solutions serving 100k+ users with 50% improved production throughput</div>
+                </div>
             </div>
         </div>
         
