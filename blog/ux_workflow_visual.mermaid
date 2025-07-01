@@ -1,0 +1,31 @@
+flowchart TD
+    A[Problem Identification] --> B[Strategic Planning with Claude]
+    B --> C[Define Requirements & Constraints]
+    C --> D[Vibe-Coding Setup in VSCode + Cline]
+    D --> E[Generate Initial Prototype]
+    E --> F{Review & Test Results}
+    F -->|Needs Improvement| G[Provide Specific Feedback to Cline]
+    G --> H[AI Implements Changes]
+    H --> F
+    F -->|Meets Standards| I[Functional Prototype Complete]
+    I --> J[Publish to GitHub for Testing]
+    J --> K[Gather Stakeholder Feedback]
+    K -->|Major Changes Needed| L[Return to Strategic Planning]
+    L --> B
+    K -->|Minor Refinements| M[Final Prototype Iteration]
+    M --> N[Claude Reviews Prototype]
+    N --> O[Generate Technical PRD]
+    O --> P[Create Executive Summary]
+    P --> Q{Stakeholder Approval}
+    Q -->|Approved| R[Handoff to Development]
+    Q -->|Needs Revision| S[Refine Documentation]
+    S --> O
+    R --> T[Monitor Implementation]
+    T --> U[Capture Learnings for Next Project]
+    U --> A
+
+    style A fill:#e1f5fe
+    style I fill:#c8e6c9
+    style R fill:#fff3e0
+    style F fill:#fce4ec
+    style Q fill:#f3e5f5
