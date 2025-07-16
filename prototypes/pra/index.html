@@ -11,13 +11,39 @@
 </head>
 <body>
     <div class="app-container">
-        <!-- Navigation Header -->
-        <header class="header">
-            <div class="nav-brand">
-                <i class="fas fa-chart-line"></i>
-                <h1>Risk Analytics Training Platform</h1>
+        <!-- Bank Header -->
+        <header class="bank-header">
+            <div class="bank-header-top">
+                <div class="bank-logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-university"></i>
+                    </div>
+                    <div class="logo-text">
+                        <h1>Meridian<span class="logo-accent">Financial</span></h1>
+                        <p class="logo-tagline">Excellence in Wealth Management</p>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <button class="header-btn">
+                        <i class="fas fa-phone"></i>
+                        <span>Contact Support</span>
+                    </button>
+                    <button class="header-btn">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Sign Out</span>
+                    </button>
+                </div>
             </div>
-            <nav class="nav-menu">
+        </header>
+        
+        <!-- Training Navigation -->
+        <nav class="training-nav">
+            <div class="training-nav-content">
+                <div class="nav-brand">
+                    <i class="fas fa-graduation-cap"></i>
+                    <h2>Advisor Training Portal</h2>
+                </div>
+                <div class="nav-menu">
                 <button class="nav-btn active" data-view="dashboard">
                     <i class="fas fa-tachometer-alt"></i>
                     Dashboard
@@ -30,9 +56,9 @@
                     <i class="fas fa-chart-bar"></i>
                     Progress
                 </button>
-            </nav>
-            <div class="user-info">
-                <div class="persona-switcher" id="persona-switcher">
+                </div>
+                <div class="user-info">
+                    <div class="persona-switcher" id="persona-switcher">
                     <button class="persona-selector" id="persona-selector">
                         <div class="persona-avatar">
                             <i class="fas fa-user-circle"></i>
@@ -99,13 +125,11 @@
                             <small><i class="fas fa-info-circle"></i> Switching persona will update all training content</small>
                         </div>
                     </div>
+                    </div>
+                    <span>Welcome, Advisor</span>
                 </div>
-                <span>Welcome, Advisor</span>
-                <button class="logout-btn">
-                    <i class="fas fa-sign-out-alt"></i>
-                </button>
             </div>
-        </header>
+        </nav>
 
         <!-- Main Content Area -->
         <main class="main-content">
@@ -779,6 +803,34 @@
                 </div>
             </div>
         </main>
+        
+        <!-- Footer -->
+        <footer class="bank-footer">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Training Disclaimer</h3>
+                    <p><strong>IMPORTANT:</strong> This is a training simulation only. All scenarios, client profiles, and financial data are fictional and for educational purposes only.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Legal Notice</h3>
+                    <p>This platform does not provide actual financial advice. Real client interactions require proper licensing and compliance with all applicable regulations. Consult your compliance department before implementing any strategies discussed in training.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Compliance</h3>
+                    <p>All training content has been reviewed for compliance accuracy. However, regulations may change. Always verify current compliance requirements with your legal and compliance teams.</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <div class="footer-bottom-left">
+                    <p>&copy; 2024 Meridian Financial. All rights reserved.</p>
+                    <p>FINRA Member | SIPC Protected | Equal Housing Lender</p>
+                </div>
+                <div class="footer-bottom-right">
+                    <p><strong>Training Environment Only</strong></p>
+                    <p>Not for client use or distribution</p>
+                </div>
+            </div>
+        </footer>
     </div>
 
     <script src="script.js"></script>
