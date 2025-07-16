@@ -431,6 +431,10 @@ function initializeApp() {
     // Load saved progress
     loadProgress();
     
+    // Add debug function to global scope for testing
+    window.clearProgress = clearProgress;
+    window.progressData = progressData;
+    
     // Set initial view
     showView('dashboard');
     
@@ -450,6 +454,7 @@ function initializeApp() {
     updateProgressView();
     
     console.log('Risk Analytics Training Platform initialized');
+    console.log('Debug: Current progress data:', progressData);
 }
 
 function setupEventListeners() {
@@ -511,6 +516,9 @@ function setupEventListeners() {
     
     // Scenario switching buttons
     setupScenarioSwitching();
+    
+    // Custom input functionality
+    setupCustomInput();
 }
 
 function showView(viewName) {
@@ -824,7 +832,8 @@ function initializeCharts() {
                         position: 'bottom',
                         labels: {
                             padding: 20,
-                            usePointStyle: true
+                            usePointStyle: true,
+                            color: '#f1f3f4'
                         }
                     }
                 }
@@ -861,12 +870,18 @@ function initializeCharts() {
                     y: {
                         beginAtZero: false,
                         grid: {
-                            color: 'rgba(0,0,0,0.1)'
+                            color: 'rgba(255,255,255,0.1)'
+                        },
+                        ticks: {
+                            color: '#d1d5db'
                         }
                     },
                     x: {
                         grid: {
-                            color: 'rgba(0,0,0,0.1)'
+                            color: 'rgba(255,255,255,0.1)'
+                        },
+                        ticks: {
+                            color: '#d1d5db'
                         }
                     }
                 }
@@ -1172,12 +1187,12 @@ function updateScenarioCompletionIndicators() {
         if (isCompleted) {
             btn.classList.add('completed');
             if (completionIndicator) {
-                completionIndicator.style.display = 'flex';
+                completionIndicator.classList.add('show');
             }
         } else {
             btn.classList.remove('completed');
             if (completionIndicator) {
-                completionIndicator.style.display = 'none';
+                completionIndicator.classList.remove('show');
             }
         }
     });
@@ -1239,17 +1254,24 @@ function displayConversation(scenario) {
     const historyElement = document.getElementById('conversation-history');
     const optionsElement = document.getElementById('response-options');
     
-    if (!historyElement || !optionsElement) return;
+    if (!historyElement || !optionsElement) {
+        console.error('Missing conversation elements');
+        return;
+    }
     
     // Clear previous conversation
     historyElement.innerHTML = '';
     
     // Add initial message
-    const initialMessage = scenario.conversations[0];
-    addMessageToHistory(initialMessage.speaker, initialMessage.message);
+    if (scenario.conversations && scenario.conversations.length > 0) {
+        const initialMessage = scenario.conversations[0];
+        addMessageToHistory(initialMessage.speaker, initialMessage.message);
+    }
     
     // Display response options
-    displayResponseOptions(scenario.responses);
+    if (scenario.responses && scenario.responses.length > 0) {
+        displayResponseOptions(scenario.responses);
+    }
 }
 
 function addMessageToHistory(speaker, message) {
@@ -1267,20 +1289,6 @@ function addMessageToHistory(speaker, message) {
     historyElement.scrollTop = historyElement.scrollHeight;
 }
 
-function displayResponseOptions(responses) {
-    const optionsElement = document.getElementById('response-options');
-    if (!optionsElement) return;
-    
-    optionsElement.innerHTML = '';
-    
-    responses.forEach((response, index) => {
-        const button = document.createElement('button');
-        button.className = 'response-btn';
-        button.textContent = response.text;
-        button.addEventListener('click', () => selectResponse(response, index));
-        optionsElement.appendChild(button);
-    });
-}
 
 function selectResponse(response, index) {
     // Add response to conversation
@@ -1591,7 +1599,8 @@ function clearProgress() {
         sessionStartTime: null
     };
     updateProgressView();
-    console.log('Progress cleared. Refresh the page to see the reset.');
+    updateScenarioCompletionIndicators();
+    console.log('Progress cleared and indicators updated.');
 }
 
 // Export functions for global access
@@ -1630,5 +1639,115 @@ window.addEventListener('resize', function() {
         }
     });
 });
+
+// Custom Input Functionality for Chatbot Interface
+function setupCustomInput() {
+    const toggleBtn = document.getElementById('toggle-custom-input');
+    const customInputArea = document.getElementById('custom-input-area');
+    const cancelBtn = document.getElementById('cancel-custom');
+    const sendBtn = document.getElementById('send-custom');
+    const textarea = document.getElementById('custom-response-input');
+    
+    if (!toggleBtn || !customInputArea || !cancelBtn || !sendBtn || !textarea) return;
+    
+    // Toggle custom input area
+    toggleBtn.addEventListener('click', function() {
+        const isVisible = customInputArea.style.display !== 'none';
+        
+        if (isVisible) {
+            customInputArea.style.display = 'none';
+            toggleBtn.innerHTML = `
+                <i class="fas fa-keyboard"></i>
+                Type Custom Response
+            `;
+        } else {
+            customInputArea.style.display = 'block';
+            toggleBtn.innerHTML = `
+                <i class="fas fa-times"></i>
+                Hide Custom Input
+            `;
+            textarea.focus();
+        }
+    });
+    
+    // Cancel custom input
+    cancelBtn.addEventListener('click', function() {
+        customInputArea.style.display = 'none';
+        toggleBtn.innerHTML = `
+            <i class="fas fa-keyboard"></i>
+            Type Custom Response
+        `;
+        textarea.value = '';
+    });
+    
+    // Send custom response
+    sendBtn.addEventListener('click', function() {
+        const customText = textarea.value.trim();
+        
+        if (!customText) {
+            alert('Please enter a response before sending.');
+            return;
+        }
+        
+        // Create a custom response object
+        const customResponse = {
+            text: customText,
+            compliance: 'pending',
+            feedback: 'Custom response submitted for analysis.'
+        };
+        
+        // Process the custom response
+        selectResponse(customResponse, -1); // -1 indicates custom response
+        
+        // Clear and hide input area
+        textarea.value = '';
+        customInputArea.style.display = 'none';
+        toggleBtn.innerHTML = `
+            <i class="fas fa-keyboard"></i>
+            Type Custom Response
+        `;
+    });
+    
+    // Enable Enter to send (Shift+Enter for new line)
+    textarea.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendBtn.click();
+        }
+    });
+}
+
+// Enhanced response button styling
+function displayResponseOptions(responses) {
+    const optionsElement = document.getElementById('response-options');
+    if (!optionsElement) return;
+    
+    optionsElement.innerHTML = '';
+    
+    responses.forEach((response, index) => {
+        const button = document.createElement('button');
+        button.className = 'enhanced-response-btn';
+        
+        // Add compliance indicator
+        const complianceIcon = response.compliance === 'good' ? 
+            '<i class="fas fa-check-circle" style="color: #27ae60;"></i>' :
+            response.compliance === 'poor' ? 
+            '<i class="fas fa-exclamation-triangle" style="color: #e74c3c;"></i>' :
+            '<i class="fas fa-question-circle" style="color: #f39c12;"></i>';
+        
+        button.innerHTML = `
+            <div class="response-content">
+                <div class="response-text">${response.text}</div>
+                <div class="response-meta">
+                    ${complianceIcon}
+                    <span class="compliance-hint">${response.compliance === 'good' ? 'Compliant' : response.compliance === 'poor' ? 'Review needed' : 'Analyze'}</span>
+                </div>
+            </div>
+        `;
+        
+        button.addEventListener('click', () => selectResponse(response, index));
+        optionsElement.appendChild(button);
+    });
+}
 
 console.log('Risk Analytics Training Platform loaded successfully');

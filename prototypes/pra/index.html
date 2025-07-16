@@ -425,45 +425,7 @@
                         </button>
                     </div>
 
-                    <!-- Training Guidance - Condensed -->
-                    <div class="training-guidance-compact">
-                        <div class="guidance-header">
-                            <h3><i class="fas fa-lightbulb"></i> Training Quick Guide</h3>
-                            <button class="guidance-toggle" id="guidance-toggle">
-                                <i class="fas fa-chevron-down"></i>
-                            </button>
-                        </div>
-                        
-                        <div class="guidance-content" id="guidance-content">
-                            <div class="guidance-row">
-                                <!-- Learning Objectives -->
-                                <div class="guidance-section compact">
-                                    <h4><i class="fas fa-bullseye"></i> Objectives</h4>
-                                    <ul class="compact-list" id="scenario-objectives">
-                                        <!-- Will be populated by JavaScript -->
-                                    </ul>
-                                </div>
-
-                                <!-- How to Complete -->
-                                <div class="guidance-section compact">
-                                    <h4><i class="fas fa-tasks"></i> How to Complete</h4>
-                                    <p class="compact-instructions" id="completion-instructions">
-                                        <!-- Will be populated by JavaScript -->
-                                    </p>
-                                </div>
-                            </div>
-
-                            <!-- Practical Application -->
-                            <div class="guidance-section practical-application compact">
-                                <h4><i class="fas fa-phone"></i> Apply in Your Next Client Call</h4>
-                                <div class="application-content-compact" id="practical-application">
-                                    <!-- Will be populated by JavaScript -->
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Active Persona Card -->
+                    <!-- 1. Active Persona Card (Name and demographic info) -->
                     <div class="active-persona-card">
                         <div class="persona-card-header">
                             <div class="persona-card-avatar" id="persona-card-avatar">
@@ -501,18 +463,7 @@
                         </div>
                     </div>
 
-                    <!-- Client Profile -->
-                    <div class="client-profile">
-                        <h3><i class="fas fa-comments"></i> Conversation Context</h3>
-                        <div class="profile-details" id="client-details">
-                            <p><strong>You are practicing with:</strong> <span id="client-name">Margaret Thompson</span></p>
-                            <p><strong>Scenario Focus:</strong> Risk discussion and portfolio explanation</p>
-                            <p><strong>Your Role:</strong> Financial advisor providing compliant education</p>
-                            <p><strong>Remember:</strong> Focus on risk characteristics, not investment advice</p>
-                        </div>
-                    </div>
-
-                    <!-- Scenario Selection Bar -->
+                    <!-- 2. Scenario Selection Bar (Switch Training Scenario) -->
                     <div class="scenario-selection-bar">
                         <h3><i class="fas fa-exchange-alt"></i> Switch Training Scenario</h3>
                         <div class="scenario-buttons">
@@ -524,7 +475,7 @@
                                     <span class="switch-btn-title">Basic Risk Discussion</span>
                                     <span class="switch-btn-meta">15-20 min • Beginner</span>
                                 </div>
-                                <div class="completion-indicator" style="display: none;">
+                                <div class="completion-indicator">
                                     <i class="fas fa-check-circle"></i>
                                 </div>
                             </button>
@@ -537,7 +488,7 @@
                                     <span class="switch-btn-title">Market Stress Scenario</span>
                                     <span class="switch-btn-meta">20-25 min • Intermediate</span>
                                 </div>
-                                <div class="completion-indicator" style="display: none;">
+                                <div class="completion-indicator">
                                     <i class="fas fa-check-circle"></i>
                                 </div>
                             </button>
@@ -550,7 +501,7 @@
                                     <span class="switch-btn-title">Rebalancing Discussion</span>
                                     <span class="switch-btn-meta">18-22 min • Intermediate</span>
                                 </div>
-                                <div class="completion-indicator" style="display: none;">
+                                <div class="completion-indicator">
                                     <i class="fas fa-check-circle"></i>
                                 </div>
                             </button>
@@ -563,50 +514,149 @@
                                     <span class="switch-btn-title">Performance Review</span>
                                     <span class="switch-btn-meta">25-30 min • Advanced</span>
                                 </div>
-                                <div class="completion-indicator" style="display: none;">
+                                <div class="completion-indicator">
                                     <i class="fas fa-check-circle"></i>
                                 </div>
                             </button>
                         </div>
                     </div>
 
-                    <!-- Conversation Interface -->
-                    <div class="conversation-interface">
-                        <div class="conversation-panel">
-                            <h3><i class="fas fa-comments"></i> Client Conversation</h3>
-                            <div class="conversation-history" id="conversation-history">
-                                <!-- Conversation messages will be dynamically added here -->
-                            </div>
-                            <div class="response-options" id="response-options">
-                                <!-- Response options will be dynamically added here -->
-                            </div>
+                    <!-- 3. Training Guidance - Condensed (Training Quick Guide) -->
+                    <div class="training-guidance-compact">
+                        <div class="guidance-header">
+                            <h3><i class="fas fa-lightbulb"></i> Training Quick Guide</h3>
+                            <button class="guidance-toggle" id="guidance-toggle">
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
                         </div>
+                        
+                        <div class="guidance-content" id="guidance-content">
+                            <div class="guidance-row">
+                                <!-- Learning Objectives -->
+                                <div class="guidance-section compact">
+                                    <h4><i class="fas fa-bullseye"></i> Objectives</h4>
+                                    <ul class="compact-list" id="scenario-objectives">
+                                        <!-- Will be populated by JavaScript -->
+                                    </ul>
+                                </div>
 
-                        <!-- Real-time Coaching Panel -->
-                        <div class="coaching-panel">
-                            <h3><i class="fas fa-lightbulb"></i> Real-time Coaching</h3>
-                            <div class="coaching-content" id="coaching-content">
-                                <div class="coaching-tip">
-                                    <i class="fas fa-info-circle"></i>
-                                    <p>Remember to focus on risk characteristics rather than making predictions about future performance.</p>
+                                <!-- How to Complete -->
+                                <div class="guidance-section compact">
+                                    <h4><i class="fas fa-tasks"></i> How to Complete</h4>
+                                    <p class="compact-instructions" id="completion-instructions">
+                                        <!-- Will be populated by JavaScript -->
+                                    </p>
                                 </div>
                             </div>
-                            <div class="compliance-checker">
-                                <h4>Language Analysis</h4>
-                                <div class="compliance-status" id="compliance-status">
-                                    <span class="status-indicator good"></span>
-                                    <span>Compliant language detected</span>
+
+                            <!-- Practical Application -->
+                            <div class="guidance-section practical-application compact">
+                                <h4><i class="fas fa-phone"></i> Apply in Your Next Client Call</h4>
+                                <div class="application-content-compact" id="practical-application">
+                                    <!-- Will be populated by JavaScript -->
                                 </div>
                             </div>
                         </div>
                     </div>
 
+                    <!-- 4. Unified Conversation Group -->
+                    <div class="conversation-group">
+                        <div class="conversation-group-header">
+                            <h2><i class="fas fa-comment-dots"></i> Client Conversation Training</h2>
+                            <p>Practice your conversation skills with context and real-time guidance</p>
+                        </div>
+                        
+                        <!-- Context Information (50/50 split) -->
+                        <div class="context-section">
+                            <!-- Client Profile (Conversation Context) -->
+                            <div class="client-profile">
+                                <h3><i class="fas fa-comments"></i> Conversation Context</h3>
+                                <div class="profile-details" id="client-details">
+                                    <p><strong>You are practicing with:</strong> <span id="client-name">Margaret Thompson</span></p>
+                                    <p><strong>Scenario Focus:</strong> Risk discussion and portfolio explanation</p>
+                                    <p><strong>Your Role:</strong> Financial advisor providing compliant education</p>
+                                    <p><strong>Remember:</strong> Focus on risk characteristics, not investment advice</p>
+                                </div>
+                            </div>
 
-                    <!-- Portfolio Context -->
-                    <div class="portfolio-context">
-                        <h3><i class="fas fa-chart-pie"></i> Portfolio Context</h3>
-                        <div class="context-metrics" id="context-metrics">
-                            <!-- Portfolio-specific metrics for the scenario -->
+                            <!-- Portfolio Context -->
+                            <div class="portfolio-context">
+                                <h3><i class="fas fa-chart-pie"></i> Portfolio Context</h3>
+                                <div class="context-metrics" id="context-metrics">
+                                    <!-- Portfolio-specific metrics for the scenario -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Interactive Conversation Interface -->
+                        <div class="conversation-interface">
+                            <!-- Main Chat Area -->
+                            <div class="conversation-panel">
+                                <div class="conversation-header">
+                                    <h3><i class="fas fa-comments"></i> Client Conversation</h3>
+                                    <div class="conversation-status">
+                                        <span class="status-dot active"></span>
+                                        <span>Active Session</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="conversation-history" id="conversation-history">
+                                    <!-- Conversation messages will be dynamically added here -->
+                                </div>
+                                
+                                <!-- Interactive Response Area -->
+                                <div class="response-area">
+                                    <!-- Quick Response Options -->
+                                    <div class="response-options" id="response-options">
+                                        <!-- Response options will be dynamically added here -->
+                                    </div>
+                                    
+                                    <!-- Custom Input Option -->
+                                    <div class="custom-response-section">
+                                        <div class="input-toggle">
+                                            <button class="toggle-btn" id="toggle-custom-input">
+                                                <i class="fas fa-keyboard"></i>
+                                                Type Custom Response
+                                            </button>
+                                        </div>
+                                        <div class="custom-input-area" id="custom-input-area" style="display: none;">
+                                            <textarea 
+                                                id="custom-response-input" 
+                                                placeholder="Type your response to the client here..."
+                                                rows="3"
+                                            ></textarea>
+                                            <div class="input-actions">
+                                                <button class="btn btn-secondary" id="cancel-custom">
+                                                    <i class="fas fa-times"></i>
+                                                    Cancel
+                                                </button>
+                                                <button class="btn btn-primary" id="send-custom">
+                                                    <i class="fas fa-paper-plane"></i>
+                                                    Send Response
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Real-time Coaching Panel -->
+                            <div class="coaching-panel">
+                                <h3><i class="fas fa-lightbulb"></i> Real-time Coaching</h3>
+                                <div class="coaching-content" id="coaching-content">
+                                    <div class="coaching-tip">
+                                        <i class="fas fa-info-circle"></i>
+                                        <p>Remember to focus on risk characteristics rather than making predictions about future performance.</p>
+                                    </div>
+                                </div>
+                                <div class="compliance-checker">
+                                    <h4>Language Analysis</h4>
+                                    <div class="compliance-status" id="compliance-status">
+                                        <span class="status-indicator good"></span>
+                                        <span>Compliant language detected</span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
