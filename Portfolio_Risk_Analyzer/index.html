@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Risk Analytics Training Platform</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Navigation Header -->
+        <header class="header">
+            <div class="nav-brand">
+                <i class="fas fa-chart-line"></i>
+                <h1>Risk Analytics Training Platform</h1>
+            </div>
+            <nav class="nav-menu">
+                <button class="nav-btn active" data-view="dashboard">
+                    <i class="fas fa-tachometer-alt"></i>
+                    Dashboard
+                </button>
+                <button class="nav-btn" data-view="scenarios">
+                    <i class="fas fa-users"></i>
+                    Training Scenarios
+                </button>
+                <button class="nav-btn" data-view="progress">
+                    <i class="fas fa-chart-bar"></i>
+                    Progress
+                </button>
+            </nav>
+            <div class="user-info">
+                <div class="persona-switcher" id="persona-switcher">
+                    <button class="persona-selector" id="persona-selector">
+                        <div class="persona-avatar">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                        <div class="persona-details">
+                            <div class="persona-name" id="persona-name">Margaret Thompson</div>
+                            <div class="persona-type" id="persona-type">Conservative Portfolio</div>
+                        </div>
+                        <div class="persona-dropdown-icon">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </button>
+                    
+                    <!-- Persona Dropdown -->
+                    <div class="persona-dropdown" id="persona-dropdown">
+                        <div class="dropdown-header">
+                            <h4><i class="fas fa-user-friends"></i> Switch Training Persona</h4>
+                            <p>Select a client to practice with</p>
+                        </div>
+                        <div class="persona-options">
+                            <button class="persona-option active" data-portfolio="conservative">
+                                <div class="option-avatar conservative">
+                                    <i class="fas fa-user-circle"></i>
+                                </div>
+                                <div class="option-details">
+                                    <div class="option-name">Margaret Thompson</div>
+                                    <div class="option-type">Conservative Portfolio</div>
+                                    <div class="option-meta">Age 65 • $850,000 • Low Risk</div>
+                                </div>
+                                <div class="option-status">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                            </button>
+                            
+                            <button class="persona-option" data-portfolio="balanced">
+                                <div class="option-avatar balanced">
+                                    <i class="fas fa-user-circle"></i>
+                                </div>
+                                <div class="option-details">
+                                    <div class="option-name">Robert Chen</div>
+                                    <div class="option-type">Balanced Portfolio</div>
+                                    <div class="option-meta">Age 45 • $1,200,000 • Moderate Risk</div>
+                                </div>
+                                <div class="option-status">
+                                    <i class="fas fa-circle"></i>
+                                </div>
+                            </button>
+                            
+                            <button class="persona-option" data-portfolio="aggressive">
+                                <div class="option-avatar aggressive">
+                                    <i class="fas fa-user-circle"></i>
+                                </div>
+                                <div class="option-details">
+                                    <div class="option-name">Sarah Martinez</div>
+                                    <div class="option-type">Growth Portfolio</div>
+                                    <div class="option-meta">Age 30 • $425,000 • High Risk</div>
+                                </div>
+                                <div class="option-status">
+                                    <i class="fas fa-circle"></i>
+                                </div>
+                            </button>
+                        </div>
+                        <div class="dropdown-footer">
+                            <small><i class="fas fa-info-circle"></i> Switching persona will update all training content</small>
+                        </div>
+                    </div>
+                </div>
+                <span>Welcome, Advisor</span>
+                <button class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Dashboard View -->
+            <div id="dashboard-view" class="view active">
+                <div class="dashboard-grid">
+                    <!-- Portfolio Selection Panel -->
+                    <div class="panel portfolio-selection">
+                        <h3><i class="fas fa-briefcase"></i> Select Training Portfolio</h3>
+                        <div class="portfolio-cards">
+                            <div class="portfolio-card active" data-portfolio="conservative">
+                                <div class="portfolio-card-header">
+                                    <div class="portfolio-avatar conservative">
+                                        <i class="fas fa-user-circle"></i>
+                                    </div>
+                                    <div class="portfolio-info">
+                                        <h4>Conservative Portfolio</h4>
+                                        <p class="client-name">Margaret Thompson</p>
+                                    </div>
+                                </div>
+                                <div class="portfolio-details">
+                                    <p>Age: 65, Retired</p>
+                                    <p>Risk Tolerance: Low</p>
+                                    <div class="portfolio-value">$850,000</div>
+                                </div>
+                            </div>
+                            <div class="portfolio-card" data-portfolio="balanced">
+                                <div class="portfolio-card-header">
+                                    <div class="portfolio-avatar balanced">
+                                        <i class="fas fa-user-circle"></i>
+                                    </div>
+                                    <div class="portfolio-info">
+                                        <h4>Balanced Portfolio</h4>
+                                        <p class="client-name">Robert Chen</p>
+                                    </div>
+                                </div>
+                                <div class="portfolio-details">
+                                    <p>Age: 45, Working</p>
+                                    <p>Risk Tolerance: Moderate</p>
+                                    <div class="portfolio-value">$1,200,000</div>
+                                </div>
+                            </div>
+                            <div class="portfolio-card" data-portfolio="aggressive">
+                                <div class="portfolio-card-header">
+                                    <div class="portfolio-avatar aggressive">
+                                        <i class="fas fa-user-circle"></i>
+                                    </div>
+                                    <div class="portfolio-info">
+                                        <h4>Growth Portfolio</h4>
+                                        <p class="client-name">Sarah Martinez</p>
+                                    </div>
+                                </div>
+                                <div class="portfolio-details">
+                                    <p>Age: 30, High Earner</p>
+                                    <p>Risk Tolerance: High</p>
+                                    <div class="portfolio-value">$425,000</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Risk Metrics Panel -->
+                    <div class="panel risk-metrics">
+                        <h3><i class="fas fa-exclamation-triangle"></i> Risk Analytics</h3>
+                        <div class="metrics-grid">
+                            <div class="metric-card">
+                                <div class="metric-label">Portfolio Volatility</div>
+                                <div class="metric-value" id="volatility">8.2%</div>
+                                <div class="metric-trend positive">↑ 0.2%</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-label">Value at Risk (VaR)</div>
+                                <div class="metric-value" id="var">-$25,400</div>
+                                <div class="metric-trend negative">↓ $1,200</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-label">Sharpe Ratio</div>
+                                <div class="metric-value" id="sharpe">1.45</div>
+                                <div class="metric-trend positive">↑ 0.05</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-label">Beta</div>
+                                <div class="metric-value" id="beta">0.62</div>
+                                <div class="metric-trend neutral">~ 0.01</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Asset Allocation Chart -->
+                    <div class="panel chart-panel">
+                        <h3><i class="fas fa-pie-chart"></i> Asset Allocation</h3>
+                        <div class="chart-container">
+                            <canvas id="allocationChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Performance Chart -->
+                    <div class="panel chart-panel">
+                        <h3><i class="fas fa-line-chart"></i> Performance History</h3>
+                        <div class="chart-container">
+                            <canvas id="performanceChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Compliance Panel -->
+                    <div class="panel compliance-panel">
+                        <h3><i class="fas fa-shield-alt"></i> Compliance Guidance</h3>
+                        <div class="compliance-content">
+                            <div class="compliance-score">
+                                <div class="score-circle">
+                                    <span class="score-value">92%</span>
+                                </div>
+                                <p>Current Session Score</p>
+                            </div>
+                            <div class="compliance-tips">
+                                <h4>Key Reminders:</h4>
+                                <ul>
+                                    <li>Use "based on historical data" when discussing performance</li>
+                                    <li>Always include "past performance doesn't guarantee future results"</li>
+                                    <li>Avoid words like "guarantee," "promise," or "will"</li>
+                                    <li>Focus on risk characteristics, not predictions</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Panel -->
+                    <div class="panel action-panel">
+                        <h3><i class="fas fa-play"></i> Start Training</h3>
+                        <div class="action-buttons">
+                            <button class="btn btn-primary start-scenario" data-scenario="basic">
+                                <i class="fas fa-graduation-cap"></i>
+                                Basic Risk Discussion
+                            </button>
+                            <button class="btn btn-secondary start-scenario" data-scenario="market-stress">
+                                <i class="fas fa-exclamation-circle"></i>
+                                Market Stress Scenario
+                            </button>
+                            <button class="btn btn-secondary start-scenario" data-scenario="rebalancing">
+                                <i class="fas fa-balance-scale"></i>
+                                Rebalancing Discussion
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Training Scenarios View -->
+            <div id="scenarios-view" class="view">
+                <!-- Training Selection Interface (shown when no scenario active) -->
+                <div id="training-selection" class="training-selection-container">
+                    <div class="selection-header">
+                        <h2><i class="fas fa-graduation-cap"></i> Select Training Scenario</h2>
+                        <p class="selection-subtitle">Choose a training scenario for your selected client persona</p>
+                    </div>
+                    
+                    <!-- Active Persona Summary -->
+                    <div class="persona-summary-card">
+                        <div class="persona-summary-header">
+                            <div class="persona-summary-avatar" id="selection-persona-avatar">
+                                <i class="fas fa-user-circle"></i>
+                            </div>
+                            <div class="persona-summary-info">
+                                <h3 id="selection-persona-name">Margaret Thompson</h3>
+                                <p id="selection-persona-type">Conservative Portfolio</p>
+                            </div>
+                        </div>
+                        <div class="persona-summary-stats">
+                            <div class="stat-item">
+                                <span class="stat-label">Age</span>
+                                <span class="stat-value" id="selection-persona-age">65</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Risk Level</span>
+                                <span class="stat-value" id="selection-persona-risk">Conservative</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Portfolio Value</span>
+                                <span class="stat-value" id="selection-persona-value">$850,000</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Training Scenario Options -->
+                    <div class="training-scenarios-grid">
+                        <div class="scenario-option recommended" data-scenario="basic">
+                            <div class="scenario-option-header">
+                                <div class="scenario-icon">
+                                    <i class="fas fa-graduation-cap"></i>
+                                </div>
+                                <div class="scenario-badge recommended">Recommended</div>
+                            </div>
+                            <h3>Basic Risk Discussion</h3>
+                            <p class="scenario-description">Practice explaining portfolio risk characteristics and volatility in client-friendly terms.</p>
+                            <div class="scenario-details">
+                                <div class="detail-row">
+                                    <span class="detail-icon"><i class="fas fa-clock"></i></span>
+                                    <span>15-20 minutes</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-icon"><i class="fas fa-signal"></i></span>
+                                    <span>Beginner Level</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-icon"><i class="fas fa-target"></i></span>
+                                    <span id="basic-focus">Focus: Risk education & compliance</span>
+                                </div>
+                            </div>
+                            <button class="scenario-start-btn" data-scenario="basic">
+                                <i class="fas fa-play"></i>
+                                Start Training
+                            </button>
+                        </div>
+
+                        <div class="scenario-option" data-scenario="market-stress">
+                            <div class="scenario-option-header">
+                                <div class="scenario-icon stress">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                </div>
+                            </div>
+                            <h3>Market Stress Scenario</h3>
+                            <p class="scenario-description">Handle client concerns during market downturns and volatility spikes.</p>
+                            <div class="scenario-details">
+                                <div class="detail-row">
+                                    <span class="detail-icon"><i class="fas fa-clock"></i></span>
+                                    <span>20-25 minutes</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-icon"><i class="fas fa-signal"></i></span>
+                                    <span>Intermediate Level</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-icon"><i class="fas fa-target"></i></span>
+                                    <span id="stress-focus">Focus: Crisis communication</span>
+                                </div>
+                            </div>
+                            <button class="scenario-start-btn" data-scenario="market-stress">
+                                <i class="fas fa-play"></i>
+                                Start Training
+                            </button>
+                        </div>
+
+                        <div class="scenario-option" data-scenario="rebalancing">
+                            <div class="scenario-option-header">
+                                <div class="scenario-icon rebalance">
+                                    <i class="fas fa-balance-scale"></i>
+                                </div>
+                            </div>
+                            <h3>Rebalancing Discussion</h3>
+                            <p class="scenario-description">Explain portfolio rebalancing benefits and address client concerns about selling winners.</p>
+                            <div class="scenario-details">
+                                <div class="detail-row">
+                                    <span class="detail-icon"><i class="fas fa-clock"></i></span>
+                                    <span>18-22 minutes</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-icon"><i class="fas fa-signal"></i></span>
+                                    <span>Intermediate Level</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-icon"><i class="fas fa-target"></i></span>
+                                    <span id="rebalance-focus">Focus: Portfolio strategy</span>
+                                </div>
+                            </div>
+                            <button class="scenario-start-btn" data-scenario="rebalancing">
+                                <i class="fas fa-play"></i>
+                                Start Training
+                            </button>
+                        </div>
+
+                        <div class="scenario-option advanced" data-scenario="performance-review">
+                            <div class="scenario-option-header">
+                                <div class="scenario-icon advanced">
+                                    <i class="fas fa-chart-line"></i>
+                                </div>
+                                <div class="scenario-badge advanced">Advanced</div>
+                            </div>
+                            <h3>Performance Review</h3>
+                            <p class="scenario-description">Conduct a comprehensive portfolio performance review with attribution analysis.</p>
+                            <div class="scenario-details">
+                                <div class="detail-row">
+                                    <span class="detail-icon"><i class="fas fa-clock"></i></span>
+                                    <span>25-30 minutes</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-icon"><i class="fas fa-signal"></i></span>
+                                    <span>Advanced Level</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-icon"><i class="fas fa-target"></i></span>
+                                    <span id="performance-focus">Focus: Performance analysis</span>
+                                </div>
+                            </div>
+                            <button class="scenario-start-btn" data-scenario="performance-review">
+                                <i class="fas fa-play"></i>
+                                Start Training
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Persona-Specific Recommendations -->
+                    <div class="persona-recommendations">
+                        <h3><i class="fas fa-lightbulb"></i> Recommended for <span id="recommendations-persona-name">Margaret Thompson</span></h3>
+                        <div class="recommendations-content" id="persona-recommendations">
+                            <!-- Content will be populated by JavaScript based on selected persona -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Active Training Interface (shown when scenario is running) -->
+                <div id="active-training" class="scenario-container" style="display: none;">
+                    <!-- Scenario Header -->
+                    <div class="scenario-header">
+                        <h2 id="scenario-title">Client Risk Discussion Training</h2>
+                        <button class="btn btn-outline" id="exit-scenario">
+                            <i class="fas fa-times"></i> Exit Training
+                        </button>
+                    </div>
+
+                    <!-- Training Guidance - Condensed -->
+                    <div class="training-guidance-compact">
+                        <div class="guidance-header">
+                            <h3><i class="fas fa-lightbulb"></i> Training Quick Guide</h3>
+                            <button class="guidance-toggle" id="guidance-toggle">
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="guidance-content" id="guidance-content">
+                            <div class="guidance-row">
+                                <!-- Learning Objectives -->
+                                <div class="guidance-section compact">
+                                    <h4><i class="fas fa-bullseye"></i> Objectives</h4>
+                                    <ul class="compact-list" id="scenario-objectives">
+                                        <!-- Will be populated by JavaScript -->
+                                    </ul>
+                                </div>
+
+                                <!-- How to Complete -->
+                                <div class="guidance-section compact">
+                                    <h4><i class="fas fa-tasks"></i> How to Complete</h4>
+                                    <p class="compact-instructions" id="completion-instructions">
+                                        <!-- Will be populated by JavaScript -->
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Practical Application -->
+                            <div class="guidance-section practical-application compact">
+                                <h4><i class="fas fa-phone"></i> Apply in Your Next Client Call</h4>
+                                <div class="application-content-compact" id="practical-application">
+                                    <!-- Will be populated by JavaScript -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Active Persona Card -->
+                    <div class="active-persona-card">
+                        <div class="persona-card-header">
+                            <div class="persona-card-avatar" id="persona-card-avatar">
+                                <i class="fas fa-user-circle"></i>
+                            </div>
+                            <div class="persona-card-info">
+                                <h3 id="persona-card-name">Margaret Thompson</h3>
+                                <p class="persona-card-type" id="persona-card-type">Conservative Portfolio Training</p>
+                            </div>
+                            <div class="persona-card-status">
+                                <span class="status-badge active">Active Persona</span>
+                            </div>
+                        </div>
+                        <div class="persona-card-details" id="persona-card-details">
+                            <div class="detail-item">
+                                <span class="detail-label">Age:</span>
+                                <span class="detail-value" id="persona-card-age">65</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Experience:</span>
+                                <span class="detail-value" id="persona-card-experience">Moderate</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Risk Tolerance:</span>
+                                <span class="detail-value" id="persona-card-risk">Conservative</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Portfolio Value:</span>
+                                <span class="detail-value" id="persona-card-value">$850,000</span>
+                            </div>
+                            <div class="detail-item full-width">
+                                <span class="detail-label">Objectives:</span>
+                                <span class="detail-value" id="persona-card-objectives">Income generation, capital preservation</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Client Profile -->
+                    <div class="client-profile">
+                        <h3><i class="fas fa-comments"></i> Conversation Context</h3>
+                        <div class="profile-details" id="client-details">
+                            <p><strong>You are practicing with:</strong> <span id="client-name">Margaret Thompson</span></p>
+                            <p><strong>Scenario Focus:</strong> Risk discussion and portfolio explanation</p>
+                            <p><strong>Your Role:</strong> Financial advisor providing compliant education</p>
+                            <p><strong>Remember:</strong> Focus on risk characteristics, not investment advice</p>
+                        </div>
+                    </div>
+
+                    <!-- Scenario Selection Bar -->
+                    <div class="scenario-selection-bar">
+                        <h3><i class="fas fa-exchange-alt"></i> Switch Training Scenario</h3>
+                        <div class="scenario-buttons">
+                            <button class="scenario-switch-btn active" data-scenario="basic">
+                                <div class="switch-btn-icon">
+                                    <i class="fas fa-graduation-cap"></i>
+                                </div>
+                                <div class="switch-btn-content">
+                                    <span class="switch-btn-title">Basic Risk Discussion</span>
+                                    <span class="switch-btn-meta">15-20 min • Beginner</span>
+                                </div>
+                                <div class="completion-indicator" style="display: none;">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                            </button>
+                            
+                            <button class="scenario-switch-btn" data-scenario="market-stress">
+                                <div class="switch-btn-icon stress">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                </div>
+                                <div class="switch-btn-content">
+                                    <span class="switch-btn-title">Market Stress Scenario</span>
+                                    <span class="switch-btn-meta">20-25 min • Intermediate</span>
+                                </div>
+                                <div class="completion-indicator" style="display: none;">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                            </button>
+                            
+                            <button class="scenario-switch-btn" data-scenario="rebalancing">
+                                <div class="switch-btn-icon rebalance">
+                                    <i class="fas fa-balance-scale"></i>
+                                </div>
+                                <div class="switch-btn-content">
+                                    <span class="switch-btn-title">Rebalancing Discussion</span>
+                                    <span class="switch-btn-meta">18-22 min • Intermediate</span>
+                                </div>
+                                <div class="completion-indicator" style="display: none;">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                            </button>
+                            
+                            <button class="scenario-switch-btn" data-scenario="performance-review">
+                                <div class="switch-btn-icon advanced">
+                                    <i class="fas fa-chart-line"></i>
+                                </div>
+                                <div class="switch-btn-content">
+                                    <span class="switch-btn-title">Performance Review</span>
+                                    <span class="switch-btn-meta">25-30 min • Advanced</span>
+                                </div>
+                                <div class="completion-indicator" style="display: none;">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Conversation Interface -->
+                    <div class="conversation-interface">
+                        <div class="conversation-panel">
+                            <h3><i class="fas fa-comments"></i> Client Conversation</h3>
+                            <div class="conversation-history" id="conversation-history">
+                                <!-- Conversation messages will be dynamically added here -->
+                            </div>
+                            <div class="response-options" id="response-options">
+                                <!-- Response options will be dynamically added here -->
+                            </div>
+                        </div>
+
+                        <!-- Real-time Coaching Panel -->
+                        <div class="coaching-panel">
+                            <h3><i class="fas fa-lightbulb"></i> Real-time Coaching</h3>
+                            <div class="coaching-content" id="coaching-content">
+                                <div class="coaching-tip">
+                                    <i class="fas fa-info-circle"></i>
+                                    <p>Remember to focus on risk characteristics rather than making predictions about future performance.</p>
+                                </div>
+                            </div>
+                            <div class="compliance-checker">
+                                <h4>Language Analysis</h4>
+                                <div class="compliance-status" id="compliance-status">
+                                    <span class="status-indicator good"></span>
+                                    <span>Compliant language detected</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- Portfolio Context -->
+                    <div class="portfolio-context">
+                        <h3><i class="fas fa-chart-pie"></i> Portfolio Context</h3>
+                        <div class="context-metrics" id="context-metrics">
+                            <!-- Portfolio-specific metrics for the scenario -->
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+
+            <!-- Progress View -->
+            <div id="progress-view" class="view">
+                <!-- Empty State (shown when no training completed) -->
+                <div id="progress-empty-state" class="progress-empty-state" style="display: none;">
+                    <div class="empty-state-content">
+                        <div class="empty-state-icon">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        <h2>Ready to Begin Your Training Journey?</h2>
+                        <p class="empty-state-subtitle">Start building your expertise in compliant client risk communication</p>
+                        
+                        <div class="training-benefits">
+                            <div class="benefit-item">
+                                <i class="fas fa-shield-alt"></i>
+                                <h4>Master Compliance Language</h4>
+                                <p>Learn to communicate risk information while staying within regulatory guidelines</p>
+                            </div>
+                            <div class="benefit-item">
+                                <i class="fas fa-users"></i>
+                                <h4>Practice Client Scenarios</h4>
+                                <p>Train with realistic client personas and portfolio situations</p>
+                            </div>
+                            <div class="benefit-item">
+                                <i class="fas fa-chart-line"></i>
+                                <h4>Track Your Progress</h4>
+                                <p>Monitor your compliance scores and completion rates over time</p>
+                            </div>
+                        </div>
+
+                        <div class="start-training-section">
+                            <h3>Choose Your Starting Point</h3>
+                            <p>Select a client persona to begin your training:</p>
+                            <div class="start-training-options">
+                                <div class="start-option" data-portfolio="conservative">
+                                    <div class="start-option-avatar conservative">
+                                        <i class="fas fa-user-circle"></i>
+                                    </div>
+                                    <h4>Margaret Thompson</h4>
+                                    <p>Conservative Portfolio</p>
+                                    <span class="recommended-badge">Recommended Start</span>
+                                    <button class="btn btn-primary start-training-btn" data-portfolio="conservative">
+                                        <i class="fas fa-play"></i>
+                                        Start Training
+                                    </button>
+                                </div>
+                                <div class="start-option" data-portfolio="balanced">
+                                    <div class="start-option-avatar balanced">
+                                        <i class="fas fa-user-circle"></i>
+                                    </div>
+                                    <h4>Robert Chen</h4>
+                                    <p>Balanced Portfolio</p>
+                                    <button class="btn btn-secondary start-training-btn" data-portfolio="balanced">
+                                        <i class="fas fa-play"></i>
+                                        Start Training
+                                    </button>
+                                </div>
+                                <div class="start-option" data-portfolio="aggressive">
+                                    <div class="start-option-avatar aggressive">
+                                        <i class="fas fa-user-circle"></i>
+                                    </div>
+                                    <h4>Sarah Martinez</h4>
+                                    <p>Growth Portfolio</p>
+                                    <button class="btn btn-secondary start-training-btn" data-portfolio="aggressive">
+                                        <i class="fas fa-play"></i>
+                                        Start Training
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Progress Content (shown when training has been completed) -->
+                <div id="progress-content" class="progress-container">
+                    <h2><i class="fas fa-chart-bar"></i> Training Progress</h2>
+                    
+                    <div class="progress-overview">
+                        <div class="progress-card">
+                            <h3>Overall Progress</h3>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 0%"></div>
+                            </div>
+                            <p>0% Complete (0 of 4 scenarios)</p>
+                        </div>
+
+                        <div class="progress-card">
+                            <h3>Compliance Score</h3>
+                            <div class="score-display">0%</div>
+                            <p>Average across all sessions</p>
+                        </div>
+
+                        <div class="progress-card">
+                            <h3>Time Spent</h3>
+                            <div class="time-display">0min</div>
+                            <p>Total training time</p>
+                        </div>
+                    </div>
+
+                    <div class="scenario-progress">
+                        <h3>Scenario Completion</h3>
+                        <div class="scenario-list">
+                            <!-- Will be populated by JavaScript -->
+                        </div>
+                    </div>
+
+                    <div class="continue-training">
+                        <h3><i class="fas fa-forward"></i> Continue Learning</h3>
+                        <p>Ready for your next training session?</p>
+                        <button class="btn btn-primary" onclick="showView('scenarios')">
+                            <i class="fas fa-graduation-cap"></i>
+                            Go to Training Scenarios
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
