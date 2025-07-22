@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial Portfolio Planner - Interactive Visualization</title>
+    <link rel="stylesheet" href="dashboard-styles.css">
+    <link rel="stylesheet" href="portfolio-planner-styles.css">
+</head>
+<body>
+    <div class="portfolio-container">
+        <!-- Header -->
+        <header class="portfolio-header">
+            <div class="header-content">
+                <div class="portfolio-title">
+                    <h1>Financial Portfolio Planner</h1>
+                    <p>Plan, visualize, and optimize your investment strategy</p>
+                </div>
+                <div class="portfolio-summary">
+                    <div class="summary-card">
+                        <div class="summary-value">$125,000</div>
+                        <div class="summary-label">Current Portfolio</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-value">8.2%</div>
+                        <div class="summary-label">Expected Return</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-value">Medium</div>
+                        <div class="summary-label">Risk Level</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Grid -->
+        <main class="portfolio-main">
+            <!-- Data Input Panel -->
+            <section class="input-panel">
+                <div class="panel-header">
+                    <h2>Portfolio Inputs</h2>
+                    <div class="panel-controls">
+                        <button class="control-btn" id="saveScenario">💾 Save Scenario</button>
+                        <button class="control-btn" id="loadScenario">📁 Load Scenario</button>
+                    </div>
+                </div>
+
+                <!-- Investment Allocation -->
+                <div class="input-section">
+                    <h3>Investment Allocation</h3>
+                    <div class="allocation-inputs">
+                        <div class="allocation-item">
+                            <label>Stocks</label>
+                            <div class="input-group">
+                                <input type="range" class="allocation-slider" min="0" max="100" value="60" data-asset="stocks">
+                                <input type="number" class="allocation-value" value="60" min="0" max="100">
+                                <span class="percentage">%</span>
+                            </div>
+                        </div>
+                        <div class="allocation-item">
+                            <label>Bonds</label>
+                            <div class="input-group">
+                                <input type="range" class="allocation-slider" min="0" max="100" value="25" data-asset="bonds">
+                                <input type="number" class="allocation-value" value="25" min="0" max="100">
+                                <span class="percentage">%</span>
+                            </div>
+                        </div>
+                        <div class="allocation-item">
+                            <label>Real Estate</label>
+                            <div class="input-group">
+                                <input type="range" class="allocation-slider" min="0" max="100" value="10" data-asset="realestate">
+                                <input type="number" class="allocation-value" value="10" min="0" max="100">
+                                <span class="percentage">%</span>
+                            </div>
+                        </div>
+                        <div class="allocation-item">
+                            <label>Cash</label>
+                            <div class="input-group">
+                                <input type="range" class="allocation-slider" min="0" max="100" value="5" data-asset="cash">
+                                <input type="number" class="allocation-value" value="5" min="0" max="100">
+                                <span class="percentage">%</span>
+                            </div>
+                        </div>
+                        <div class="allocation-total">
+                            Total: <span id="totalAllocation">100</span>%
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Financial Parameters -->
+                <div class="input-section">
+                    <h3>Financial Parameters</h3>
+                    <div class="parameter-inputs">
+                        <div class="parameter-item">
+                            <label for="initialInvestment">Initial Investment</label>
+                            <div class="input-with-prefix">
+                                <span class="prefix">$</span>
+                                <input type="number" id="initialInvestment" value="100000" step="1000">
+                            </div>
+                        </div>
+                        <div class="parameter-item">
+                            <label for="monthlyContribution">Monthly Contribution</label>
+                            <div class="input-with-prefix">
+                                <span class="prefix">$</span>
+                                <input type="number" id="monthlyContribution" value="1000" step="100">
+                            </div>
+                        </div>
+                        <div class="parameter-item">
+                            <label for="timeHorizon">Time Horizon</label>
+                            <div class="input-with-suffix">
+                                <input type="number" id="timeHorizon" value="20" min="1" max="50">
+                                <span class="suffix">years</span>
+                            </div>
+                        </div>
+                        <div class="parameter-item">
+                            <label for="riskTolerance">Risk Tolerance</label>
+                            <select id="riskTolerance">
+                                <option value="conservative">Conservative</option>
+                                <option value="moderate" selected>Moderate</option>
+                                <option value="aggressive">Aggressive</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Presets -->
+                <div class="input-section">
+                    <h3>Quick Presets</h3>
+                    <div class="preset-buttons">
+                        <button class="preset-btn" data-preset="conservative">Conservative</button>
+                        <button class="preset-btn active" data-preset="balanced">Balanced</button>
+                        <button class="preset-btn" data-preset="aggressive">Aggressive</button>
+                        <button class="preset-btn" data-preset="retirement">Retirement</button>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="input-actions">
+                    <button class="btn-primary full-width" id="updatePortfolio">Update Portfolio</button>
+                    <button class="btn-secondary full-width" id="resetInputs">Reset to Default</button>
+                </div>
+            </section>
+
+            <!-- Visualization Panel -->
+            <section class="visualization-panel">
+                <div class="panel-header">
+                    <h2>Portfolio Visualization</h2>
+                    <div class="chart-controls">
+                        <button class="chart-tab active" data-chart="allocation">Allocation</button>
+                        <button class="chart-tab" data-chart="growth">Growth</button>
+                        <button class="chart-tab" data-chart="comparison">Comparison</button>
+                    </div>
+                </div>
+
+                <!-- Allocation Chart -->
+                <div class="chart-container" id="allocationChart">
+                    <div class="chart-title">Current Portfolio Allocation</div>
+                    <div class="pie-chart">
+                        <svg viewBox="0 0 200 200" class="pie-svg">
+                            <!-- Stocks - 60% -->
+                            <circle cx="100" cy="100" r="80" fill="none" stroke="#2d3436" stroke-width="20" 
+                                    stroke-dasharray="301.6 502.7" stroke-dashoffset="0" transform="rotate(-90 100 100)"/>
+                            <!-- Bonds - 25% -->
+                            <circle cx="100" cy="100" r="80" fill="none" stroke="#636e72" stroke-width="20" 
+                                    stroke-dasharray="125.7 502.7" stroke-dashoffset="-301.6" transform="rotate(-90 100 100)"/>
+                            <!-- Real Estate - 10% -->
+                            <circle cx="100" cy="100" r="80" fill="none" stroke="#b2bec3" stroke-width="20" 
+                                    stroke-dasharray="62.8 502.7" stroke-dashoffset="-427.3" transform="rotate(-90 100 100)"/>
+                            <!-- Cash - 5% -->
+                            <circle cx="100" cy="100" r="80" fill="none" stroke="#ddd" stroke-width="20" 
+                                    stroke-dasharray="31.4 502.7" stroke-dashoffset="-490.1" transform="rotate(-90 100 100)"/>
+                        </svg>
+                        <div class="chart-legend">
+                            <div class="legend-item">
+                                <div class="legend-color stocks"></div>
+                                <span>Stocks (60%)</span>
+                                <span class="legend-value">$75,000</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color bonds"></div>
+                                <span>Bonds (25%)</span>
+                                <span class="legend-value">$31,250</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color realestate"></div>
+                                <span>Real Estate (10%)</span>
+                                <span class="legend-value">$12,500</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color cash"></div>
+                                <span>Cash (5%)</span>
+                                <span class="legend-value">$6,250</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Growth Projection Chart -->
+                <div class="chart-container hidden" id="growthChart">
+                    <div class="chart-title">Portfolio Growth Projection</div>
+                    <div class="line-chart">
+                        <div class="chart-area">
+                            <svg viewBox="0 0 400 200" class="growth-svg">
+                                <!-- Grid lines -->
+                                <defs>
+                                    <pattern id="grid" width="40" height="20" patternUnits="userSpaceOnUse">
+                                        <path d="M 40 0 L 0 0 0 20" fill="none" stroke="#f1f3f4" stroke-width="1"/>
+                                    </pattern>
+                                </defs>
+                                <rect width="400" height="200" fill="url(#grid)" />
+                                
+                                <!-- Your Portfolio Line -->
+                                <polyline points="0,150 40,145 80,135 120,125 160,110 200,95 240,80 280,65 320,50 360,35 400,20" 
+                                          stroke="#2d3436" stroke-width="3" fill="none"/>
+                                
+                                <!-- Benchmark Line -->
+                                <polyline points="0,150 40,148 80,142 120,138 160,130 200,122 240,115 280,105 320,95 360,85 400,75" 
+                                          stroke="#636e72" stroke-width="2" fill="none" stroke-dasharray="5,5"/>
+                                
+                                <!-- Data points -->
+                                <circle cx="400" cy="20" r="4" fill="#2d3436" class="data-point"/>
+                            </svg>
+                        </div>
+                        <div class="chart-axes">
+                            <div class="y-axis">
+                                <span>$800K</span>
+                                <span>$600K</span>
+                                <span>$400K</span>
+                                <span>$200K</span>
+                                <span>$0</span>
+                            </div>
+                            <div class="x-axis">
+                                <span>2025</span>
+                                <span>2030</span>
+                                <span>2035</span>
+                                <span>2040</span>
+                                <span>2045</span>
+                            </div>
+                        </div>
+                        <div class="chart-legend horizontal">
+                            <div class="legend-item">
+                                <div class="legend-line solid"></div>
+                                <span>Your Portfolio</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-line dashed"></div>
+                                <span>S&P 500 Benchmark</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Comparison Chart -->
+                <div class="chart-container hidden" id="comparisonChart">
+                    <div class="chart-title">Portfolio Scenarios Comparison</div>
+                    <div class="comparison-bars">
+                        <div class="scenario-bar">
+                            <div class="bar-label">Conservative</div>
+                            <div class="bar-visual">
+                                <div class="bar-fill conservative" style="width: 45%;"></div>
+                                <span class="bar-value">$425K</span>
+                            </div>
+                        </div>
+                        <div class="scenario-bar">
+                            <div class="bar-label">Your Portfolio</div>
+                            <div class="bar-visual">
+                                <div class="bar-fill current" style="width: 75%;"></div>
+                                <span class="bar-value">$685K</span>
+                            </div>
+                        </div>
+                        <div class="scenario-bar">
+                            <div class="bar-label">Aggressive</div>
+                            <div class="bar-visual">
+                                <div class="bar-fill aggressive" style="width: 95%;"></div>
+                                <span class="bar-value">$850K</span>
+                            </div>
+                        </div>
+                        <div class="scenario-bar">
+                            <div class="bar-label">Target Retirement</div>
+                            <div class="bar-visual">
+                                <div class="bar-fill target" style="width: 60%;"></div>
+                                <span class="bar-value">$500K</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Analysis Panel -->
+            <section class="analysis-panel">
+                <div class="panel-header">
+                    <h2>Portfolio Analysis</h2>
+                    <div class="analysis-controls">
+                        <button class="control-btn" id="exportAnalysis">📊 Export Report</button>
+                        <button class="control-btn" id="shareAnalysis">🔗 Share Analysis</button>
+                    </div>
+                </div>
+
+                <!-- Key Metrics -->
+                <div class="analysis-section">
+                    <h3>Key Metrics</h3>
+                    <div class="metrics-grid">
+                        <div class="metric-card">
+                            <div class="metric-icon">📈</div>
+                            <div class="metric-info">
+                                <div class="metric-value">8.2%</div>
+                                <div class="metric-label">Expected Annual Return</div>
+                            </div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-icon">⚠️</div>
+                            <div class="metric-info">
+                                <div class="metric-value">12.5%</div>
+                                <div class="metric-label">Portfolio Volatility</div>
+                            </div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-icon">🎯</div>
+                            <div class="metric-info">
+                                <div class="metric-value">0.65</div>
+                                <div class="metric-label">Sharpe Ratio</div>
+                            </div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-icon">💰</div>
+                            <div class="metric-info">
+                                <div class="metric-value">$685K</div>
+                                <div class="metric-label">Projected Value</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Risk Assessment -->
+                <div class="analysis-section">
+                    <h3>Risk Assessment</h3>
+                    <div class="risk-analysis">
+                        <div class="risk-gauge">
+                            <div class="gauge-container">
+                                <svg viewBox="0 0 200 100" class="gauge-svg">
+                                    <path d="M 20 80 A 80 80 0 0 1 180 80" stroke="#f1f3f4" stroke-width="10" fill="none"/>
+                                    <path d="M 20 80 A 80 80 0 0 1 120 45" stroke="#2d3436" stroke-width="10" fill="none"/>
+                                    <circle cx="100" cy="80" r="5" fill="#2d3436"/>
+                                </svg>
+                                <div class="gauge-label">Medium Risk</div>
+                            </div>
+                            <div class="gauge-scale">
+                                <span>Low</span>
+                                <span>Medium</span>
+                                <span>High</span>
+                            </div>
+                        </div>
+                        <div class="risk-details">
+                            <div class="risk-item">
+                                <span class="risk-factor">Market Risk:</span>
+                                <span class="risk-level medium">Medium</span>
+                            </div>
+                            <div class="risk-item">
+                                <span class="risk-factor">Inflation Risk:</span>
+                                <span class="risk-level low">Low</span>
+                            </div>
+                            <div class="risk-item">
+                                <span class="risk-factor">Concentration Risk:</span>
+                                <span class="risk-level low">Low</span>
+                            </div>
+                            <div class="risk-item">
+                                <span class="risk-factor">Liquidity Risk:</span>
+                                <span class="risk-level low">Low</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recommendations -->
+                <div class="analysis-section">
+                    <h3>AI-Powered Recommendations</h3>
+                    <div class="recommendations">
+                        <div class="recommendation-item positive">
+                            <div class="recommendation-icon">✅</div>
+                            <div class="recommendation-content">
+                                <div class="recommendation-title">Well-Diversified Portfolio</div>
+                                <div class="recommendation-text">Your allocation across multiple asset classes provides good risk distribution.</div>
+                            </div>
+                        </div>
+                        <div class="recommendation-item warning">
+                            <div class="recommendation-icon">⚠️</div>
+                            <div class="recommendation-content">
+                                <div class="recommendation-title">Consider International Exposure</div>
+                                <div class="recommendation-text">Adding 15-20% international stocks could further improve diversification and reduce correlation risk.</div>
+                            </div>
+                        </div>
+                        <div class="recommendation-item suggestion">
+                            <div class="recommendation-icon">💡</div>
+                            <div class="recommendation-content">
+                                <div class="recommendation-title">Rebalancing Strategy</div>
+                                <div class="recommendation-text">Set up quarterly rebalancing to maintain your target allocation as markets fluctuate.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Scenario Analysis -->
+                <div class="analysis-section">
+                    <h3>Scenario Analysis</h3>
+                    <div class="scenario-analysis">
+                        <div class="scenario-item">
+                            <div class="scenario-label">Bull Market (+20% annual returns)</div>
+                            <div class="scenario-result positive">$1.2M final value</div>
+                        </div>
+                        <div class="scenario-item">
+                            <div class="scenario-label">Base Case (8.2% annual returns)</div>
+                            <div class="scenario-result neutral">$685K final value</div>
+                        </div>
+                        <div class="scenario-item">
+                            <div class="scenario-label">Bear Market (-10% first 2 years)</div>
+                            <div class="scenario-result negative">$425K final value</div>
+                        </div>
+                        <div class="scenario-item">
+                            <div class="scenario-label">High Inflation (6% annually)</div>
+                            <div class="scenario-result negative">$485K real value</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // Portfolio interaction functionality
+        
+        // Allocation sliders
+        document.querySelectorAll('.allocation-slider').forEach(slider => {
+            const numberInput = slider.parentElement.querySelector('.allocation-value');
+            
+            slider.addEventListener('input', function() {
+                numberInput.value = this.value;
+                updateAllocation();
+                updateVisualizations();
+            });
+            
+            numberInput.addEventListener('input', function() {
+                slider.value = this.value;
+                updateAllocation();
+                updateVisualizations();
+            });
+        });
+
+        function updateAllocation() {
+            const sliders = document.querySelectorAll('.allocation-slider');
+            let total = 0;
+            sliders.forEach(slider => {
+                total += parseInt(slider.value);
+            });
+            document.getElementById('totalAllocation').textContent = total;
+            
+            // Update colors based on total
+            const totalElement = document.getElementById('totalAllocation');
+            totalElement.className = total === 100 ? 'valid' : 'invalid';
+        }
+
+        // Chart tabs
+        document.querySelectorAll('.chart-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.chart-tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                
+                document.querySelectorAll('.chart-container').forEach(container => {
+                    container.classList.add('hidden');
+                });
+                
+                const chartType = this.dataset.chart;
+                document.getElementById(chartType + 'Chart').classList.remove('hidden');
+            });
+        });
+
+        // Preset buttons
+        document.querySelectorAll('.preset-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                
+                const preset = this.dataset.preset;
+                applyPreset(preset);
+            });
+        });
+
+        function applyPreset(preset) {
+            const presets = {
+                conservative: { stocks: 30, bonds: 50, realestate: 15, cash: 5 },
+                balanced: { stocks: 60, bonds: 25, realestate: 10, cash: 5 },
+                aggressive: { stocks: 80, bonds: 10, realestate: 8, cash: 2 },
+                retirement: { stocks: 40, bonds: 45, realestate: 10, cash: 5 }
+            };
+            
+            const allocation = presets[preset];
+            if (allocation) {
+                Object.keys(allocation).forEach(asset => {
+                    const slider = document.querySelector(`[data-asset="${asset}"]`);
+                    const input = slider.parentElement.querySelector('.allocation-value');
+                    slider.value = allocation[asset];
+                    input.value = allocation[asset];
+                });
+                updateAllocation();
+                updateVisualizations();
+            }
+        }
+
+        function updateVisualizations() {
+            // Update pie chart
+            updatePieChart();
+            // Update metrics
+            updateMetrics();
+            // Update analysis
+            updateAnalysis();
+        }
+
+        function updatePieChart() {
+            const stocks = parseInt(document.querySelector('[data-asset="stocks"]').value);
+            const bonds = parseInt(document.querySelector('[data-asset="bonds"]').value);
+            const realestate = parseInt(document.querySelector('[data-asset="realestate"]').value);
+            const cash = parseInt(document.querySelector('[data-asset="cash"]').value);
+            
+            // Update legend values (assuming $125K total)
+            const total = 125000;
+            document.querySelector('.legend-item:nth-child(1) .legend-value').textContent = 
+                '$' + (total * stocks / 100).toLocaleString();
+            document.querySelector('.legend-item:nth-child(2) .legend-value').textContent = 
+                '$' + (total * bonds / 100).toLocaleString();
+            document.querySelector('.legend-item:nth-child(3) .legend-value').textContent = 
+                '$' + (total * realestate / 100).toLocaleString();
+            document.querySelector('.legend-item:nth-child(4) .legend-value').textContent = 
+                '$' + (total * cash / 100).toLocaleString();
+                
+            // Update legend percentages
+            document.querySelector('.legend-item:nth-child(1) span').textContent = `Stocks (${stocks}%)`;
+            document.querySelector('.legend-item:nth-child(2) span').textContent = `Bonds (${bonds}%)`;
+            document.querySelector('.legend-item:nth-child(3) span').textContent = `Real Estate (${realestate}%)`;
+            document.querySelector('.legend-item:nth-child(4) span').textContent = `Cash (${cash}%)`;
+        }
+
+        function updateMetrics() {
+            // Simulate metric calculations based on allocation
+            const stocks = parseInt(document.querySelector('[data-asset="stocks"]').value);
+            const expectedReturn = (stocks * 0.1 + (100 - stocks) * 0.05).toFixed(1);
+            document.querySelector('.metric-card:nth-child(1) .metric-value').textContent = expectedReturn + '%';
+        }
+
+        function updateAnalysis() {
+            // Update risk level based on stock allocation
+            const stocks = parseInt(document.querySelector('[data-asset="stocks"]').value);
+            let riskLevel = 'Low';
+            if (stocks > 40) riskLevel = 'Medium';
+            if (stocks > 70) riskLevel = 'High';
+            
+            document.querySelector('.gauge-label').textContent = riskLevel + ' Risk';
+        }
+
+        // Update portfolio button
+        document.getElementById('updatePortfolio').addEventListener('click', function() {
+            updateVisualizations();
+            // Show success message
+            this.textContent = '✅ Portfolio Updated';
+            setTimeout(() => {
+                this.textContent = 'Update Portfolio';
+            }, 2000);
+        });
+
+        // Reset inputs
+        document.getElementById('resetInputs').addEventListener('click', function() {
+            applyPreset('balanced');
+            document.querySelector('[data-preset="balanced"]').classList.add('active');
+        });
+
+        // Initialize
+        updateAllocation();
+        updateVisualizations();
+    </script>
+</body>
+</html>

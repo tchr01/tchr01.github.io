@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Case Study - Climate Change Impact</title>
+    <link rel="stylesheet" href="dashboard-styles.css">
+    <link rel="stylesheet" href="case-study-styles.css">
+</head>
+<body>
+    <div class="case-study-container">
+        <!-- Header with Progress -->
+        <header class="case-study-header">
+            <div class="header-content">
+                <div class="case-title">
+                    <h1>Climate Change Impact Analysis</h1>
+                    <p>Interactive Case Study • Environmental Science</p>
+                </div>
+                <div class="progress-section">
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 35%;"></div>
+                    </div>
+                    <span class="progress-text">3 of 8 sections completed</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Navigation Sidebar -->
+        <nav class="case-sidebar">
+            <div class="sidebar-content">
+                <h3>Case Study Sections</h3>
+                <div class="section-nav">
+                    <div class="nav-section completed">
+                        <div class="section-icon">✓</div>
+                        <div class="section-info">
+                            <span class="section-title">1. Introduction</span>
+                            <span class="section-type">Video + Text</span>
+                        </div>
+                    </div>
+                    <div class="nav-section completed">
+                        <div class="section-icon">✓</div>
+                        <div class="section-info">
+                            <span class="section-title">2. Historical Data</span>
+                            <span class="section-type">Interactive Charts</span>
+                        </div>
+                    </div>
+                    <div class="nav-section active">
+                        <div class="section-icon">3</div>
+                        <div class="section-info">
+                            <span class="section-title">3. Regional Impact</span>
+                            <span class="section-type">Maps + Images</span>
+                        </div>
+                    </div>
+                    <div class="nav-section">
+                        <div class="section-icon">4</div>
+                        <div class="section-info">
+                            <span class="section-title">4. Economic Effects</span>
+                            <span class="section-type">Interactive Model</span>
+                        </div>
+                    </div>
+                    <div class="nav-section">
+                        <div class="section-icon">5</div>
+                        <div class="section-info">
+                            <span class="section-title">5. Solutions</span>
+                            <span class="section-type">Video + Text</span>
+                        </div>
+                    </div>
+                    <div class="nav-section">
+                        <div class="section-icon">6</div>
+                        <div class="section-info">
+                            <span class="section-title">6. Case Examples</span>
+                            <span class="section-type">Image Gallery</span>
+                        </div>
+                    </div>
+                    <div class="nav-section">
+                        <div class="section-icon">7</div>
+                        <div class="section-info">
+                            <span class="section-title">7. Assessment</span>
+                            <span class="section-type">Interactive Quiz</span>
+                        </div>
+                    </div>
+                    <div class="nav-section">
+                        <div class="section-icon">8</div>
+                        <div class="section-info">
+                            <span class="section-title">8. Summary</span>
+                            <span class="section-type">Text + Resources</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="case-main">
+            <div class="content-header">
+                <div class="section-breadcrumb">
+                    <span>Section 3 of 8</span>
+                    <span>•</span>
+                    <span>Regional Impact Analysis</span>
+                </div>
+                <div class="content-controls">
+                    <button class="control-btn" id="toggleNotes">📝 Notes</button>
+                    <button class="control-btn" id="toggleBookmark">🔖 Bookmark</button>
+                    <button class="control-btn" id="shareSection">📤 Share</button>
+                </div>
+            </div>
+
+            <!-- Video Section -->
+            <section class="content-section">
+                <div class="section-header">
+                    <h2>📹 Regional Climate Patterns</h2>
+                    <div class="modality-indicator video">Video Content</div>
+                </div>
+                <div class="video-container">
+                    <div class="video-player">
+                        <div class="video-placeholder">
+                            <div class="play-button">▶</div>
+                            <p>Climate Change in North America</p>
+                            <span class="video-duration">Duration: 8:42</span>
+                        </div>
+                    </div>
+                    <div class="video-controls">
+                        <div class="playback-controls">
+                            <button class="control-btn small">⏮</button>
+                            <button class="control-btn small">⏸</button>
+                            <button class="control-btn small">⏭</button>
+                        </div>
+                        <div class="video-progress">
+                            <div class="progress-bar small">
+                                <div class="progress-fill" style="width: 45%;"></div>
+                            </div>
+                            <span class="time-display">3:54 / 8:42</span>
+                        </div>
+                        <div class="video-options">
+                            <button class="control-btn small">⚙️</button>
+                            <button class="control-btn small">📺</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Interactive Map Section -->
+            <section class="content-section">
+                <div class="section-header">
+                    <h2>🗺️ Interactive Impact Map</h2>
+                    <div class="modality-indicator interactive">Interactive</div>
+                </div>
+                <div class="map-container">
+                    <div class="map-controls">
+                        <div class="control-group">
+                            <label>Data Layer:</label>
+                            <select class="map-select">
+                                <option>Temperature Change</option>
+                                <option>Precipitation Patterns</option>
+                                <option>Sea Level Rise</option>
+                                <option>Extreme Weather Events</option>
+                            </select>
+                        </div>
+                        <div class="control-group">
+                            <label>Time Range:</label>
+                            <input type="range" class="time-slider" min="1980" max="2024" value="2020">
+                            <span class="time-value">2020</span>
+                        </div>
+                    </div>
+                    <div class="interactive-map">
+                        <div class="map-placeholder">
+                            <div class="map-regions">
+                                <div class="region northwest" data-temp="+2.1°C">NW</div>
+                                <div class="region northeast" data-temp="+1.8°C">NE</div>
+                                <div class="region southwest" data-temp="+2.5°C">SW</div>
+                                <div class="region southeast" data-temp="+1.9°C">SE</div>
+                            </div>
+                            <div class="map-legend">
+                                <div class="legend-title">Temperature Change</div>
+                                <div class="legend-scale">
+                                    <div class="legend-item">
+                                        <div class="color-box low"></div>
+                                        <span>+1.0°C</span>
+                                    </div>
+                                    <div class="legend-item">
+                                        <div class="color-box medium"></div>
+                                        <span>+2.0°C</span>
+                                    </div>
+                                    <div class="legend-item">
+                                        <div class="color-box high"></div>
+                                        <span>+3.0°C</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Text and Image Section -->
+            <section class="content-section">
+                <div class="section-header">
+                    <h2>📖 Regional Analysis</h2>
+                    <div class="modality-indicator text">Text + Images</div>
+                </div>
+                <div class="text-content">
+                    <div class="content-column">
+                        <p><strong>Pacific Northwest:</strong> The Pacific Northwest has experienced significant temperature increases, with average temperatures rising by 2.1°C since 1980. This warming trend has led to earlier snowmelt, reduced snowpack, and increased wildfire activity.</p>
+                        
+                        <p>Key impacts include:</p>
+                        <ul>
+                            <li>30% reduction in snowpack by mid-century projections</li>
+                            <li>Extended fire seasons lasting 2-3 months longer</li>
+                            <li>Shifts in precipitation patterns affecting agriculture</li>
+                            <li>Ocean acidification threatening marine ecosystems</li>
+                        </ul>
+
+                        <div class="callout-box">
+                            <div class="callout-icon">💡</div>
+                            <div class="callout-content">
+                                <strong>Did you know?</strong> The Pacific Northwest has warmed twice as fast as the global average, with urban areas experiencing even greater temperature increases due to the heat island effect.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="image-column">
+                        <div class="image-gallery">
+                            <div class="image-card active">
+                                <div class="image-placeholder">
+                                    <span>🏔️</span>
+                                    <p>Glacier Retreat</p>
+                                </div>
+                                <div class="image-caption">Mount Rainier glacier retreat comparison (1980 vs 2020)</div>
+                            </div>
+                            <div class="image-thumbnails">
+                                <div class="thumbnail active">🏔️</div>
+                                <div class="thumbnail">🔥</div>
+                                <div class="thumbnail">🌊</div>
+                                <div class="thumbnail">🌾</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Interactive Chart Section -->
+            <section class="content-section">
+                <div class="section-header">
+                    <h2>📊 Temperature Trends</h2>
+                    <div class="modality-indicator chart">Interactive Chart</div>
+                </div>
+                <div class="chart-container">
+                    <div class="chart-controls">
+                        <div class="chart-options">
+                            <button class="chart-btn active" data-chart="temperature">Temperature</button>
+                            <button class="chart-btn" data-chart="precipitation">Precipitation</button>
+                            <button class="chart-btn" data-chart="events">Extreme Events</button>
+                        </div>
+                        <div class="chart-settings">
+                            <label>
+                                <input type="checkbox" checked> Show Trend Line
+                            </label>
+                            <label>
+                                <input type="checkbox"> Show Projections
+                            </label>
+                        </div>
+                    </div>
+                    <div class="interactive-chart">
+                        <div class="chart-placeholder">
+                            <div class="chart-grid">
+                                <div class="y-axis">
+                                    <span>3.0°C</span>
+                                    <span>2.0°C</span>
+                                    <span>1.0°C</span>
+                                    <span>0.0°C</span>
+                                </div>
+                                <div class="chart-area">
+                                    <svg class="chart-svg" viewBox="0 0 300 150">
+                                        <polyline points="0,120 50,115 100,105 150,95 200,85 250,75 300,65" 
+                                                  stroke="#636e72" stroke-width="2" fill="none"/>
+                                        <circle cx="200" cy="85" r="4" fill="#2d3436" class="data-point active"/>
+                                    </svg>
+                                </div>
+                                <div class="x-axis">
+                                    <span>1980</span>
+                                    <span>1990</span>
+                                    <span>2000</span>
+                                    <span>2010</span>
+                                    <span>2020</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="chart-tooltip">
+                            <strong>2010:</strong> +1.8°C above baseline
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Navigation Footer -->
+            <div class="content-navigation">
+                <button class="nav-btn secondary">← Previous: Historical Data</button>
+                <div class="section-info">
+                    <span>Section 3 of 8</span>
+                </div>
+                <button class="nav-btn primary">Next: Economic Effects →</button>
+            </div>
+        </main>
+
+        <!-- Notes Sidebar (Hidden by default) -->
+        <aside class="notes-sidebar" id="notesSidebar">
+            <div class="notes-header">
+                <h3>Your Notes</h3>
+                <button class="close-btn" onclick="toggleNotes()">✕</button>
+            </div>
+            <div class="notes-content">
+                <div class="note-item">
+                    <div class="note-timestamp">Section 2 • 2 min ago</div>
+                    <div class="note-text">Important trend: Temperature increase accelerated after 2000</div>
+                </div>
+                <div class="note-item">
+                    <div class="note-timestamp">Section 1 • 5 min ago</div>
+                    <div class="note-text">Key term: Anthropogenic climate change</div>
+                </div>
+                <div class="notes-input">
+                    <textarea placeholder="Add a note about this section..."></textarea>
+                    <button class="add-note-btn">Add Note</button>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <script>
+        // Interactive functionality
+        
+        // Navigation
+        document.querySelectorAll('.nav-section').forEach(section => {
+            section.addEventListener('click', function() {
+                if (!this.classList.contains('completed') && !this.classList.contains('active')) {
+                    return; // Locked sections
+                }
+                document.querySelector('.nav-section.active').classList.remove('active');
+                this.classList.add('active');
+                // Update main content based on selection
+            });
+        });
+
+        // Video controls
+        document.querySelector('.video-placeholder').addEventListener('click', function() {
+            this.innerHTML = '<div class="playing-indicator">⏸ Playing...</div>';
+        });
+
+        // Map interactions
+        document.querySelectorAll('.region').forEach(region => {
+            region.addEventListener('mouseenter', function() {
+                const tooltip = document.createElement('div');
+                tooltip.className = 'region-tooltip';
+                tooltip.textContent = this.dataset.temp;
+                document.body.appendChild(tooltip);
+                
+                const rect = this.getBoundingClientRect();
+                tooltip.style.left = rect.left + 'px';
+                tooltip.style.top = rect.top - 30 + 'px';
+            });
+            
+            region.addEventListener('mouseleave', function() {
+                const tooltip = document.querySelector('.region-tooltip');
+                if (tooltip) tooltip.remove();
+            });
+        });
+
+        // Chart interactions
+        document.querySelectorAll('.chart-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelector('.chart-btn.active').classList.remove('active');
+                this.classList.add('active');
+                // Update chart data
+            });
+        });
+
+        // Time slider
+        document.querySelector('.time-slider').addEventListener('input', function() {
+            document.querySelector('.time-value').textContent = this.value;
+        });
+
+        // Image gallery
+        document.querySelectorAll('.thumbnail').forEach(thumb => {
+            thumb.addEventListener('click', function() {
+                document.querySelector('.thumbnail.active').classList.remove('active');
+                this.classList.add('active');
+                // Update main image
+            });
+        });
+
+        // Notes functionality
+        function toggleNotes() {
+            const sidebar = document.getElementById('notesSidebar');
+            sidebar.classList.toggle('visible');
+        }
+
+        document.getElementById('toggleNotes').addEventListener('click', toggleNotes);
+
+        // Bookmark functionality
+        document.getElementById('toggleBookmark').addEventListener('click', function() {
+            this.classList.toggle('active');
+            this.textContent = this.classList.contains('active') ? '🔖 Bookmarked' : '🔖 Bookmark';
+        });
+
+        // Progress tracking simulation
+        function updateProgress() {
+            // This would typically track user interaction and update progress accordingly
+            console.log('Progress tracking active');
+        }
+
+        updateProgress();
+    </script>
+</body>
+</html>

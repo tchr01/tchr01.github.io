@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Management Dashboard - Wireframe</title>
+    <link rel="stylesheet" href="dashboard-styles.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Navigation Sidebar -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <h1>ProjectPro</h1>
+            </div>
+            <div class="nav-menu">
+                <div class="nav-item active">📊 Dashboard</div>
+                <div class="nav-item">📋 Projects</div>
+                <div class="nav-item">✅ Tasks</div>
+                <div class="nav-item">👥 Team</div>
+                <div class="nav-item">📈 Reports</div>
+                <div class="nav-item">📅 Calendar</div>
+                <div class="nav-item">💬 Messages</div>
+                <div class="nav-item">⚙️ Settings</div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header with User Profile -->
+            <header class="header">
+                <h2>Dashboard Overview</h2>
+                <div class="user-profile" onclick="toggleDropdown()">
+                    <div class="user-avatar">JD</div>
+                    <span class="user-name">John Doe</span>
+                    <span class="dropdown-arrow">▼</span>
+                    <div class="dropdown-menu" id="userDropdown">
+                        <div class="dropdown-item">👤 Profile</div>
+                        <div class="dropdown-item">⚙️ Account Settings</div>
+                        <div class="dropdown-item">🔔 Notifications</div>
+                        <div class="dropdown-item">❓ Help & Support</div>
+                        <div class="dropdown-item">🚪 Sign Out</div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content Area -->
+            <div class="content">
+                <!-- Metrics Cards Section -->
+                <section class="metrics-section">
+                    <h3 class="section-title">Key Metrics</h3>
+                    <div class="metrics-grid">
+                        <div class="metric-card">
+                            <div class="metric-value">24</div>
+                            <div class="metric-label">Active Projects</div>
+                            <div class="metric-change">+3 from last month</div>
+                        </div>
+                        <div class="metric-card light">
+                            <div class="metric-value">156</div>
+                            <div class="metric-label">Completed Tasks</div>
+                            <div class="metric-change positive">+12% this week</div>
+                        </div>
+                        <div class="metric-card medium">
+                            <div class="metric-value">8</div>
+                            <div class="metric-label">Overdue Tasks</div>
+                            <div class="metric-change negative">+2 since yesterday</div>
+                        </div>
+                        <div class="metric-card dark">
+                            <div class="metric-value">73%</div>
+                            <div class="metric-label">Team Productivity</div>
+                            <div class="metric-change negative">-5% from last week</div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Task List Section -->
+                <section class="task-section">
+                    <div class="task-header">
+                        <h3 class="section-title">Recent Tasks</h3>
+                        <div class="task-filters">
+                            <button class="filter-btn active">All</button>
+                            <button class="filter-btn">In Progress</button>
+                            <button class="filter-btn">Completed</button>
+                            <button class="filter-btn">Overdue</button>
+                        </div>
+                    </div>
+                    <div class="task-list">
+                        <div class="task-item">
+                            <div class="task-info">
+                                <input type="checkbox" class="task-checkbox">
+                                <div class="task-details">
+                                    <div class="task-title">Update user authentication system</div>
+                                    <div class="task-meta">Due: Today • Project: WebApp Redesign</div>
+                                </div>
+                            </div>
+                            <span class="task-priority priority-high">High</span>
+                            <div class="task-assignee">AM</div>
+                        </div>
+                        <div class="task-item">
+                            <div class="task-info">
+                                <input type="checkbox" class="task-checkbox">
+                                <div class="task-details">
+                                    <div class="task-title">Design new landing page mockups</div>
+                                    <div class="task-meta">Due: Tomorrow • Project: Marketing Site</div>
+                                </div>
+                            </div>
+                            <span class="task-priority priority-medium">Medium</span>
+                            <div class="task-assignee">SL</div>
+                        </div>
+                        <div class="task-item">
+                            <div class="task-info">
+                                <input type="checkbox" class="task-checkbox" checked>
+                                <div class="task-details">
+                                    <div class="task-title">Code review for payment integration</div>
+                                    <div class="task-meta">Completed • Project: E-commerce Platform</div>
+                                </div>
+                            </div>
+                            <span class="task-priority priority-low">Low</span>
+                            <div class="task-assignee">RK</div>
+                        </div>
+                        <div class="task-item">
+                            <div class="task-info">
+                                <input type="checkbox" class="task-checkbox">
+                                <div class="task-details">
+                                    <div class="task-title">Setup CI/CD pipeline for staging environment</div>
+                                    <div class="task-meta">Due: Next week • Project: DevOps Infrastructure</div>
+                                </div>
+                            </div>
+                            <span class="task-priority priority-medium">Medium</span>
+                            <div class="task-assignee">TC</div>
+                        </div>
+                        <div class="task-item">
+                            <div class="task-info">
+                                <input type="checkbox" class="task-checkbox">
+                                <div class="task-details">
+                                    <div class="task-title">Conduct user testing sessions</div>
+                                    <div class="task-meta">Due: Friday • Project: Mobile App</div>
+                                </div>
+                            </div>
+                            <span class="task-priority priority-high">High</span>
+                            <div class="task-assignee">JD</div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function toggleDropdown() {
+            const dropdown = document.getElementById('userDropdown');
+            dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+        }
+
+        // Close dropdown when clicking outside
+        window.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('userDropdown');
+            const userProfile = document.querySelector('.user-profile');
+            
+            if (!userProfile.contains(event.target)) {
+                dropdown.style.display = 'none';
+            }
+        });
+
+        // Task filter functionality
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                // Filter logic would go here
+            });
+        });
+    </script>
+</body>
+</html>
