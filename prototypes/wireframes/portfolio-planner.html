@@ -13,7 +13,10 @@
         <header class="portfolio-header">
             <div class="header-content">
                 <div class="portfolio-title">
-                    <h1>Financial Portfolio Planner</h1>
+                    <div class="portfolio-title-top">
+                        <img src="https://www.fidelity.ca/etc.clientlibs/fidelity/common/clientlibs/clientlib-site/resources/images/logo2.png" alt="Fidelity" class="client-logo">
+                        <h1>Financial Portfolio Planner</h1>
+                    </div>
                     <p>Plan, visualize, and optimize your investment strategy</p>
                 </div>
                 <div class="portfolio-summary">
@@ -337,11 +340,10 @@
                     <div class="risk-analysis">
                         <div class="risk-gauge">
                             <div class="gauge-container">
-                                <svg viewBox="0 0 200 100" class="gauge-svg">
-                                    <path d="M 20 80 A 80 80 0 0 1 180 80" stroke="#f1f3f4" stroke-width="10" fill="none"/>
-                                    <path d="M 20 80 A 80 80 0 0 1 120 45" stroke="#2d3436" stroke-width="10" fill="none"/>
-                                    <circle cx="100" cy="80" r="5" fill="#2d3436"/>
-                                </svg>
+                                <div class="gauge-background"></div>
+                                <div class="gauge-fill" id="gaugeFill"></div>
+                                <div class="gauge-needle" id="gaugeNeedle"></div>
+                                <div class="gauge-center"></div>
                                 <div class="gauge-label">Medium Risk</div>
                             </div>
                             <div class="gauge-scale">
@@ -433,17 +435,46 @@
             const numberInput = slider.parentElement.querySelector('.allocation-value');
             
             slider.addEventListener('input', function() {
-                numberInput.value = this.value;
-                updateAllocation();
-                updateVisualizations();
+                const newValue = parseInt(this.value);
+                if (validateAllocation(slider, newValue)) {
+                    numberInput.value = newValue;
+                    updateAllocation();
+                    updateVisualizations();
+                } else {
+                    // Revert to previous valid value
+                    this.value = numberInput.value;
+                }
             });
             
             numberInput.addEventListener('input', function() {
-                slider.value = this.value;
-                updateAllocation();
-                updateVisualizations();
+                const newValue = parseInt(this.value);
+                if (validateAllocation(slider, newValue)) {
+                    slider.value = newValue;
+                    updateAllocation();
+                    updateVisualizations();
+                } else {
+                    // Revert to previous valid value
+                    this.value = slider.value;
+                }
             });
         });
+
+        function validateAllocation(changedSlider, newValue) {
+            // Calculate what total would be with this change
+            const sliders = document.querySelectorAll('.allocation-slider');
+            let total = 0;
+            
+            sliders.forEach(slider => {
+                if (slider === changedSlider) {
+                    total += newValue;
+                } else {
+                    total += parseInt(slider.value);
+                }
+            });
+            
+            // Only allow changes that keep total <= 100%
+            return total <= 100;
+        }
 
         function updateAllocation() {
             const sliders = document.querySelectorAll('.allocation-slider');
@@ -520,6 +551,38 @@
             const realestate = parseInt(document.querySelector('[data-asset="realestate"]').value);
             const cash = parseInt(document.querySelector('[data-asset="cash"]').value);
             
+            // Calculate angles for pie chart (360 degrees total)
+            const stocksAngle = (stocks / 100) * 360;
+            const bondsAngle = (bonds / 100) * 360;
+            const realestateAngle = (realestate / 100) * 360;
+            const cashAngle = (cash / 100) * 360;
+            
+            // Update SVG pie chart segments
+            const circumference = 2 * Math.PI * 80; // radius = 80
+            const stocksLength = (stocks / 100) * circumference;
+            const bondsLength = (bonds / 100) * circumference;
+            const realestateLength = (realestate / 100) * circumference;
+            const cashLength = (cash / 100) * circumference;
+            
+            // Get the circle elements
+            const circles = document.querySelectorAll('.pie-svg circle');
+            
+            // Update stocks segment
+            circles[0].setAttribute('stroke-dasharray', `${stocksLength} ${circumference}`);
+            circles[0].setAttribute('stroke-dashoffset', '0');
+            
+            // Update bonds segment
+            circles[1].setAttribute('stroke-dasharray', `${bondsLength} ${circumference}`);
+            circles[1].setAttribute('stroke-dashoffset', `-${stocksLength}`);
+            
+            // Update real estate segment
+            circles[2].setAttribute('stroke-dasharray', `${realestateLength} ${circumference}`);
+            circles[2].setAttribute('stroke-dashoffset', `-${stocksLength + bondsLength}`);
+            
+            // Update cash segment
+            circles[3].setAttribute('stroke-dasharray', `${cashLength} ${circumference}`);
+            circles[3].setAttribute('stroke-dashoffset', `-${stocksLength + bondsLength + realestateLength}`);
+            
             // Update legend values (assuming $125K total)
             const total = 125000;
             document.querySelector('.legend-item:nth-child(1) .legend-value').textContent = 
@@ -541,18 +604,95 @@
         function updateMetrics() {
             // Simulate metric calculations based on allocation
             const stocks = parseInt(document.querySelector('[data-asset="stocks"]').value);
-            const expectedReturn = (stocks * 0.1 + (100 - stocks) * 0.05).toFixed(1);
+            const bonds = parseInt(document.querySelector('[data-asset="bonds"]').value);
+            const realestate = parseInt(document.querySelector('[data-asset="realestate"]').value);
+            const cash = parseInt(document.querySelector('[data-asset="cash"]').value);
+            
+            // Calculate expected return based on asset allocation
+            const expectedReturn = (
+                (stocks / 100) * 10.0 +    // Stocks: 10% return
+                (bonds / 100) * 4.0 +      // Bonds: 4% return  
+                (realestate / 100) * 7.0 + // Real Estate: 7% return
+                (cash / 100) * 1.0         // Cash: 1% return
+            ).toFixed(1);
+            
+            // Calculate portfolio volatility
+            const volatility = (
+                (stocks / 100) * 16.0 +    // Stocks: 16% volatility
+                (bonds / 100) * 5.0 +      // Bonds: 5% volatility
+                (realestate / 100) * 12.0 + // Real Estate: 12% volatility
+                (cash / 100) * 0.5         // Cash: 0.5% volatility
+            ).toFixed(1);
+            
+            // Calculate Sharpe ratio (simplified)
+            const sharpeRatio = (expectedReturn / volatility).toFixed(2);
+            
+            // Calculate projected value (20 years, $1000/month contributions)
+            const monthlyRate = expectedReturn / 100 / 12;
+            const months = 20 * 12;
+            const initialInvestment = parseInt(document.getElementById('initialInvestment').value) || 100000;
+            const monthlyContribution = parseInt(document.getElementById('monthlyContribution').value) || 1000;
+            
+            const futureValue = initialInvestment * Math.pow(1 + monthlyRate, months) + 
+                               monthlyContribution * ((Math.pow(1 + monthlyRate, months) - 1) / monthlyRate);
+            
+            // Update metric displays
             document.querySelector('.metric-card:nth-child(1) .metric-value').textContent = expectedReturn + '%';
+            document.querySelector('.metric-card:nth-child(2) .metric-value').textContent = volatility + '%';
+            document.querySelector('.metric-card:nth-child(3) .metric-value').textContent = sharpeRatio;
+            document.querySelector('.metric-card:nth-child(4) .metric-value').textContent = '$' + Math.round(futureValue / 1000) + 'K';
+            
+            // Update header summary
+            document.querySelector('.summary-card:nth-child(2) .summary-value').textContent = expectedReturn + '%';
         }
 
         function updateAnalysis() {
             // Update risk level based on stock allocation
             const stocks = parseInt(document.querySelector('[data-asset="stocks"]').value);
             let riskLevel = 'Low';
-            if (stocks > 40) riskLevel = 'Medium';
-            if (stocks > 70) riskLevel = 'High';
+            let gaugeRotation = 20; // Starting angle
+            
+            if (stocks <= 40) {
+                riskLevel = 'Low';
+                gaugeRotation = 20;
+            } else if (stocks <= 70) {
+                riskLevel = 'Medium';
+                gaugeRotation = 60;
+            } else {
+                riskLevel = 'High';
+                gaugeRotation = 100;
+            }
+            
+            // Update gauge using CSS transforms (much more reliable than SVG)
+            // Convert stock percentage to rotation angle (-90° to 90°)
+            const angle = -90 + (stocks / 100) * 180; // Left (-90°) to Right (90°)
+            
+            // Update needle rotation
+            const needle = document.getElementById('gaugeNeedle');
+            needle.style.transform = `rotate(${angle}deg)`;
+            
+            // Update arc fill (0% to 100% based on stocks)
+            const fillPercentage = stocks;
+            const fill = document.getElementById('gaugeFill');
+            
+            // Create conic gradient based on fill percentage
+            const fillAngle = (fillPercentage / 100) * 180; // 0° to 180°
+            fill.style.background = `conic-gradient(from 180deg, #636e72 0deg ${fillAngle}deg, transparent ${fillAngle}deg 180deg)`;
             
             document.querySelector('.gauge-label').textContent = riskLevel + ' Risk';
+            
+            // Update header summary
+            document.querySelector('.summary-card:nth-child(3) .summary-value').textContent = riskLevel;
+            
+            // Update comparison chart bars based on current allocation
+            const currentBar = document.querySelector('.bar-fill.current');
+            const expectedReturn = parseFloat(document.querySelector('.metric-card:nth-child(1) .metric-value').textContent);
+            const barWidth = Math.min((expectedReturn / 10) * 95, 95); // Scale to chart
+            currentBar.style.width = barWidth + '%';
+            
+            // Update bar value
+            const projectedValue = document.querySelector('.metric-card:nth-child(4) .metric-value').textContent;
+            document.querySelector('.scenario-bar:nth-child(2) .bar-value').textContent = projectedValue;
         }
 
         // Update portfolio button

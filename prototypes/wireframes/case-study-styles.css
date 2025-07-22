@@ -28,10 +28,17 @@
     margin: 0 auto;
 }
 
+.case-title-top {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 5px;
+}
+
 .case-title h1 {
     font-size: 24px;
     font-weight: 600;
-    margin-bottom: 5px;
+    margin: 0;
 }
 
 .case-title p {
