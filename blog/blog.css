@@ -283,3 +283,31 @@ blockquote::before {
     top: -10px;
     opacity: 0.2;
 }
+
+.stat-callout {
+    text-align: center;
+    border: none;
+    background: #000000;
+    border-radius: 12px;
+    padding: 30px 20px;
+    margin: 30px 0;
+}
+
+.stat-callout::before {
+    display: none;
+}
+
+.big-number {
+    font-size: 4rem;
+    font-weight: bold;
+    color: #dc187a;
+    line-height: 1;
+    margin-bottom: 10px;
+}
+
+.stat-text {
+    font-size: 1.1rem;
+    color: #ffffff;
+    font-style: normal;
+    line-height: 1.4;
+}
