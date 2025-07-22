@@ -27,18 +27,10 @@ body {
     text-align: center;
 }
 
-.gallery-title-top {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 20px;
-    margin-bottom: 15px;
-}
-
 .header-content h1 {
     font-size: 48px;
     font-weight: bold;
-    margin: 0;
+    margin-bottom: 15px;
     letter-spacing: -1px;
 }
 
@@ -47,12 +39,6 @@ body {
     opacity: 0.9;
     max-width: 600px;
     margin: 0 auto;
-}
-
-.client-logo {
-    height: 40px;
-    width: auto;
-    filter: brightness(0) invert(1);
 }
 
 /* Main Content */
