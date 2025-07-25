@@ -51,6 +51,7 @@
         String[] movieTitles = {};
         String[] movieGenres = {};
         float[] movieRatings = {};
+        String[] designProblems = {};
         color[] movieColors = {};
         float[] movieAngles = {};
         float[] movieRadii = {};
@@ -80,7 +81,7 @@
         void setup() {
             size(1200, 700);
             centerX = width / 2;
-            centerY = height / 2;
+            centerY = height / 3;
             
             if (!dataInitialized && numMovies == 0) {
                 loadPhysicalMovies();
@@ -179,11 +180,156 @@
                 "Action", "Romance", "Crime", "Drama", "Horror", "Action", "Comedy", "Comedy", 
                 "Drama", "Crime", "Romance", "Drama", "Horror"
             };
+            
+            String[] designProblems = {
+                // Authentic design problems based on actual on-screen interfaces and technology shown in each film
+                "HAL 9000 computer interface and space station life support systems",
+                "Medical memory disorder tracking charts and video diary playback systems", 
+                "WWII-era steamboat navigation instruments and Belgian Congo river charts",
+                "David's behavioral programming interface and robotic consciousness displays",
+                "Air Force One communication systems and presidential security protocols",
+                "Rock journalism interview recording equipment and backstage access management",
+                "Prison white supremacist literature distribution and correctional facility monitoring",
+                "Zoo animal behavior research documentation and veterinary care scheduling",
+                "NFL team statistics tracking and professional sports broadcast coordination",
+                "Atlantean trident technology interface and underwater kingdom power grids",
+                "Obsessive-compulsive restaurant table arrangement and psychiatric care coordination",
+                "International Man of Mystery gadget activation and spy communication devices",
+                "S.H.I.E.L.D. helicarrier control systems and superhero team coordination interfaces",
+                "Baby genius intelligence testing equipment and daycare surveillance systems",
+                "Gotham City crime-fighting technology and Batcave computer mainframe",
+                "Beachfront property management and terminal illness care coordination",
+                "Dog show competition judging scorecards and canine training documentation",
+                "FAO Schwarz toy store inventory and giant piano performance systems",
+                "Elementary school administrative records and academic performance tracking",
+                "Divine intervention prayer management and miracle request processing systems",
+                "Cape Fear psychological thriller stalking coordination and legal restraining order processing",
+                "Somali pirate maritime hijacking communication and naval rescue coordination",
+                "Caribbean cruise ship entertainment scheduling and passenger safety protocols",
+                "Casablanca resistance movement coordination and wartime refugee documentation",
+                "Las Vegas casino surveillance systems and organized crime money laundering tracking",
+                "FedEx package tracking systems and survival resource management on deserted island",
+                "FBI psychological profiling laboratory and serial killer investigation databases",
+                "Action movie explosive device timing systems and high-speed chase coordination",
+                "Angel-human communication interface and divine intervention scheduling systems",
+                "Martin Short comedy character behavior analysis and entertainment industry booking",
+                "Disney-Pixar animation studio rendering systems and family-friendly content management",
+                "Steven Spielberg period drama cinematography and historical accuracy research coordination",
+                "SETI radio telescope interface and extraterrestrial signal decoding displays",
+                "Coyote Ugly bar entertainment scheduling and mechanical bull safety monitoring",
+                "Olympic figure skating competition scoring and ice rink maintenance scheduling",
+                "Inner-city school educational resource allocation and student mentorship tracking",
+                "Tunnel collapse emergency response coordination and survival equipment deployment",
+                "1951 sci-fi alien visitor communication protocols and government response management",
+                "Prep school English literature curriculum and inspirational teaching methodology tracking",
+                "Marvel Comics antihero healing factor monitoring and fourth-wall-breaking interface design",
+                "Asteroid impact early warning systems and global evacuation coordination protocols",
+                "Fugitive tracking database and law enforcement manhunt coordination systems",
+                "Romance comedy dating mishap coordination and relationship counseling scheduling",
+                "1930s Jekyll and Hyde transformation monitoring and Victorian-era medical documentation",
+                "Stand-up comedy performance scheduling and television special production coordination",
+                "Apocalyptic demon invasion response and religious artifact authentication systems",
+                // Movies 47-100 authentic design problems
+                "Legal case research database and environmental activism documentation systems",
+                "E.T. alien communication device and government quarantine facility monitoring",
+                "Medieval fairy tale ballroom event coordination and royal court etiquette management",
+                "Baseball field maintenance scheduling and father-son relationship counseling coordination",
+                "Futuristic taxi dispatch system and alien weapon technology interface design",
+                "Disney time-travel spacecraft navigation and 1980s suburban family coordination",
+                "Flintstones prehistoric civilization infrastructure and Stone Age technology management",
+                "Vietnam War documentary footage analysis and American disability advocacy coordination",
+                "Parisian thriller kidnapping investigation and international pharmaceutical research tracking",
+                "Body-switching magic spell coordination and family dysfunction therapy scheduling",
+                "Southern recipe documentation and female friendship support group coordination",
+                "U.S. Marshals fugitive tracking and one-armed man investigation database",
+                "Star Trek parody adventure coordination and sci-fi convention fan management",
+                "Jungle adventure comedy coordination and corporate environmental destruction documentation",
+                "Romantic supernatural pottery class scheduling and afterlife communication protocols",
+                "Mafia family business coordination and Italian-American cultural tradition documentation",
+                "Civil War epic battlefield strategy and Atlanta burning historical accuracy research",
+                "Organized crime documentary coordination and Las Vegas casino operation management",
+                "Death row inmate supernatural ability monitoring and prison guard shift scheduling",
+                "Stoner comedy marijuana cultivation and roommate dysfunction coordination",
+                "Golf tournament anger management and sports psychology therapy scheduling",
+                "Disaster movie flood survival coordination and small-town emergency response protocols",
+                "Mel Brooks historical comedy coordination and Jewish-American entertainment industry tracking",
+                "Invisible man military experiment monitoring and government cover-up coordination",
+                "Christmas family comedy coordination and suburban household security systems",
+                "Shrinking technology family adventure and backyard exploration safety protocols",
+                "Body-swap comedy coordination and high school social hierarchy management",
+                "Alien invasion Independence Day coordination and global military response systems",
+                "Indiana Jones archaeological expedition and Nazi artifact recovery mission coordination",
+                "Indiana Jones Temple of Doom adventure and British colonial India expedition management",
+                "Pixar emotional intelligence monitoring and childhood development psychology tracking",
+                "Marvel Cinematic Universe armor technology and weapons development laboratory systems",
+                "Figure skating biopic coordination and Olympic athlete media manipulation documentation",
+                "Jurassic Park dinosaur containment systems and genetic engineering laboratory management",
+                "Women's baseball league coordination and WWII-era sports entertainment management",
+                "Legal comedy courtroom deception and attorney professional conduct monitoring",
+                "Lighthouse keeper psychological horror and maritime navigation beacon maintenance",
+                "Little Rascals children's comedy coordination and 1990s nostalgia entertainment tracking",
+                "Jurassic Park sequel expedition and Site B dinosaur habitat monitoring systems",
+                "Basketball romance coordination and athletic scholarship academic performance tracking",
+                "Film noir detective investigation and 1940s San Francisco criminal underworld tracking",
+                "Spy comedy mistaken identity and Cold War espionage communication protocols",
+                "Jim Carrey superhero comedy coordination and Cuban-American organized crime investigation",
+                "Zorro swashbuckling adventure coordination and Spanish colonial California resistance movement",
+                "Heist comedy coordination and small-town bank robbery investigation systems",
+                "Comedy sequel family reunion coordination and parental relationship dysfunction therapy",
+                "Comedy dysfunction coordination and Rhode Island state trooper patrol scheduling",
+                "Men in Black alien monitoring and government extraterrestrial cover-up coordination",
+                // Movies 101-150 authentic design problems  
+                "Mexican adventure comedy coordination and cross-border criminal investigation tracking",
+                "John Travolta angel comedy coordination and small-town newspaper editorial management",
+                "Home renovation disaster comedy and contractor project management coordination",
+                "Charlize Theron serial killer biopic and death row legal appeal documentation",
+                "Adam Sandler wealth comedy coordination and small-town charitable foundation management",
+                "Robin Williams family comedy coordination and child custody legal battle tracking",
+                "1930s Universal monster movie coordination and classic Hollywood horror production management",
+                "Brendan Fraser mummy adventure and Egyptian archaeological expedition coordination",
+                "Mummy sequel adventure coordination and ancient Egyptian artifact museum security",
+                "Greek-American wedding comedy coordination and cultural assimilation family dynamics tracking",
+                "Sandra Bullock internet thriller and identity theft investigation database management",
+                "Drew Barrymore romantic comedy coordination and high school social anxiety therapy",
+                "Alfred Hitchcock spy thriller coordination and British intelligence wartime operation management",
+                "Eddie Murphy comedy sequel coordination and university scientific research laboratory management",
+                "Office Space workplace satire coordination and corporate software development dysfunction tracking",
+                "Juliette Lewis disability drama coordination and independent living skills training management",
+                "Goldie Hawn romantic comedy coordination and maritime rescue operation coordination",
+                "Robin Williams medical drama coordination and children's hospital patient care management",
+                "Mel Gibson Revolutionary War epic coordination and colonial militia battlefield strategy",
+                "George Clooney disaster movie coordination and commercial fishing vessel weather tracking",
+                "Disney Peter Pan animation coordination and children's bedtime story narration scheduling",
+                "Pink Floyd rock opera coordination and 1980s British music video production management",
+                "Pirates of the Caribbean trilogy coordination and Caribbean maritime adventure management",
+                "Tobey Maguire small-town drama coordination and 1950s social conformity research tracking",
+                "Sean Patrick Flanery supernatural drama coordination and Amish community integration management",
+                "Julia Roberts romantic comedy coordination and Hollywood entertainment industry coordination",
+                "John Ritter family comedy coordination and single-parent household management systems",
+                "Alfred Hitchcock psychological thriller coordination and British countryside manor security",
+                "Quentin Tarantino crime drama coordination and Los Angeles criminal underworld tracking",
+                "Cuba Gooding Jr. sports drama coordination and high school football team coordination",
+                "Steven Spielberg archaeological adventure coordination and 1930s Nazi artifact recovery",
+                "Dustin Hoffman autism drama coordination and Las Vegas casino card counting systems",
+                "Mel Gibson kidnapping thriller coordination and airline pilot ransom negotiation",
+                "Alfred Hitchcock romantic thriller coordination and British espionage wartime coordination",
+                "Edward Norton psychological thriller coordination and FBI serial killer profiling database",
+                "Denzel Washington sports drama coordination and high school racial integration management",
+                "Horror movie supernatural coordination and cursed videotape investigation tracking",
+                "Jackie Chan martial arts comedy coordination and Hong Kong police international cooperation",
+                "Danny DeVito dark comedy coordination and kidnapping ransom coordination systems",
+                "Mandy Moore Christian teen drama coordination and religious school administrative management",
+                "Tom Hanks war epic coordination and WWII D-Day invasion military strategy planning",
+                "Brad Pitt crime thriller coordination and serial killer investigation forensics database",
+                "John Cusack romantic comedy coordination and fate-based coincidence tracking algorithms",
+                "Tim Robbins prison drama coordination and correctional facility contraband monitoring systems",
+                "Anthony Hopkins psychological thriller coordination and maximum security psychiatric facility management"
+            };
 
-            initializeMovieData(movieTitles, movieRatings, movieGenres);
+            initializeMovieData(movieTitles, movieRatings, movieGenres, designProblems);
         }
         
-        void initializeMovieData(String[] titles, float[] ratings, String[] genres) {
+        void initializeMovieData(String[] titles, float[] ratings, String[] genres, String[] problems) {
             numMovies = titles.length;
             
             // Create arrays to hold movie data with indices for sorting
@@ -193,6 +339,7 @@
                 movies[i].title = titles[i] != null ? titles[i] : "Unknown Movie";
                 movies[i].genre = genres[i] != null ? genres[i] : "Drama";
                 movies[i].rating = ratings[i] > 0 ? ratings[i] : 3.5;
+                movies[i].designProblem = problems[i] != null ? problems[i] : "Interface design challenge";
             }
             
             // Sort movies by rating (highest to lowest)
@@ -202,6 +349,7 @@
             movieTitles = new String[numMovies];
             movieGenres = new String[numMovies];
             movieRatings = new float[numMovies];
+            designProblems = new String[numMovies];
             movieColors = new color[numMovies];
             movieAngles = new float[numMovies];
             movieRadii = new float[numMovies];
@@ -216,16 +364,17 @@
                 movieTitles[i] = movies[i].title;
                 movieGenres[i] = movies[i].genre;
                 movieRatings[i] = movies[i].rating;
+                designProblems[i] = movies[i].designProblem;
                 movieColors[i] = getGenreColor(movieGenres[i]);
                 
                 // Start at exactly 12 o'clock (top) and spiral clockwise
                 // The first movie (highest rated) should point straight up from center
-                // Need to subtract 3*PI/2 to get from 3 o'clock to 12 o'clock position
-                movieAngles[i] = (i * angleStep) - (3 * PI / 2);
+                // Need to subtract PI/2 to get from 3 o'clock to 12 o'clock position
+                movieAngles[i] = (i * angleStep) - (PI / 2);
                 
-                // More dramatic scaling - use exponential curve for rating differences
+                // More gradual scaling - use subtle exponential curve for rating differences
                 float normalizedRating = map(movieRatings[i], 3.0, 5.0, 0, 1);
-                float exponentialRating = pow(normalizedRating, 1.8); // Exponential curve makes differences more dramatic
+                float exponentialRating = pow(normalizedRating, 1.2); // Subtle curve makes differences visible but gradual
                 movieRadii[i] = map(exponentialRating, 0, 1, minRadius + 20, maxRadius);
                 targetRadii[i] = movieRadii[i];
                 currentRadii[i] = movieRadii[i];
@@ -239,6 +388,7 @@
             String title;
             String genre;
             float rating;
+            String designProblem;
         }
         
         // Sort movies by rating (highest to lowest)
@@ -274,7 +424,7 @@
             // Draw circles at specific rating intervals using the same exponential mapping
             for (float rating = 3.0; rating <= 5.0; rating += 0.5) {
                 float normalizedRating = map(rating, 3.0, 5.0, 0, 1);
-                float exponentialRating = pow(normalizedRating, 1.8);
+                float exponentialRating = pow(normalizedRating, 1.2);
                 float r = map(exponentialRating, 0, 1, minRadius + 20, maxRadius);
                 ellipse(centerX, centerY, r * 2, r * 2);
             }
@@ -433,9 +583,14 @@
         void drawMovieInfoOnTop(int index) {
             String info = movieTitles[index];
             String rating = movieGenres[index] + " • " + nf(movieRatings[index], 1, 1) + " ★";
+            String designProblem = "Design Challenge: " + designProblems[index];
             
-            float boxWidth = max(textWidth(info), textWidth(rating)) + 50;
-            float boxHeight = 80;
+            // Calculate box dimensions based on content
+            float titleWidth = textWidth(info);
+            float ratingWidth = textWidth(rating);
+            float problemWidth = textWidth(designProblem);
+            float boxWidth = max(max(titleWidth, ratingWidth), problemWidth) + 60;
+            float boxHeight = 110; // Increased height for three lines
             
             float boxX = (width - boxWidth) / 2;
             float boxY = 20;
@@ -460,11 +615,15 @@
             fill(255, 255, 255, 255);
             noStroke();
             textAlign(CENTER);
-            text(info, boxX + boxWidth/2, boxY + 35);
+            text(info, boxX + boxWidth/2, boxY + 30);
             
             // Rating in yellow
             fill(255, 255, 0, 255);
-            text(rating, boxX + boxWidth/2, boxY + 60);
+            text(rating, boxX + boxWidth/2, boxY + 50);
+            
+            // Design problem in cyan (retro color)
+            fill(0, 255, 255, 200);
+            text(designProblem, boxX + boxWidth/2, boxY + 75);
         }
         
         void drawUI() {
