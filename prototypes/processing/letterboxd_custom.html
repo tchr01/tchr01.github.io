@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Letterboxd Collection - Custom Data</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/processing.js/1.6.6/processing.min.js"></script>
+    <style>
+        body {
+            font-family: "Courier New", monospace;
+            background: #000;
+            color: #00ff00;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        #title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px #00ff00;
+            text-align: center;
+        }
+        
+        #input-section {
+            background: #001100;
+            border: 2px solid #00ff00;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+        
+        textarea {
+            width: 100%;
+            height: 150px;
+            background: #000;
+            color: #00ff00;
+            border: 1px solid #00ff00;
+            font-family: "Courier New", monospace;
+            font-size: 12px;
+            padding: 10px;
+            resize: vertical;
+        }
+        
+        button {
+            background: #003300;
+            color: #00ff00;
+            border: 2px solid #00ff00;
+            padding: 10px 20px;
+            font-family: "Courier New", monospace;
+            cursor: pointer;
+            margin: 10px 5px 0 0;
+        }
+        
+        button:hover {
+            background: #00ff00;
+            color: #000;
+        }
+        
+        canvas {
+            border: 2px solid #00ff00;
+            box-shadow: 0 0 20px #00ff00;
+            display: block;
+            margin: 0 auto;
+        }
+        
+        #info {
+            margin-top: 20px;
+            font-size: 12px;
+            opacity: 0.7;
+            text-align: center;
+        }
+        
+        .example {
+            font-size: 11px;
+            opacity: 0.8;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="title">LETTERBOXD COLLECTION WHEEL - CUSTOM DATA</div>
+    
+    <div id="input-section">
+        <h3>Input Your Movie Data</h3>
+        <p>Format: <code>Movie Title,Year,Rating,Genre</code> (one per line)</p>
+        <textarea id="movieData" placeholder="Blade Runner,1982,4.5,Sci-Fi
+The Godfather,1972,5.0,Crime
+The Matrix,1999,4.0,Sci-Fi
+Pulp Fiction,1994,4.5,Crime">Blade Runner,1982,4.5,Sci-Fi
+The Godfather,1972,5.0,Crime
+The Matrix,1999,4.0,Sci-Fi
+Pulp Fiction,1994,4.5,Crime
+The Shining,1980,4.0,Horror
+Citizen Kane,1941,4.5,Drama
+Vertigo,1958,4.0,Thriller
+Casablanca,1942,4.5,Romance
+Goodfellas,1990,4.5,Crime
+Fight Club,1999,4.0,Drama
+Se7en,1995,4.0,Thriller
+The Departed,2006,4.0,Crime
+Terminator 2,1991,4.0,Action
+Aliens,1986,4.0,Sci-Fi
+Heat,1995,4.0,Action
+Taxi Driver,1976,4.5,Drama
+Apocalypse Now,1979,4.5,War
+2001: A Space Odyssey,1968,4.5,Sci-Fi
+The Exorcist,1973,4.0,Horror
+Psycho,1960,4.5,Horror
+North by Northwest,1959,4.0,Thriller
+Some Like It Hot,1959,4.5,Comedy</textarea>
+        
+        <div>
+            <button onclick="loadMovieData()">Load Data</button>
+            <button onclick="loadSampleData()">Load Sample Data</button>
+            <button onclick="clearData()">Clear</button>
+        </div>
+        
+        <div class="example">
+            <strong>Supported Genres:</strong> Sci-Fi, Horror, Crime, Drama, Comedy, Thriller, Action, Romance, War, Animation, Documentary
+        </div>
+    </div>
+    
+    <script type="application/processing" id="processingCode">
+        // Movie data - will be populated from user input
+        String[] movieTitles = {};
+        String[] movieGenres = {};
+        float[] movieRatings = {};
+        int[] movieYears = {};
+        color[] movieColors = {};
+        float[] movieRadii = {};
+        float[] targetRadii = {};
+        float[] currentRadii = {};
+        
+        int numMovies = 0;
+        int selectedMovie = -1;
+        int hoveredMovie = -1;
+        float time = 0;
+        float centerX, centerY;
+        float maxRadius = 220;
+        float minRadius = 60;
+        
+        void setup() {
+            size(800, 600);
+            centerX = width / 2;
+            centerY = height / 2;
+            
+            // Start with sample data
+            loadSampleMovies();
+        }
+        
+        void loadSampleMovies() {
+            String[] sampleData = {
+                "Blade Runner,1982,4.5,Sci-Fi",
+                "The Godfather,1972,5.0,Crime",
+                "The Matrix,1999,4.0,Sci-Fi",
+                "Pulp Fiction,1994,4.5,Crime",
+                "The Shining,1980,4.0,Horror"
+            };
+            
+            parseMovieData(sampleData);
+        }
+        
+        void parseMovieData(String[] dataLines) {
+            numMovies = dataLines.length;
+            
+            movieTitles = new String[numMovies];
+            movieGenres = new String[numMovies];
+            movieRatings = new float[numMovies];
+            movieYears = new int[numMovies];
+            movieColors = new color[numMovies];
+            movieRadii = new float[numMovies];
+            targetRadii = new float[numMovies];
+            currentRadii = new float[numMovies];
+            
+            float angleStep = TWO_PI / numMovies;
+            
+            for (int i = 0; i < numMovies; i++) {
+                String[] parts = split(dataLines[i], ',');
+                if (parts.length >= 4) {
+                    movieTitles[i] = trim(parts[0]);
+                    movieYears[i] = int(trim(parts[1]));
+                    movieRatings[i] = float(trim(parts[2]));
+                    movieGenres[i] = trim(parts[3]);
+                    
+                    movieColors[i] = getGenreColor(movieGenres[i]);
+                    movieRadii[i] = map(movieRatings[i], 1.0, 5.0, minRadius + 30, maxRadius);
+                    targetRadii[i] = movieRadii[i];
+                    currentRadii[i] = movieRadii[i];
+                }
+            }
+        }
+        
+        void draw() {
+            background(0);
+            time += 0.02;
+            
+            if (numMovies == 0) {
+                fill(0, 255, 0);
+                textAlign(CENTER);
+                text("Load your movie data above to see the visualization!", centerX, centerY);
+                return;
+            }
+            
+            // Draw concentric circles for rating levels
+            stroke(0, 255, 0, 30);
+            strokeWeight(1);
+            noFill();
+            for (float r = minRadius; r <= maxRadius; r += 30) {
+                ellipse(centerX, centerY, r * 2, r * 2);
+            }
+            
+            // Rating level labels
+            fill(0, 255, 0, 100);
+            textAlign(LEFT);
+            text("1★", minRadius + 30, centerY - 5);
+            text("3★", minRadius + 70, centerY - 5);
+            text("5★", minRadius + 140, centerY - 5);
+            
+            // Draw movie slices
+            hoveredMovie = -1;
+            float angleStep = TWO_PI / numMovies;
+            
+            for (int i = 0; i < numMovies; i++) {
+                float startAngle = i * angleStep - angleStep/2;
+                float endAngle = (i + 1) * angleStep - angleStep/2;
+                
+                // Check if mouse is over this slice
+                float mouseAngle = atan2(mouseY - centerY, mouseX - centerX);
+                if (mouseAngle < 0) mouseAngle += TWO_PI;
+                float mouseDist = dist(mouseX, mouseY, centerX, centerY);
+                
+                boolean isHovered = false;
+                if (mouseDist >= minRadius && mouseDist <= currentRadii[i] + 20) {
+                    float normalizedStart = startAngle;
+                    float normalizedEnd = endAngle;
+                    if (normalizedStart < 0) normalizedStart += TWO_PI;
+                    if (normalizedEnd < 0) normalizedEnd += TWO_PI;
+                    
+                    if (normalizedStart <= normalizedEnd) {
+                        isHovered = (mouseAngle >= normalizedStart && mouseAngle <= normalizedEnd);
+                    } else {
+                        isHovered = (mouseAngle >= normalizedStart || mouseAngle <= normalizedEnd);
+                    }
+                }
+                
+                if (isHovered) hoveredMovie = i;
+                
+                boolean isSelected = selectedMovie == i;
+                
+                // Update target radius for smooth animation
+                if (isHovered || isSelected) {
+                    targetRadii[i] = movieRadii[i] + 25;
+                } else {
+                    targetRadii[i] = movieRadii[i];
+                }
+                
+                // Smooth animation
+                currentRadii[i] = lerp(currentRadii[i], targetRadii[i], 0.15);
+                
+                // Draw the pie slice
+                float alpha = (isHovered || isSelected) ? 220 : 160;
+                fill(red(movieColors[i]), green(movieColors[i]), blue(movieColors[i]), alpha);
+                stroke(0, 255, 0, 80);
+                strokeWeight(1);
+                
+                // Draw pie slice from inner circle to rating height
+                beginShape();
+                for (float a = startAngle; a <= endAngle; a += 0.05) {
+                    float x = centerX + cos(a) * minRadius;
+                    float y = centerY + sin(a) * minRadius;
+                    vertex(x, y);
+                }
+                for (float a = endAngle; a >= startAngle; a -= 0.05) {
+                    float x = centerX + cos(a) * currentRadii[i];
+                    float y = centerY + sin(a) * currentRadii[i];
+                    vertex(x, y);
+                }
+                endShape(CLOSE);
+                
+                // Draw bright edge at the rating line
+                stroke(255, 255, 0, 200);
+                strokeWeight(2);
+                noFill();
+                arc(centerX, centerY, currentRadii[i] * 2, currentRadii[i] * 2, startAngle, endAngle);
+                
+                // Movie dot at center of slice
+                float dotAngle = startAngle + angleStep/2;
+                float dotRadius = (minRadius + currentRadii[i]) / 2;
+                float dotX = centerX + cos(dotAngle) * dotRadius;
+                float dotY = centerY + sin(dotAngle) * dotRadius;
+                
+                fill(movieColors[i]);
+                stroke(0, 255, 0);
+                strokeWeight(2);
+                float dotSize = (isHovered || isSelected) ? 14 : 10;
+                dotSize += sin(time + i * 0.3) * 1.5;
+                ellipse(dotX, dotY, dotSize, dotSize);
+                
+                // Inner yellow rating dot
+                fill(255, 255, 0, 200);
+                noStroke();
+                ellipse(dotX, dotY, dotSize * 0.5, dotSize * 0.5);
+                
+                // Show movie info on hover
+                if (isHovered || isSelected) {
+                    drawMovieInfo(i, dotX, dotY);
+                }
+            }
+            
+            // Draw center circle
+            fill(0);
+            stroke(0, 255, 0);
+            strokeWeight(2);
+            ellipse(centerX, centerY, minRadius * 2, minRadius * 2);
+            
+            // Center text
+            fill(0, 255, 0);
+            textAlign(CENTER);
+            text("LETTERBOXD", centerX, centerY - 5);
+            text("(" + numMovies + " FILMS)", centerX, centerY + 10);
+            
+            // Draw UI
+            drawUI();
+        }
+        
+        void drawMovieInfo(int index, float x, float y) {
+            String info = movieTitles[index] + " (" + movieYears[index] + ")";
+            String rating = movieGenres[index] + " • " + nf(movieRatings[index], 1, 1) + " ★";
+            
+            fill(0, 220);
+            stroke(0, 255, 0);
+            strokeWeight(1);
+            
+            float boxWidth = max(textWidth(info), textWidth(rating)) + 20;
+            float boxHeight = 50;
+            
+            float boxX = x - boxWidth/2;
+            float boxY = y - 60;
+            
+            if (boxX < 10) boxX = 10;
+            if (boxX + boxWidth > width - 10) boxX = width - boxWidth - 10;
+            if (boxY < 10) boxY = y + 30;
+            
+            rect(boxX, boxY, boxWidth, boxHeight);
+            
+            fill(0, 255, 0);
+            textAlign(CENTER);
+            text(info, boxX + boxWidth/2, boxY + 20);
+            text(rating, boxX + boxWidth/2, boxY + 35);
+        }
+        
+        void drawUI() {
+            // Genre legend
+            fill(0, 255, 0, 200);
+            textAlign(LEFT);
+            text("GENRE COLORS:", 20, 30);
+            
+            String[] genres = {"Sci-Fi", "Horror", "Crime", "Drama", "Comedy", "Thriller", "Action"};
+            for (int i = 0; i < genres.length; i++) {
+                fill(getGenreColor(genres[i]));
+                ellipse(30, 50 + i * 20, 12, 12);
+                fill(0, 255, 0, 150);
+                text(genres[i], 45, 55 + i * 20);
+            }
+            
+            // Instructions
+            fill(0, 255, 0, 100);
+            textAlign(RIGHT);
+            text("Slice height = rating", width - 20, height - 45);
+            text("Color = genre", width - 20, height - 30);
+            text("Click to select", width - 20, height - 15);
+        }
+        
+        color getGenreColor(String genre) {
+            if (genre.equals("Sci-Fi")) return color(0, 200, 255);
+            if (genre.equals("Horror")) return color(255, 50, 50);
+            if (genre.equals("Crime")) return color(255, 150, 0);
+            if (genre.equals("Drama")) return color(150, 255, 150);
+            if (genre.equals("Comedy")) return color(255, 255, 100);
+            if (genre.equals("Thriller")) return color(200, 100, 255);
+            if (genre.equals("Action")) return color(255, 100, 100);
+            if (genre.equals("Romance")) return color(255, 150, 200);
+            if (genre.equals("War")) return color(150, 100, 50);
+            if (genre.equals("Animation")) return color(100, 255, 255);
+            if (genre.equals("Documentary")) return color(200, 200, 200);
+            return color(255, 255, 255);
+        }
+        
+        void mousePressed() {
+            if (hoveredMovie != -1) {
+                selectedMovie = (selectedMovie == hoveredMovie) ? -1 : hoveredMovie;
+            } else {
+                selectedMovie = -1;
+            }
+        }
+    </script>
+    
+    <canvas id="processingCanvas"></canvas>
+    
+    <div id="info">
+        Input your Letterboxd data above and click "Load Data" to visualize your collection!
+    </div>
+
+    <script>
+        var processingInstance;
+        
+        function initProcessing() {
+            var canvas = document.getElementById('processingCanvas');
+            var code = document.getElementById('processingCode').textContent;
+            processingInstance = new Processing(canvas, code);
+        }
+        
+        function loadMovieData() {
+            var textarea = document.getElementById('movieData');
+            var data = textarea.value.trim();
+            if (data) {
+                var lines = data.split('\n').filter(line => line.trim());
+                if (processingInstance && processingInstance.parseMovieData) {
+                    processingInstance.parseMovieData(lines);
+                }
+            }
+        }
+        
+        function loadSampleData() {
+            var sampleData = `Blade Runner,1982,4.5,Sci-Fi
+The Godfather,1972,5.0,Crime
+The Matrix,1999,4.0,Sci-Fi
+Pulp Fiction,1994,4.5,Crime
+The Shining,1980,4.0,Horror
+Citizen Kane,1941,4.5,Drama
+Vertigo,1958,4.0,Thriller
+Casablanca,1942,4.5,Romance
+Goodfellas,1990,4.5,Crime
+Fight Club,1999,4.0,Drama
+Se7en,1995,4.0,Thriller
+The Departed,2006,4.0,Crime
+Terminator 2,1991,4.0,Action
+Aliens,1986,4.0,Sci-Fi
+Heat,1995,4.0,Action
+Taxi Driver,1976,4.5,Drama
+Apocalypse Now,1979,4.5,War
+2001: A Space Odyssey,1968,4.5,Sci-Fi
+The Exorcist,1973,4.0,Horror
+Psycho,1960,4.5,Horror
+North by Northwest,1959,4.0,Thriller
+Some Like It Hot,1959,4.5,Comedy`;
+            
+            document.getElementById('movieData').value = sampleData;
+            loadMovieData();
+        }
+        
+        function clearData() {
+            document.getElementById('movieData').value = '';
+        }
+        
+        // Initialize when page loads
+        window.onload = function() {
+            setTimeout(initProcessing, 100);
+        };
+    </script>
+</body>
+</html>

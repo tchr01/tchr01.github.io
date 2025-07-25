@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Letterboxd Collection - Interactive Infographic</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/processing.js/1.6.6/processing.min.js"></script>
+    <style>
+        body {
+            font-family: "Courier New", monospace;
+            background: #000;
+            color: #00ff00;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        #title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px #00ff00;
+        }
+        
+        canvas {
+            border: 2px solid #00ff00;
+            box-shadow: 0 0 20px #00ff00;
+        }
+        
+        #info {
+            margin-top: 20px;
+            font-size: 12px;
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+    <div id="title">LETTERBOXD COLLECTION MATRIX</div>
+    
+    <script type="application/processing">
+        // Simple movie data
+        int numMovies = 35;
+        float[] movieX = new float[numMovies];
+        float[] movieY = new float[numMovies];
+        float[] movieSize = new float[numMovies];
+        String[] movieTitles = new String[numMovies];
+        String[] movieGenres = new String[numMovies];
+        float[] movieRatings = new float[numMovies];
+        color[] movieColors = new color[numMovies];
+        
+        int selectedMovie = -1;
+        float time = 0;
+        String[] genres = {"Sci-Fi", "Horror", "Crime", "Drama", "Thriller", "Action", "Comedy"};
+        float[] genreX = new float[7];
+        float[] genreY = new float[7];
+        
+        void setup() {
+            size(800, 600);
+            
+            // Initialize movies
+            String[] titles = {
+                "Blade Runner", "The Matrix", "2001: Space Odyssey", "Alien", "Interstellar",
+                "The Shining", "Psycho", "The Exorcist", "Halloween", "Hereditary",
+                "Goodfellas", "The Godfather", "Pulp Fiction", "Casino", "Scarface",
+                "Citizen Kane", "The Departed", "Taxi Driver", "Raging Bull", "There Will Be Blood",
+                "Se7en", "Zodiac", "Gone Girl", "Vertigo", "North by Northwest",
+                "Terminator 2", "Heat", "Die Hard", "Mad Max", "John Wick",
+                "The Grand Budapest", "Some Like It Hot", "Groundhog Day", "The Big Lebowski", "Fargo"
+            };
+            
+            String[] movieGenreList = {
+                "Sci-Fi", "Sci-Fi", "Sci-Fi", "Sci-Fi", "Sci-Fi",
+                "Horror", "Horror", "Horror", "Horror", "Horror",
+                "Crime", "Crime", "Crime", "Crime", "Crime",
+                "Drama", "Drama", "Drama", "Drama", "Drama",
+                "Thriller", "Thriller", "Thriller", "Thriller", "Thriller",
+                "Action", "Action", "Action", "Action", "Action",
+                "Comedy", "Comedy", "Comedy", "Comedy", "Comedy"
+            };
+            
+            // Genre positions in a circle
+            float centerX = width / 2;
+            float centerY = height / 2;
+            float radius = 200;
+            
+            for (int i = 0; i < genres.length; i++) {
+                float angle = map(i, 0, genres.length, 0, TWO_PI);
+                genreX[i] = centerX + cos(angle) * radius;
+                genreY[i] = centerY + sin(angle) * radius;
+            }
+            
+            for (int i = 0; i < numMovies; i++) {
+                movieTitles[i] = titles[i];
+                movieGenres[i] = movieGenreList[i];
+                movieRatings[i] = random(3.5, 5.0);
+                movieSize[i] = map(movieRatings[i], 3.5, 5.0, 15, 35);
+                movieColors[i] = getGenreColor(movieGenres[i]);
+                
+                // Position movies around their genre center
+                int genreIndex = getGenreIndex(movieGenres[i]);
+                float scatter = map(movieRatings[i], 3.5, 5.0, 60, 20); // Higher rated movies closer to center
+                
+                movieX[i] = genreX[genreIndex] + random(-scatter, scatter);
+                movieY[i] = genreY[genreIndex] + random(-scatter, scatter);
+            }
+        }
+        
+        void draw() {
+            background(0);
+            time += 0.05;
+            
+            // Draw grid
+            stroke(0, 255, 0, 30);
+            for (int x = 0; x < width; x += 40) {
+                line(x, 0, x, height);
+            }
+            for (int y = 0; y < height; y += 40) {
+                line(0, y, width, y);
+            }
+            
+            // Draw genre centers
+            for (int i = 0; i < genres.length; i++) {
+                stroke(0, 255, 0, 100);
+                strokeWeight(1);
+                noFill();
+                ellipse(genreX[i], genreY[i], 120, 120);
+                
+                fill(0, 255, 0, 150);
+                textAlign(CENTER);
+                text(genres[i], genreX[i], genreY[i] + 70);
+            }
+            
+            // Draw movies
+            for (int i = 0; i < numMovies; i++) {
+                float distance = dist(mouseX, mouseY, movieX[i], movieY[i]);
+                boolean isHovered = distance < movieSize[i] + 10;
+                boolean isSelected = selectedMovie == i;
+                
+                float currentSize = movieSize[i];
+                
+                if (isHovered || isSelected) {
+                    currentSize += 8;
+                    
+                    // Glow effect
+                    for (int r = int(currentSize + 15); r > 0; r--) {
+                        fill(0, 255, 0, 255 - r * 15);
+                        noStroke();
+                        ellipse(movieX[i], movieY[i], r, r);
+                    }
+                }
+                
+                // Pulsing
+                currentSize += sin(time + i * 0.3) * 2;
+                
+                // Main circle
+                fill(movieColors[i]);
+                stroke(0, 255, 0);
+                strokeWeight(2);
+                ellipse(movieX[i], movieY[i], currentSize, currentSize);
+                
+                // Inner rating dot
+                fill(255, 255, 0, 200);
+                noStroke();
+                float ratingSize = map(movieRatings[i], 3.5, 5.0, 4, currentSize * 0.5);
+                ellipse(movieX[i], movieY[i], ratingSize, ratingSize);
+                
+                // Show info on hover
+                if (isHovered || isSelected) {
+                    fill(0, 200);
+                    stroke(0, 255, 0);
+                    rect(movieX[i] - 90, movieY[i] - currentSize - 60, 180, 50);
+                    
+                    fill(0, 255, 0);
+                    textAlign(CENTER);
+                    text(movieTitles[i], movieX[i], movieY[i] - currentSize - 40);
+                    text(movieGenres[i] + " • " + nf(movieRatings[i], 1, 1) + " stars", 
+                         movieX[i], movieY[i] - currentSize - 25);
+                }
+            }
+            
+            // UI
+            fill(0, 255, 0);
+            textAlign(LEFT);
+            text("Mouse: " + mouseX + ", " + mouseY, 10, 20);
+            text("LETTERBOXD BY GENRE", 10, 40);
+            text("Movies clustered by genre • Higher rated = closer to center", 10, height - 20);
+        }
+        
+        color getGenreColor(String genre) {
+            if (genre.equals("Sci-Fi")) return color(0, 200, 255);
+            if (genre.equals("Horror")) return color(255, 50, 50);
+            if (genre.equals("Crime")) return color(255, 150, 0);
+            if (genre.equals("Drama")) return color(150, 255, 150);
+            if (genre.equals("Comedy")) return color(255, 255, 100);
+            if (genre.equals("Thriller")) return color(200, 100, 255);
+            if (genre.equals("Action")) return color(255, 100, 100);
+            return color(255, 255, 255);
+        }
+        
+        int getGenreIndex(String genre) {
+            for (int i = 0; i < genres.length; i++) {
+                if (genres[i].equals(genre)) return i;
+            }
+            return 0;
+        }
+        
+        void mousePressed() {
+            selectedMovie = -1;
+            for (int i = 0; i < numMovies; i++) {
+                if (dist(mouseX, mouseY, movieX[i], movieY[i]) < movieSize[i] + 10) {
+                    selectedMovie = i;
+                    break;
+                }
+            }
+        }
+    </script>
+    
+    <canvas></canvas>
+    
+    <div id="info">
+        Hover over colored dots to see movie details • Click to select
+    </div>
+</body>
+</html>

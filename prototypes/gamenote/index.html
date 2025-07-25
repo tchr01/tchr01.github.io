@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GameNote - Album & Game Pairing</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>GameNote</h1>
+            <p>Discover perfect album & retro game pairings</p>
+        </header>
+
+        <main>
+            <div class="controls">
+                <button id="getPairingBtn" class="primary-btn">Get Pairing</button>
+                <div class="mood-selector">
+                    <label for="mood">Mood:</label>
+                    <select id="mood">
+                        <option value="any">Any</option>
+                        <option value="energetic">Energetic</option>
+                        <option value="chill">Chill</option>
+                        <option value="nostalgic">Nostalgic</option>
+                        <option value="experimental">Experimental</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="pairingContainer" class="pairing-container hidden">
+                <div class="pairing-card">
+                    <div class="album-section">
+                        <img id="albumArt" src="" alt="Album cover" class="album-art">
+                        <div class="item-info">
+                            <h3 id="albumTitle"></h3>
+                            <p id="albumArtist"></p>
+                            <p id="albumGenre" class="genre"></p>
+                            <p id="albumYear" class="year"></p>
+                        </div>
+                    </div>
+                    
+                    <div class="plus-symbol">+</div>
+                    
+                    <div class="game-section">
+                        <img id="gameImage" src="" alt="Game screenshot" class="game-image">
+                        <div class="item-info">
+                            <h3 id="gameTitle"></h3>
+                            <p id="gamePlatform"></p>
+                            <p id="gameGenre" class="genre"></p>
+                            <p id="gameYear" class="year"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="session-info">
+                    <p id="sessionTime">Estimated session: <span></span></p>
+                    <p id="compatibility">Compatibility: <span></span></p>
+                </div>
+
+                <div class="pairing-reasoning">
+                    <h4>Why this pairing?</h4>
+                    <p id="reasoningText"></p>
+                </div>
+
+                <div class="rating-controls">
+                    <button id="thumbsDown" class="rating-btn" data-rating="down">👎</button>
+                    <button id="thumbsUp" class="rating-btn" data-rating="up">👍</button>
+                    <button id="tryAnother" class="secondary-btn">Try Another</button>
+                </div>
+            </div>
+
+            <div id="loadingState" class="loading hidden">
+                <p>Finding the perfect pairing...</p>
+            </div>
+        </main>
+
+        <footer>
+            <p>Built for music and gaming enthusiasts</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

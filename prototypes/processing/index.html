@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Letterboxd Collection - Radial Pie Chart</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/processing.js/1.6.6/processing.min.js"></script>
+    <style>
+        body {
+            font-family: "Courier New", monospace;
+            background: #000;
+            color: #00ff00;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+
+        a {color: #00ff00;}
+
+        h1 {font-size:2rem;}
+        
+        #title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px #00ff00;
+        }
+        
+        canvas {
+            border:none;
+            outline:none;
+        }
+        
+        #info {
+            margin-top: 20px;
+            font-size: 12px;
+            opacity: 0.7;
+        }
+        .wrapper {width: 65%;
+    margin: 0 auto;
+    text-align: left;
+    color: #fff;
+    font-family: Arial;
+    line-height: 1.75;}
+    </style>
+</head>
+<body>
+    <div id="title">LETTERBOXD COLLECTION WHEEL</div>
+    
+    <script type="application/processing">
+        // Movie data
+        int numMovies = 35;
+        String[] movieTitles = new String[numMovies];
+        String[] movieGenres = new String[numMovies];
+        float[] movieRatings = new float[numMovies];
+        color[] movieColors = new color[numMovies];
+        float[] movieAngles = new float[numMovies];
+        float[] movieRadii = new float[numMovies];
+        float[] targetRadii = new float[numMovies];
+        float[] currentRadii = new float[numMovies];
+        float[] zoomFactors = new float[numMovies];
+        float[] targetZoomFactors = new float[numMovies];
+        
+        int selectedMovie = -1;
+        int hoveredMovie = -1;
+        String filteredGenre = ""; // Empty string means show all genres
+        float time = 0;
+        float centerX, centerY;
+        float maxRadius = 380;
+        float minRadius = 100;
+        float maxZoomDistance = 200; // Distance from mouse where zoom effect starts
+        float zoomSectionSize = PI/3; // Size of zoom section (60 degrees)
+        float globalZoomFactor = 1.0;
+        float targetGlobalZoom = 1.0;
+        float zoomCenterAngle = 0;
+        float targetZoomCenterAngle = 0;
+        
+        void setup() {
+            size(1200, 700);
+            centerX = width / 2;
+            centerY = height / 2;
+            
+            // Load physical.csv data
+            loadPhysicalMovies();
+        }
+        
+        void loadPhysicalMovies() {
+            // ALL 410 movies from physical.csv
+            String[] titles = {
+                "2001: A Space Odyssey", "50 First Dates", "The African Queen", "A.I. Artificial Intelligence", "Air Force One", "Almost Famous", "The Amazing Spider-Man", "American History X", "Anger Management", "The Animal", "Any Given Sunday", "Aquaman", "As Good as It Gets", "Austin Powers: The Spy Who Shagged Me", "The Avengers", "Baby Geniuses", "Batman Forever", "Beaches", "Best in Show", "Big", "Billy Madison", "The Birdcage", "Blast from the Past", "Bruce Almighty", "Cape Fear", "Captain Phillips", "Captain Ron", "Casablanca", "Casino", "Cast Away", "The Cell", "Chill Factor", "City of Angels", "Clifford", "Coco", "The Color Purple", "Contact", "Coyote Ugly", "The Cutting Edge", "Dangerous Minds", "Dante's Peak", "Daylight", "The Day the Earth Stood Still", "Dead Poets Society", "Deadpool", "Deep Impact", "Double Jeopardy", "Down to You", "Dr. Jekyll and Mr. Hyde", "Ellen DeGeneres: Here and Now", "End of Days", "Erin Brockovich", "E.T. the Extra-Terrestrial", "Ever After", "Field of Dreams", "The Fifth Element", "Flight of the Navigator", "The Flintstones", "Forrest Gump", "Frantic", "Freaky Friday", "Fried Green Tomatoes", "The Fugitive", "Galaxy Quest", "George of the Jungle", "Ghost", "The Godfather", "Gone with the Wind", "GoodFellas", "The Green Mile", "Half Baked", "Happy Gilmore", "Hard Rain", "History of the World: Part I", "Hollow Man", "Home Alone", "Honey, I Shrunk the Kids", "The Hot Chick", "Independence Day", "Indiana Jones and the Last Crusade", "Indiana Jones and the Temple of Doom", "Inside Out 2", "Iron Man 2", "I, Tonya", "Jurassic Park", "A League of Their Own", "Liar Liar", "The Lighthouse", "The Little Rascals", "The Lost World: Jurassic Park", "Love & Basketball", "The Maltese Falcon", "The Man with One Red Shoe", "The Mask", "The Mask of Zorro", "Masterminds", "Meet the Parents", "Me, Myself & Irene", "Men in Black", "The Mexican", "Michael", "The Money Pit", "Monster", "Mr. Deeds", "Mrs. Doubtfire", "The Mummy", "The Mummy", "The Mummy Returns", "My Big Fat Greek Wedding", "National Lampoon's Vacation", "The Net", "Never Been Kissed", "Notorious", "The Nutty Professor", "Ocean's Eleven", "Office Space", "The Other Sister", "Overboard", "Patch Adams", "The Patriot", "The Perfect Storm", "Peter Pan", "Pink Floyd: The Wall", "Pirates of the Caribbean: At World's End", "Pirates of the Caribbean: Dead Man's Chest", "Pirates of the Caribbean: The Curse of the Black Pearl", "Pleasantville", "Powder", "Pretty Woman", "Problem Child", "Psycho", "Pulp Fiction", "Radio", "Raiders of the Lost Ark", "Rain Man", "Ransom", "Rebecca", "Red Dragon", "Remember the Titans", "The Ring", "Rush Hour 2", "Ruthless People", "Saved!", "Saving Private Ryan", "Se7en", "Serendipity", "The Shawshank Redemption", "She's All That", "The Silence of the Lambs", "Sister Act", "Sleepless in Seattle", "Snake Eyes", "Son in Law", "Spider-Man 3", "Splash", "Stand by Me", "Stepmom", "Summer Rental", "Superman Returns", "Swordfish", "Teenage Mutant Ninja Turtles", "Teenage Mutant Ninja Turtles III", "Teenage Mutant Ninja Turtles II: The Secret of the Ooze", "The Ten Commandments", "That Thing You Do!", "Thelma & Louise", "There's Something About Mary", "Titanic", "Tommy Boy", "Tomorrow Never Dies", "Top Gun", "Turner & Hooch", "Twister", "Uncle Buck", "Unfaithful", "A Walk to Remember", "Waterworld", "The Wedding Singer", "What Lies Beneath", "What's Eating Gilbert Grape", "Who Framed Roger Rabbit", "Witness", "xXx", "Zootopia", "Mission to Mars", "Broken Arrow", "Conspiracy Theory", "Stargate", "Terminator 2: Judgment Day", "WarGames", "Star Trek: Generations", "GoldenEye", "The Rock", "Blue Velvet", "Gleaming the Cube", "Dark City", "Videodrome", "Session 9", "The Wizard", "Star Trek: The Motion Picture", "Star Trek III: The Search for Spock", "Star Trek IV: The Voyage Home", "Toy Story", "Toy Story 2", "Babe", "Charlotte's Web", "Fantasia", "101 Dalmatians", "102 Dalmatians", "Flubber", "My Dog Skip", "Oliver & Company", "Fly Away Home", "Jumanji", "James and the Giant Peach", "Antz", "Anastasia", "The Return of Jafar", "The Hunchback of Notre Dame", "The Fox and the Hound", "Caddyshack", "Mighty Joe Young", "Monsters, Inc.", "The Karate Kid", "Cool Runnings", "The Indian in the Cupboard", "Matilda", "Spy Kids 2: The Island of Lost Dreams", "Doug's 1st Movie", "Hook", "How the Grinch Stole Christmas", "Spy Kids", "Ice Age", "The Secret Garden", "Aladdin", "Beauty and the Beast", "The Little Mermaid", "Pinocchio", "Sleeping Beauty", "Pocahontas", "The Parent Trap", "The Parent Trap", "The Great Mouse Detective", "Finding Nemo", "Mulan", "Peter Pan", "The Sandlot", "The Goonies", "A Little Princess", "Bedknobs and Broomsticks", "Madeline", "Shiloh", "Homeward Bound", "Lemony Snicket's A Series of Unfortunate Events", "FernGully: The Last Rainforest", "Willy Wonka & the Chocolate Factory", "Ri¢hie Ri¢h", "The Lion King II: Simba's Pride", "Tarzan", "Bambi", "Horton Hears a Who!", "Stuart Little", "Snow-White", "A Bug's Life", "Toothless", "The Princess Diaries", "The Nightmare Before Christmas", "The Lion King", "Free Willy 3: The Rescue", "The Land Before Time", "Thor: Ragnarok", "Spider-Man: Far From Home", "Venom", "The Expendables 2", "Watchmen", "Constantine", "V for Vendetta", "The Mechanic", "The Book of Eli", "The Dark Knight", "What Dreams May Come", "One Hour Photo", "Wreck-It Ralph", "Enough", "Finding Dory", "The Producers", "Mystic River", "Harry Potter and the Philosopher's Stone", "Harry Potter and the Chamber of Secrets", "Harry Potter and the Prisoner of Azkaban", "Harry Potter and the Goblet of Fire", "Harry Potter and the Order of the Phoenix", "Harry Potter and the Half-Blood Prince", "Harry Potter and the Deathly Hallows: Part 1", "Harry Potter and the Deathly Hallows: Part 2", "Dial M for Murder", "Ace Ventura: Pet Detective", "The Blair Witch Project", "Chitty Chitty Bang Bang", "Fallen", "Austin Powers: International Man of Mystery", "Rocky", "Night of the Living Dead", "The Royal Tenenbaums", "Spice World", "The Cider House Rules", "Good Will Hunting", "Scrooge", "Spaceballs", "X-Men", "Free Willy", "The Last Airbender", "Frozen", "Oz the Great and Powerful", "How to Train Your Dragon", "Kung Fu Panda 2", "Smallfoot", "The Sweetest Thing", "Jack Reacher: Never Go Back", "Vegas Vacation", "The Great Outdoors", "8 Mile", "Super Size Me", "Team America: World Police", "Little Miss Sunshine", "Sisters", "300", "Where the Wild Things Are", "Charlie and the Chocolate Factory", "Wicked", "Split", "Limitless", "Color Out of Space", "Interstellar", "Ocean's Twelve", "Ocean's Thirteen", "The Bone Collector", "Date Night", "Valkyrie", "Big Daddy", "The Social Network", "Teenage Mutant Ninja Turtles", "Dumb and Dumber", "Despicable Me 2", "Minions", "The Lorax", "Corpse Bride", "Mulholland Dr.", "March of the Penguins", "The Adventures of Milo and Otis", "Pete's Dragon", "Despicable Me 4", "The Boss Baby", "Misery", "Beetlejuice", "It Came from Beneath the Sea", "Earth vs. the Flying Saucers", "The 7th Voyage of Sinbad", "The 3 Worlds of Gulliver", "Mysterious Island", "Jason and the Argonauts", "The Golden Voyage of Sinbad", "Sinbad and the Eye of the Tiger", "Buddy", "The Jungle Book", "The Godfather Part II", "Unbreakable", "The Wolf of Wall Street", "Signs", "The Town", "The Chronicles of Narnia: The Lion, the Witch and the Wardrobe", "I Am Sam", "Lost in Translation", "Inside Out", "The Terminator", "Schindler's List", "Step Brothers", "Pi", "Bridesmaids", "S.W.A.T.", "A Mighty Wind", "Eyes Wide Shut", "Borat: Cultural Learnings of America for Make Benefit Glorious Nation of Kazakhstan", "Little Nicky", "Broken Flowers", "Sing", "The Lego Movie", "Rat Race", "King Kong", "Despicable Me 3", "Star Wars: The Last Jedi", "Star Wars: The Force Awakens", "Brave", "Ghostbusters II", "The Fountain", "Full Metal Jacket", "The Secret Life of Pets", "Fargo", "This Is It", "28 Days Later", "The Haunted Mansion", "Guardians of the Galaxy", "Guardians of the Galaxy Vol. 2", "Brüno", "Star Trek: First Contact", "American Psycho", "Hannibal", "Hugo", "Journey to the Center of the Earth", "The Big Sleep"
+            };
+            
+            int[] years = {
+                1968, 2004, 1951, 2001, 1997, 2000, 2012, 1998, 2003, 2001, 1999, 2018, 1997, 1999, 2012, 1999, 1995, 1988, 2000, 1988, 1995, 1996, 1999, 2003, 1991, 2013, 1992, 1942, 1995, 2000, 2000, 1999, 1998, 1994, 2017, 1985, 1997, 2000, 1992, 1995, 1997, 1996, 1951, 1989, 2016, 1998, 1999, 2000, 1931, 2003, 1999, 2000, 1982, 1998, 1989, 1997, 1986, 1994, 1994, 1988, 1976, 1991, 1993, 1999, 1997, 1990, 1972, 1939, 1990, 1999, 1998, 1996, 1998, 1981, 2000, 1990, 1989, 2002, 1996, 1989, 1984, 2024, 2010, 2017, 1993, 1992, 1997, 2019, 1994, 1997, 2000, 1941, 1985, 1994, 1998, 2016, 2000, 2000, 1997, 2001, 1996, 1986, 2003, 2002, 1993, 1932, 1999, 2001, 2002, 1983, 1995, 1999, 1946, 1996, 2001, 1999, 1999, 1987, 1998, 2000, 2000, 1953, 1982, 2007, 2006, 2003, 1998, 1995, 1990, 1990, 1960, 1994, 2003, 1981, 1988, 1996, 1940, 2002, 2000, 2002, 2001, 1986, 2004, 1998, 1995, 2001, 1994, 1999, 1991, 1992, 1993, 1998, 1993, 2007, 1984, 1986, 1998, 1985, 2006, 2001, 1990, 1993, 1991, 1956, 1996, 1991, 1998, 1997, 1995, 1997, 1986, 1989, 1996, 1989, 2002, 2002, 1995, 1998, 2000, 1993, 1988, 1985, 2002, 2016, 2000, 1996, 1997, 1994, 1991, 1983, 1994, 1995, 1996, 1986, 1989, 1998, 1983, 2001, 1989, 1979, 1984, 1986, 1995, 1999, 1995, 1973, 1940, 1996, 2000, 1997, 2000, 1988, 1996, 1995, 1996, 1998, 1997, 1994, 1996, 1981, 1980, 1998, 2001, 1984, 1993, 1995, 1996, 2002, 1999, 1991, 2000, 2001, 2002, 1993, 1992, 1991, 1989, 1940, 1959, 1995, 1998, 1961, 1986, 2003, 1998, 2003, 1993, 1985, 1995, 1971, 1998, 1996, 1980, 2004, 1992, 1971, 1994, 1998, 1999, 1942, 1970, 1999, 1933, 1998, 1997, 2001, 1993, 1994, 1997, 1988, 2017, 2019, 2018, 2012, 2009, 2005, 2005, 2011, 2010, 2008, 1998, 2002, 2012, 2002, 2016, 2005, 2003, 2001, 2002, 2004, 2005, 2007, 2009, 2010, 2011, 1954, 1994, 1999, 1968, 1998, 1997, 1976, 1968, 2001, 1997, 1999, 1997, 1951, 1987, 2000, 1993, 2010, 2013, 2013, 2010, 2011, 2018, 2002, 2016, 1997, 1988, 2002, 2004, 2004, 2006, 2015, 2006, 2009, 2005, 2024, 2016, 2011, 2019, 2014, 2004, 2007, 1999, 2010, 2008, 1999, 2010, 2014, 1994, 2013, 2015, 2012, 2005, 1999, 2005, 1986, 1977, 2024, 2017, 1990, 1988, 1955, 1956, 1958, 1960, 1961, 1963, 1973, 1977, 1997, 2016, 1974, 2000, 2013, 2002, 2010, 2005, 2001, 2003, 2015, 1984, 1993, 2008, 1998, 2011, 2003, 2003, 1999, 2006, 2000, 2005, 2016, 2014, 2001, 2005, 2017, 2017, 2015, 2012, 1989, 2006, 1987, 2016, 1996, 2009, 2002, 2003, 2014, 2017, 2009, 1996, 2000, 2001, 2011, 2008, 1946
+            };
+            
+            numMovies = titles.length;
+            movieTitles = new String[numMovies];
+            movieGenres = new String[numMovies];
+            movieRatings = new float[numMovies];
+            movieColors = new color[numMovies];
+            movieRadii = new float[numMovies];
+            targetRadii = new float[numMovies];
+            currentRadii = new float[numMovies];
+            zoomFactors = new float[numMovies];
+            targetZoomFactors = new float[numMovies];
+            
+            float angleStep = TWO_PI / numMovies;
+            
+            for (int i = 0; i < numMovies; i++) {
+                movieTitles[i] = titles[i];
+                
+                // Smart genre assignment based on title patterns
+                movieGenres[i] = assignGenre(titles[i]);
+                
+                // Since we don't have ratings, assign based on movie reputation/year
+                // Classic films and well-known movies get higher ratings
+                if (years[i] < 1970) {
+                    movieRatings[i] = random(4.0, 5.0); // Golden age classics
+                } else if (years[i] < 1990) {
+                    movieRatings[i] = random(3.5, 4.8); // 70s-80s era
+                } else if (years[i] < 2010) {
+                    movieRatings[i] = random(3.0, 4.5); // 90s-2000s
+                } else {
+                    movieRatings[i] = random(3.2, 4.3); // Modern films
+                }
+                
+                // Boost ratings for known classics
+                if (isClassicFilm(titles[i])) {
+                    movieRatings[i] = min(5.0, movieRatings[i] + 0.5);
+                }
+                
+                movieColors[i] = getGenreColor(movieGenres[i]);
+                
+                // Arrange movies in a circle
+                movieAngles[i] = i * angleStep;
+                
+                // Radius based on rating - slice height represents rating
+                movieRadii[i] = map(movieRatings[i], 3.0, 5.0, minRadius + 30, maxRadius);
+                targetRadii[i] = movieRadii[i];
+                currentRadii[i] = movieRadii[i];
+                zoomFactors[i] = 1.0;
+                targetZoomFactors[i] = 1.0;
+            }
+        }
+        
+        String assignGenre(String title) {
+            // Smart genre detection based on title keywords and known films
+            String lowerTitle = title.toLowerCase();
+            
+            // Animation patterns
+            if (lowerTitle.contains("toy story") || lowerTitle.contains("finding") || 
+                lowerTitle.contains("monsters") || lowerTitle.contains("incredibles") ||
+                lowerTitle.contains("shrek") || lowerTitle.contains("ice age") ||
+                lowerTitle.contains("despicable") || lowerTitle.contains("minions") ||
+                lowerTitle.contains("frozen") || lowerTitle.contains("moana") ||
+                lowerTitle.contains("coco") || lowerTitle.contains("zootopia") ||
+                lowerTitle.contains("lion king") || lowerTitle.contains("beauty and the beast") ||
+                lowerTitle.contains("little mermaid") || lowerTitle.contains("aladdin") ||
+                lowerTitle.contains("mulan") || lowerTitle.contains("pocahontas") ||
+                lowerTitle.contains("pinocchio") || lowerTitle.contains("bambi") ||
+                lowerTitle.contains("dumbo") || lowerTitle.contains("fantasia") ||
+                lowerTitle.contains("sleeping beauty") || lowerTitle.contains("peter pan") ||
+                lowerTitle.contains("alice in wonderland") || lowerTitle.contains("jungle book") ||
+                lowerTitle.contains("fox and the hound") || lowerTitle.contains("great mouse detective") ||
+                lowerTitle.contains("oliver") || lowerTitle.contains("mermaid") ||
+                lowerTitle.contains("hunchback") || lowerTitle.contains("hercules") ||
+                lowerTitle.contains("tarzan") || lowerTitle.contains("emperor") ||
+                lowerTitle.contains("atlantis") || lowerTitle.contains("treasure planet") ||
+                lowerTitle.contains("brother bear") || lowerTitle.contains("home on the range") ||
+                lowerTitle.contains("chicken little") || lowerTitle.contains("meet the robinsons") ||
+                lowerTitle.contains("bolt") || lowerTitle.contains("princess and the frog") ||
+                lowerTitle.contains("tangled") || lowerTitle.contains("winnie") ||
+                lowerTitle.contains("nightmare before christmas") || lowerTitle.contains("corpse bride") ||
+                lowerTitle.contains("antz") || lowerTitle.contains("bug's life") ||
+                lowerTitle.contains("shrek") || lowerTitle.contains("madagascar") ||
+                lowerTitle.contains("kung fu panda") || lowerTitle.contains("how to train your dragon") ||
+                lowerTitle.contains("croods") || lowerTitle.contains("turbo") ||
+                lowerTitle.contains("home") || lowerTitle.contains("trolls") ||
+                lowerTitle.contains("boss baby") || lowerTitle.contains("ferdinand") ||
+                lowerTitle.contains("grinch") || lowerTitle.contains("sing") ||
+                lowerTitle.contains("secret life of pets") || lowerTitle.contains("lego movie")) {
+                return "Animation";
+            }
+            
+            // Horror patterns
+            if (lowerTitle.contains("horror") || lowerTitle.contains("nightmare") ||
+                lowerTitle.contains("scary") || lowerTitle.contains("ghost") ||
+                lowerTitle.contains("haunted") || lowerTitle.contains("evil") ||
+                lowerTitle.contains("dead") || lowerTitle.contains("zombie") ||
+                lowerTitle.contains("vampire") || lowerTitle.contains("monster") ||
+                lowerTitle.contains("psycho") || lowerTitle.contains("exorcist") ||
+                lowerTitle.contains("shining") || lowerTitle.contains("halloween") ||
+                lowerTitle.contains("friday the 13th") || lowerTitle.contains("scream") ||
+                lowerTitle.contains("saw") || lowerTitle.contains("conjuring") ||
+                lowerTitle.contains("insidious") || lowerTitle.contains("sinister") ||
+                lowerTitle.contains("paranormal activity") || lowerTitle.contains("ring") ||
+                lowerTitle.contains("grudge") || lowerTitle.contains("darkness") ||
+                lowerTitle.contains("blair witch") || lowerTitle.contains("texas chainsaw") ||
+                lowerTitle.contains("silence of the lambs") || lowerTitle.contains("hannibal") ||
+                lowerTitle.contains("misery") || lowerTitle.contains("cell") ||
+                lowerTitle.contains("lighthouse") || lowerTitle.contains("color out of space") ||
+                lowerTitle.contains("videodrome") || lowerTitle.contains("session 9") ||
+                lowerTitle.contains("jekyll") || lowerTitle.contains("mummy") ||
+                lowerTitle.contains("fallen") || lowerTitle.contains("28 days later")) {
+                return "Horror";
+            }
+            
+            // Sci-Fi patterns
+            if (lowerTitle.contains("space") || lowerTitle.contains("star") ||
+                lowerTitle.contains("galaxy") || lowerTitle.contains("alien") ||
+                lowerTitle.contains("mars") || lowerTitle.contains("future") ||
+                lowerTitle.contains("robot") || lowerTitle.contains("cyborg") ||
+                lowerTitle.contains("matrix") || lowerTitle.contains("blade runner") ||
+                lowerTitle.contains("terminator") || lowerTitle.contains("2001") ||
+                lowerTitle.contains("contact") || lowerTitle.contains("independence day") ||
+                lowerTitle.contains("men in black") || lowerTitle.contains("fifth element") ||
+                lowerTitle.contains("stargate") || lowerTitle.contains("star trek") ||
+                lowerTitle.contains("star wars") || lowerTitle.contains("interstellar") ||
+                lowerTitle.contains("gravity") || lowerTitle.contains("arrival") ||
+                lowerTitle.contains("prometheus") || lowerTitle.contains("district 9") ||
+                lowerTitle.contains("war games") || lowerTitle.contains("tron") ||
+                lowerTitle.contains("minority report") || lowerTitle.contains("total recall") ||
+                lowerTitle.contains("dark city") || lowerTitle.contains("book of eli") ||
+                lowerTitle.contains("watchmen") || lowerTitle.contains("v for vendetta") ||
+                lowerTitle.contains("constantine") || lowerTitle.contains("aquaman") ||
+                lowerTitle.contains("superman") || lowerTitle.contains("spider-man") ||
+                lowerTitle.contains("avengers") || lowerTitle.contains("iron man") ||
+                lowerTitle.contains("thor") || lowerTitle.contains("guardians") ||
+                lowerTitle.contains("deadpool") || lowerTitle.contains("x-men") ||
+                lowerTitle.contains("fantastic four") || lowerTitle.contains("hulk") ||
+                lowerTitle.contains("captain america") || lowerTitle.contains("ant-man") ||
+                lowerTitle.contains("doctor strange") || lowerTitle.contains("black panther") ||
+                lowerTitle.contains("wonder woman") || lowerTitle.contains("justice league") ||
+                lowerTitle.contains("batman") || lowerTitle.contains("e.t.") ||
+                lowerTitle.contains("close encounters") || lowerTitle.contains("day the earth stood still") ||
+                lowerTitle.contains("planet of the apes") || lowerTitle.contains("godzilla") ||
+                lowerTitle.contains("king kong") || lowerTitle.contains("pacific rim") ||
+                lowerTitle.contains("transformers") || lowerTitle.contains("flight of the navigator") ||
+                lowerTitle.contains("mission to mars") || lowerTitle.contains("deep impact")) {
+                return "Sci-Fi";
+            }
+            
+            // Action patterns
+            if (lowerTitle.contains("die hard") || lowerTitle.contains("mission impossible") ||
+                lowerTitle.contains("james bond") || lowerTitle.contains("007") ||
+                lowerTitle.contains("goldeneye") || lowerTitle.contains("tomorrow never dies") ||
+                lowerTitle.contains("lethal weapon") || lowerTitle.contains("speed") ||
+                lowerTitle.contains("heat") || lowerTitle.contains("face/off") ||
+                lowerTitle.contains("con air") || lowerTitle.contains("rock") ||
+                lowerTitle.contains("expendables") || lowerTitle.contains("rambo") ||
+                lowerTitle.contains("rocky") || lowerTitle.contains("predator") ||
+                lowerTitle.contains("commando") || lowerTitle.contains("demolition man") ||
+                lowerTitle.contains("eraser") || lowerTitle.contains("true lies") ||
+                lowerTitle.contains("broken arrow") || lowerTitle.contains("air force one") ||
+                lowerTitle.contains("perfect storm") || lowerTitle.contains("dante's peak") ||
+                lowerTitle.contains("daylight") || lowerTitle.contains("twister") ||
+                lowerTitle.contains("volcano") || lowerTitle.contains("armageddon") ||
+                lowerTitle.contains("deep impact") || lowerTitle.contains("independence day") ||
+                lowerTitle.contains("jurassic") || lowerTitle.contains("indiana jones") ||
+                lowerTitle.contains("raiders") || lowerTitle.contains("last crusade") ||
+                lowerTitle.contains("temple of doom") || lowerTitle.contains("fugitive") ||
+                lowerTitle.contains("rush hour") || lowerTitle.contains("jackie chan") ||
+                lowerTitle.contains("martial arts") || lowerTitle.contains("karate") ||
+                lowerTitle.contains("ninja") || lowerTitle.contains("samurai") ||
+                lowerTitle.contains("fast and furious") || lowerTitle.contains("gone in 60 seconds") ||
+                lowerTitle.contains("need for speed") || lowerTitle.contains("rush") ||
+                lowerTitle.contains("drive") || lowerTitle.contains("baby driver") ||
+                lowerTitle.contains("john wick") || lowerTitle.contains("taken") ||
+                lowerTitle.contains("bourne") || lowerTitle.contains("mechanic") ||
+                lowerTitle.contains("transporter") || lowerTitle.contains("crank") ||
+                lowerTitle.contains("xxx") || lowerTitle.contains("fast five") ||
+                lowerTitle.contains("furious") || lowerTitle.contains("pirates") ||
+                lowerTitle.contains("mask of zorro") || lowerTitle.contains("three musketeers") ||
+                lowerTitle.contains("robin hood") || lowerTitle.contains("gladiator") ||
+                lowerTitle.contains("braveheart") || lowerTitle.contains("300") ||
+                lowerTitle.contains("troy") || lowerTitle.contains("alexander") ||
+                lowerTitle.contains("kingdom of heaven") || lowerTitle.contains("last samurai") ||
+                lowerTitle.contains("13th warrior") || lowerTitle.contains("valhalla rising") ||
+                lowerTitle.contains("punisher") || lowerTitle.contains("daredevil") ||
+                lowerTitle.contains("green lantern") || lowerTitle.contains("fantastic four") ||
+                lowerTitle.contains("hulk") || lowerTitle.contains("war") ||
+                lowerTitle.contains("patriot") || lowerTitle.contains("saving private ryan") ||
+                lowerTitle.contains("black hawk down") || lowerTitle.contains("we were soldiers") ||
+                lowerTitle.contains("platoon") || lowerTitle.contains("full metal jacket") ||
+                lowerTitle.contains("apocalypse now") || lowerTitle.contains("born on the fourth of july") ||
+                lowerTitle.contains("top gun") || lowerTitle.contains("maverick") ||
+                lowerTitle.contains("crimson tide") || lowerTitle.contains("hunt for red october") ||
+                lowerTitle.contains("under siege") || lowerTitle.contains("executive decision") ||
+                lowerTitle.contains("passenger 57") || lowerTitle.contains("snakes on a plane") ||
+                lowerTitle.contains("turbulence") || lowerTitle.contains("air force one") ||
+                lowerTitle.contains("con air") || lowerTitle.contains("flightplan")) {
+                return "Action";
+            }
+            
+            // Crime patterns
+            if (lowerTitle.contains("godfather") || lowerTitle.contains("goodfellas") ||
+                lowerTitle.contains("casino") || lowerTitle.contains("scarface") ||
+                lowerTitle.contains("departed") || lowerTitle.contains("gangs of new york") ||
+                lowerTitle.contains("once upon a time in america") || lowerTitle.contains("donnie brasco") ||
+                lowerTitle.contains("casino royale") || lowerTitle.contains("heat") ||
+                lowerTitle.contains("reservoir dogs") || lowerTitle.contains("pulp fiction") ||
+                lowerTitle.contains("kill bill") || lowerTitle.contains("jackie brown") ||
+                lowerTitle.contains("sin city") || lowerTitle.contains("la confidential") ||
+                lowerTitle.contains("chinatown") || lowerTitle.contains("maltese falcon") ||
+                lowerTitle.contains("big sleep") || lowerTitle.contains("double indemnity") ||
+                lowerTitle.contains("sunset boulevard") || lowerTitle.contains("touch of evil") ||
+                lowerTitle.contains("third man") || lowerTitle.contains("notorious") ||
+                lowerTitle.contains("north by northwest") || lowerTitle.contains("dial m for murder") ||
+                lowerTitle.contains("rear window") || lowerTitle.contains("vertigo") ||
+                lowerTitle.contains("psycho") || lowerTitle.contains("birds") ||
+                lowerTitle.contains("frenzy") || lowerTitle.contains("torn curtain") ||
+                lowerTitle.contains("topaz") || lowerTitle.contains("family plot") ||
+                lowerTitle.contains("man who knew too much") || lowerTitle.contains("39 steps") ||
+                lowerTitle.contains("lady vanishes") || lowerTitle.contains("saboteur") ||
+                lowerTitle.contains("lifeboat") || lowerTitle.contains("spellbound") ||
+                lowerTitle.contains("rebecca") || lowerTitle.contains("shadow of a doubt") ||
+                lowerTitle.contains("strangers on a train") || lowerTitle.contains("rope") ||
+                lowerTitle.contains("under capricorn") || lowerTitle.contains("stage fright") ||
+                lowerTitle.contains("i confess") || lowerTitle.contains("wrong man") ||
+                lowerTitle.contains("marnie") || lowerTitle.contains("se7en") ||
+                lowerTitle.contains("zodiac") || lowerTitle.contains("gone girl") ||
+                lowerTitle.contains("fight club") || lowerTitle.contains("panic room") ||
+                lowerTitle.contains("game") || lowerTitle.contains("curious case") ||
+                lowerTitle.contains("social network") || lowerTitle.contains("girl with the dragon tattoo") ||
+                lowerTitle.contains("silence of the lambs") || lowerTitle.contains("manhunter") ||
+                lowerTitle.contains("red dragon") || lowerTitle.contains("hannibal") ||
+                lowerTitle.contains("cape fear") || lowerTitle.contains("shutter island") ||
+                lowerTitle.contains("taxi driver") || lowerTitle.contains("mean streets") ||
+                lowerTitle.contains("raging bull") || lowerTitle.contains("king of comedy") ||
+                lowerTitle.contains("after hours") || lowerTitle.contains("color of money") ||
+                lowerTitle.contains("casino") || lowerTitle.contains("goodfellas") ||
+                lowerTitle.contains("gangs of new york") || lowerTitle.contains("aviator") ||
+                lowerTitle.contains("departed") || lowerTitle.contains("wolf of wall street") ||
+                lowerTitle.contains("irishman") || lowerTitle.contains("killers of the flower moon") ||
+                lowerTitle.contains("ocean's") || lowerTitle.contains("italian job") ||
+                lowerTitle.contains("thomas crown affair") || lowerTitle.contains("entrapment") ||
+                lowerTitle.contains("heist") || lowerTitle.contains("inside man") ||
+                lowerTitle.contains("bank job") || lowerTitle.contains("town") ||
+                lowerTitle.contains("heat") || lowerTitle.contains("thief") ||
+                lowerTitle.contains("french connection") || lowerTitle.contains("popeye doyle") ||
+                lowerTitle.contains("serpico") || lowerTitle.contains("prince of the city") ||
+                lowerTitle.contains("q&a") || lowerTitle.contains("night falls on manhattan") ||
+                lowerTitle.contains("find me guilty") || lowerTitle.contains("righteous kill") ||
+                lowerTitle.contains("cop land") || lowerTitle.contains("carlito's way") ||
+                lowerTitle.contains("donnie brasco") || lowerTitle.contains("analyze this") ||
+                lowerTitle.contains("analyze that") || lowerTitle.contains("meet the parents") ||
+                lowerTitle.contains("meet the fockers") || lowerTitle.contains("little fockers") ||
+                lowerTitle.contains("mystic river") || lowerTitle.contains("gone baby gone") ||
+                lowerTitle.contains("live by night") || lowerTitle.contains("argo") ||
+                lowerTitle.contains("accountant") || lowerTitle.contains("way back")) {
+                return "Crime";
+            }
+            
+            // Return a default genre based on common patterns or just cycle through genres
+            String[] defaultGenres = {"Drama", "Comedy", "Action", "Thriller", "Romance", "Adventure"};
+            return defaultGenres[abs(title.hashCode()) % defaultGenres.length];
+        }
+        
+        boolean isClassicFilm(String title) {
+            String lowerTitle = title.toLowerCase();
+            return lowerTitle.contains("godfather") || lowerTitle.contains("casablanca") ||
+                   lowerTitle.contains("citizen kane") || lowerTitle.contains("gone with the wind") ||
+                   lowerTitle.contains("lawrence of arabia") || lowerTitle.contains("wizard of oz") ||
+                   lowerTitle.contains("sunset boulevard") || lowerTitle.contains("vertigo") ||
+                   lowerTitle.contains("singin' in the rain") || lowerTitle.contains("some like it hot") ||
+                   lowerTitle.contains("maltese falcon") || lowerTitle.contains("third man") ||
+                   lowerTitle.contains("notorious") || lowerTitle.contains("rebecca") ||
+                   lowerTitle.contains("psycho") || lowerTitle.contains("2001") ||
+                   lowerTitle.contains("apocalypse now") || lowerTitle.contains("taxi driver") ||
+                   lowerTitle.contains("goodfellas") || lowerTitle.contains("pulp fiction") ||
+                   lowerTitle.contains("schindler's list") || lowerTitle.contains("shawshank redemption") ||
+                   lowerTitle.contains("raiders of the lost ark") || lowerTitle.contains("e.t.") ||
+                   lowerTitle.contains("jaws") || lowerTitle.contains("alien") ||
+                   lowerTitle.contains("blade runner") || lowerTitle.contains("terminator") ||
+                   lowerTitle.contains("matrix") || lowerTitle.contains("star wars") ||
+                   lowerTitle.contains("empire strikes back") || lowerTitle.contains("return of the jedi") ||
+                   lowerTitle.contains("forrest gump") || lowerTitle.contains("titanic") ||
+                   lowerTitle.contains("silence of the lambs") || lowerTitle.contains("one flew over") ||
+                   lowerTitle.contains("chinatown") || lowerTitle.contains("raging bull") ||
+                   lowerTitle.contains("deer hunter") || lowerTitle.contains("rocky") ||
+                   lowerTitle.contains("annie hall") || lowerTitle.contains("manhattan") ||
+                   lowerTitle.contains("network") || lowerTitle.contains("all the president's men") ||
+                   lowerTitle.contains("french connection") || lowerTitle.contains("serpico") ||
+                   lowerTitle.contains("dog day afternoon") || lowerTitle.contains("mean streets");
+        }
+        
+        void draw() {
+            background(0);
+            time += 0.02;
+            
+            // Draw concentric circles for rating levels
+            stroke(0, 255, 0, 30);
+            strokeWeight(1);
+            noFill();
+            for (float r = minRadius; r <= maxRadius; r += 40) {
+                ellipse(centerX, centerY, r * 2, r * 2);
+            }
+            
+            
+            // Calculate mouse angle and distance from center
+            float mouseAngle = atan2(mouseY - centerY, mouseX - centerX);
+            if (mouseAngle < 0) mouseAngle += TWO_PI;
+            float mouseDistFromCenter = dist(mouseX, mouseY, centerX, centerY);
+            
+            // Only apply zoom if mouse is within the visualization area
+            boolean mouseInArea = mouseDistFromCenter >= minRadius && mouseDistFromCenter <= maxRadius + 50;
+            
+            // Calculate global zoom and rotation for spatial magnification
+            if (mouseInArea) {
+                targetGlobalZoom = 3.5; // Higher zoom for better detail viewing
+                targetZoomCenterAngle = mouseAngle; // Center zoom on mouse angle
+            } else {
+                targetGlobalZoom = 1.0; // Zoom out when mouse leaves
+            }
+            
+            // Faster, more responsive animation
+            globalZoomFactor = lerp(globalZoomFactor, targetGlobalZoom, 0.15);
+            
+            // Faster angle following with wrap-around handling
+            float angleDiff = targetZoomCenterAngle - zoomCenterAngle;
+            if (angleDiff > PI) angleDiff -= TWO_PI;
+            if (angleDiff < -PI) angleDiff += TWO_PI;
+            zoomCenterAngle += angleDiff * 0.2;
+            
+            // Apply spatial transformation for true zoom effect
+            pushMatrix();
+            
+            // Calculate zoom focus point (where mouse is pointing)
+            float zoomFocusX = centerX + cos(zoomCenterAngle) * ((minRadius + maxRadius) / 2);
+            float zoomFocusY = centerY + sin(zoomCenterAngle) * ((minRadius + maxRadius) / 2);
+            
+            // Zoom toward the mouse position, not the center
+            translate(zoomFocusX, zoomFocusY);
+            scale(globalZoomFactor);
+            translate(-zoomFocusX, -zoomFocusY);
+            
+            // Draw radial lines for each movie slice with spatial transformation
+            hoveredMovie = -1;
+            float angleStep = TWO_PI / numMovies;
+            
+            for (int i = 0; i < numMovies; i++) {
+                float baseAngle = i * angleStep;
+                float startAngle = baseAngle - angleStep/2;
+                float endAngle = baseAngle + angleStep/2;
+                
+                // Calculate dot position first
+                float dotAngle = baseAngle;
+                float dotRadius = currentRadii[i]; // Place dot at the end of the slice
+                float dotX = centerX + cos(dotAngle) * dotRadius;
+                float dotY = centerY + sin(dotAngle) * dotRadius;
+                
+                // Check if mouse is over this dot (much more precise)
+                boolean isHovered = false;
+
+                if (mouseInArea) {
+                    float mouseAngleNorm = mouseAngle;
+                    float sliceStart = startAngle;
+                    float sliceEnd = endAngle;
+
+                    // Handle wrap-around for angles (crossing 0 radians)
+                    if (sliceEnd < sliceStart) sliceEnd += TWO_PI;
+                    if (mouseAngleNorm < sliceStart) mouseAngleNorm += TWO_PI;
+
+                    // Check if mouse angle falls within this slice
+                    boolean angleInRange = (mouseAngleNorm >= sliceStart && mouseAngleNorm <= sliceEnd);
+                    boolean radiusInRange = (mouseDistFromCenter >= minRadius && mouseDistFromCenter <= currentRadii[i]);
+
+                    isHovered = angleInRange && radiusInRange;
+                }
+                
+                if (isHovered) hoveredMovie = i;
+                boolean isSelected = selectedMovie == i;
+                
+                // Update target radius for smooth animation
+                if (isHovered || isSelected) {
+                    targetRadii[i] = movieRadii[i] + 25; // Extend on hover
+                } else {
+                    targetRadii[i] = movieRadii[i]; // Normal height
+                }
+                
+                // Smooth animation
+                currentRadii[i] = lerp(currentRadii[i], targetRadii[i], 0.15);
+                
+                // Check if this movie should be highlighted based on genre filter
+                boolean isFiltered = !filteredGenre.equals("") && !movieGenres[i].equals(filteredGenre);
+                
+                // Draw the pie slice - only to the movie's rating height
+                float alpha = (isHovered || isSelected) ? 220 : 160;
+                if (isFiltered) {
+                    alpha *= 0.2; // Dim filtered out movies
+                }
+                fill(red(movieColors[i]), green(movieColors[i]), blue(movieColors[i]), alpha);
+                stroke(0, 255, 0, isFiltered ? 20 : 80);
+                strokeWeight(3);
+                
+                // Draw pie slice from inner circle to rating height
+                beginShape();
+                // Inner arc
+                for (float a = startAngle; a <= endAngle; a += 0.05) {
+                    float x = centerX + cos(a) * minRadius;
+                    float y = centerY + sin(a) * minRadius;
+                    vertex(x, y);
+                }
+                // Outer arc at rating height
+                for (float a = endAngle; a >= startAngle; a -= 0.05) {
+                    float x = centerX + cos(a) * currentRadii[i];
+                    float y = centerY + sin(a) * currentRadii[i];
+                    vertex(x, y);
+                }
+                endShape(CLOSE);
+                
+                // Draw the movie dot (position already calculated above)
+                
+                fill(red(movieColors[i]), green(movieColors[i]), blue(movieColors[i]), isFiltered ? 50 : 255);
+                noStroke(); // Remove border from movie dots
+                float dotSize = (isHovered || isSelected) ? 14 : 10;
+                dotSize += sin(time + i * 0.3) * 1.5; // Gentle pulsing
+                ellipse(dotX, dotY, dotSize, dotSize);
+                
+                // Inner rating dot - same color as genre but slightly more opaque
+                fill(red(movieColors[i]), green(movieColors[i]), blue(movieColors[i]), isFiltered ? 80 : 255);
+                noStroke();
+                ellipse(dotX, dotY, dotSize * 0.5, dotSize * 0.5);
+                
+                // Store info for drawing outside transform
+                if (isHovered || isSelected) {
+                    // We'll draw this outside the transform matrix
+                }
+            }
+            
+            // Draw center circle (inside transform so it flows with zoom)
+            fill(0);
+            stroke(0, 255, 0);
+            strokeWeight(2);
+            ellipse(centerX, centerY, minRadius * 2, minRadius * 2);
+            
+            // Center text (also transformed)
+            fill(0, 255, 0);
+            textAlign(CENTER);
+            text("PHYSICAL", centerX, centerY - 10);
+            text("COLLECTION", centerX, centerY + 5);
+            
+            // Restore transformation matrix
+            popMatrix();
+            
+            // Draw movie info box on top (outside transform so it's always visible)
+            // Only show info for movies that match current filter (or all if no filter)
+            if (hoveredMovie != -1 || selectedMovie != -1) {
+                int infoMovie = hoveredMovie != -1 ? hoveredMovie : selectedMovie;
+                boolean movieMatchesFilter = filteredGenre.equals("") || movieGenres[infoMovie].equals(filteredGenre);
+                if (movieMatchesFilter) {
+                    drawMovieInfoOnTop(infoMovie);
+                }
+            }
+            
+            // Draw UI
+            drawUI();
+        }
+        
+        void drawMovieInfoOnTop(int index) {
+            String info = movieTitles[index];
+            String rating = movieGenres[index] + " • " + nf(movieRatings[index], 1, 1) + " ★";
+            
+            float boxWidth = max(textWidth(info), textWidth(rating)) + 50; // Much wider
+            float boxHeight = 80; // Much taller
+            
+            // Position box at top center of screen for maximum visibility
+            float boxX = (width - boxWidth) / 2;
+            float boxY = 20;
+            
+            // Draw completely solid black background
+            fill(0, 0, 0, 255); // Completely opaque black background
+            noStroke(); // No stroke for the main background
+            rect(boxX, boxY, boxWidth, boxHeight, 8); // Rounded corners
+            
+            // Draw bright yellow border on top
+            noFill();
+            stroke(255, 255, 0, 255); // Bright yellow border
+            strokeWeight(3);
+            rect(boxX, boxY, boxWidth, boxHeight, 8); // Rounded corners
+            
+            // Draw inner glow effect
+            stroke(0, 255, 0, 150);
+            strokeWeight(1);
+            rect(boxX + 3, boxY + 3, boxWidth - 6, boxHeight - 6, 6);
+            
+            // Movie title in bright white for maximum contrast
+            fill(255, 255, 255, 255);
+            noStroke();
+            textAlign(CENTER);
+            text(info, boxX + boxWidth/2, boxY + 35);
+            
+            // Rating and genre in bright yellow
+            fill(255, 255, 0, 255);
+            text(rating, boxX + boxWidth/2, boxY + 60);
+        }
+        
+        void drawUI() {
+            // Genre legend
+            fill(0, 255, 0, 200);
+            textAlign(LEFT);
+            text("GENRE FILTER (click to filter):", 20, 30);
+            
+            String[] genres = {"Sci-Fi", "Horror", "Crime", "Drama", "Comedy", "Thriller", "Action"};
+            for (int i = 0; i < genres.length; i++) {
+                boolean isActive = filteredGenre.equals("") || filteredGenre.equals(genres[i]);
+                
+                // Highlight selected genre or dim unselected ones
+                fill(getGenreColor(genres[i]), isActive ? 255 : 100);
+                ellipse(30, 50 + i * 20, 12, 12);
+                
+                // Add selection ring for active filter
+                if (filteredGenre.equals(genres[i])) {
+                    stroke(255, 255, 0);
+                    strokeWeight(2);
+                    noFill();
+                    ellipse(30, 50 + i * 20, 18, 18);
+                }
+                
+                fill(0, 255, 0, isActive ? 200 : 100);
+                noStroke();
+                text(genres[i], 45, 55 + i * 20);
+            }
+            
+            // Reset button
+            boolean resetHovered = mouseX >= 20 && mouseX <= 80 && mouseY >= height - 100 && mouseY <= height - 80;
+            fill(resetHovered ? color(255, 255, 0) : color(0, 255, 0), 200);
+            stroke(0, 255, 0);
+            strokeWeight(1);
+            rect(20, height - 100, 60, 20);
+            
+            fill(0, 0, 0);
+            textAlign(CENTER);
+            text("RESET", 50, height - 87);
+            textAlign(LEFT);
+            
+            // Instructions
+            fill(0, 255, 0, 100);
+            textAlign(RIGHT);
+            text("Each slice = one movie", width - 20, height - 75);
+            text("Distance from center = rating", width - 20, height - 60);
+            text("Color = genre", width - 20, height - 45);
+            text("Move mouse for section zoom", width - 20, height - 30);
+            
+            
+            // Mouse debug
+            /* fill(0, 255, 0, 80);
+            textAlign(LEFT);
+            text("Mouse: " + mouseX + ", " + mouseY, 20, height - 35);
+            if (hoveredMovie != -1) {
+                text("Hovering: " + movieTitles[hoveredMovie], 20, height - 20);
+            }*/
+            
+            // Show if zoom is active
+            if (globalZoomFactor > 1.1) {
+                fill(255, 255, 0, 150);
+                // text("SPATIAL ZOOM ACTIVE: " + nf(globalZoomFactor, 1, 1) + "x", 20, height - 5);
+            }
+        }
+        
+        color getGenreColor(String genre) {
+            if (genre.equals("Sci-Fi")) return color(0, 200, 255);
+            if (genre.equals("Horror")) return color(255, 50, 50);
+            if (genre.equals("Crime")) return color(255, 150, 0);
+            if (genre.equals("Drama")) return color(150, 255, 150);
+            if (genre.equals("Comedy")) return color(255, 255, 100);
+            if (genre.equals("Thriller")) return color(200, 100, 255);
+            if (genre.equals("Action")) return color(255, 100, 100);
+            return color(255, 255, 255);
+        }
+        
+        void mousePressed() {
+            // Check if clicking on genre legend
+            String[] genres = {"Sci-Fi", "Horror", "Crime", "Drama", "Comedy", "Thriller", "Action"};
+            boolean clickedGenre = false;
+            
+            for (int i = 0; i < genres.length; i++) {
+                float genreY = 50 + i * 20;
+                if (mouseX >= 20 && mouseX <= 100 && mouseY >= genreY - 10 && mouseY <= genreY + 10) {
+                    // Toggle genre filter
+                    if (filteredGenre.equals(genres[i])) {
+                        filteredGenre = ""; // Turn off filter if already selected
+                    } else {
+                        filteredGenre = genres[i]; // Apply new filter
+                    }
+                    clickedGenre = true;
+                    break;
+                }
+            }
+            
+            // Check if clicking reset button
+            if (mouseX >= 20 && mouseX <= 80 && mouseY >= height - 100 && mouseY <= height - 80) {
+                filteredGenre = "";
+                clickedGenre = true;
+            }
+            
+            // Only handle movie selection if not clicking on UI elements
+            if (!clickedGenre) {
+                if (hoveredMovie != -1) {
+                    selectedMovie = (selectedMovie == hoveredMovie) ? -1 : hoveredMovie;
+                } else {
+                    selectedMovie = -1;
+                }
+            }
+        }
+    </script>
+    
+    <canvas></canvas>
+    
+    <div id="info">
+        A radial visualization where each movie is a slice • Distance from center shows rating
+    </div>
+
+    
+<div class="wrapper">
+    <article>
+        <header>
+            <h1>Interface Design in the Physical World</h1>
+            <small>Matthew White - 7/24/2025</small>
+        </header>
+
+        <p>There's something beautifully paradoxical about my relationship with media. By day, I design digital interfaces and solve complex UX problems with code, pixels, and algorithms—often collaborating with AI tools like Claude Code to rapidly prototype and iterate on solutions. By night, I walk over to my shelf and browse through my collection of 410 physical movies, the same way I used to wander the aisles at Blockbuster.</p>
+
+        <p>This parallel became clear to me recently as I was organizing my physical media collection and decided to visualize it using Processing—the same creative coding framework I first discovered in 2006 when I was trying to make art with algorithms. Back then, I had ambitious ideas for data visualizations that my coding skills couldn't quite execute. Years of trying, practicing, and learning with other languages and frameworks taught me to think creatively about problems and communicate my visual intent. Now, with AI tools like Claude Code, I could finally leverage that creative strategy and design thinking to bring those half-formed concepts to life. Sure, I could use D3 or other modern frameworks, but returning to Processing felt right—personal, even. Just like my collection itself.</p>
+
+        <section>
+            <h2>Code as Canvas, 2006-2007</h2>
+
+            <p>Back then, Processing felt revolutionary. Here was a way to bridge the gap between programming and visual expression, to treat code not as pure logic but as a creative medium. I remember those late nights in 2007, wrestling with <code>for</code> loops and <code>sin()</code> functions, trying to make something beautiful emerge from the mathematical precision of code.</p>
+
+            <p>Processing taught me that behind every digital interface lies a human decision about how information should feel, how data should move, how interaction should flow. Every curve drawn with <code>bezier()</code>, every color chosen with <code>fill()</code>, was a tiny act of interface design—long before I knew that's what I was doing.</p>
+
+            <p>That early experience shaped how I approach UX today. The same principles that made a Processing sketch compelling—visual hierarchy, rhythm, responsive feedback—are what make digital interfaces intuitive and delightful.</p>
+        </section>
+
+        <section>
+            <h2>The Interface of Physical Media</h2>
+
+            <p>But here's what I've realized: physical media has its own interface design language, one that's been refined over decades of human interaction.</p>
+
+            <p>Consider the simple act of browsing my movie collection. Each DVD case is a masterpiece of information architecture: the spine displays the title in carefully chosen typography, creating a visual rhythm across the shelf. The front cover serves as both artistic expression and functional UI—communicating genre, tone, and key information at a glance. The back cover unfolds like a detailed product page: synopsis, cast list, technical specifications, even screenshots that serve as visual previews.</p>
+
+            <p>This is interface design in its purest form. Every element has been considered for both aesthetic appeal and functional purpose. The physical dimensions of the case create natural constraints that force designers to prioritize information—much like responsive design principles force us to consider mobile-first thinking.</p>
+
+            <p>My collection spans from <em>The African Queen</em> (1951) to recent releases, with a heavy concentration in the 90s and 2000s—the golden age of DVD packaging design. During this era, studios were still learning how to translate the cinematic experience into a physical product you could hold, and the experimentation shows. Special editions with embossed covers, innovative case designs, elaborate booklets—each one a small study in user experience design.</p>
+        </section>
+
+        <section>
+            <h2>The Ritual of Intention</h2>
+
+            <p>There's a UX principle we often talk about called "choice paralysis"—when too many options overwhelm users and prevent decision-making. Netflix's endless scroll of algorithmic recommendations is a perfect example of this problem at scale.</p>
+
+            <p>But browsing my physical collection recreates the Blockbuster experience: a curated, finite set of options that I can actually process. I can see everything at once, spot patterns in my own taste, and make a decision without getting lost in an infinite feed of "Because you watched..." suggestions.</p>
+
+            <p>This constrained browsing creates what I call "productive friction." The extra steps—standing up, scanning titles, picking up a case—transform the paralyzing abundance of streaming into manageable choice architecture.</p>
+
+            <p>It's the same principle behind good form design: sometimes we want users to slow down, to really think about their choices. The most important actions shouldn't always be the easiest ones.</p>
+        </section>
+
+        <section>
+            <h2>Data as Artifact</h2>
+
+            <p>When I visualized my collection in Processing—the same tool that first taught me to think about data as something visual and experiential—patterns emerged that pure digital analytics might miss. The clustering of titles from certain decades tells the story of which eras I connect with most deeply. The mix of genres reveals viewing habits that streaming algorithms, optimized for engagement, might never surface.</p>
+
+            <p>Each disc or VHS tape in my collection is both content and container, story and object. Unlike digital files that exist as abstract data, these movies have weight, texture, presence. They occupy physical space in my home, creating a living archive of aesthetic choices and emotional connections.</p>
+
+            <p>But perhaps more importantly, DVDs and Blu-rays offer something streaming services have largely abandoned: curated context. Director commentaries, behind-the-scenes documentaries, deleted scenes, alternate endings—these bonus features create a contained universe around each film. When I want to dive deeper into a movie's world, I'm not pulled into the endless rabbit hole of YouTube theories or Wikipedia articles. Instead, I get the filmmaker's intended supplementary content, designed specifically to enhance that single viewing experience.</p>
+
+            <p>This is intentional design at its finest. The disc creates a boundary around the experience, letting me go deep without distraction. There's no autoplay pulling me toward the next thing, no algorithm suggesting what I should watch next. Just the film and its carefully curated companion materials, allowing for focused exploration without the cognitive overhead of the entire internet.</p>
+        </section>
+
+        <section>
+            <h2>Interface Lessons from Analog</h2>
+
+            <p>Working with physical media has made me a better digital designer. Here's what DVDs taught me about interface design:</p>
+
+            <h3>Organization as experience design</h3>
+            <p>Alphabetical shelves prioritize findability—like a search-optimized interface. Genre groupings create discovery zones where <em>Blade Runner</em> sitting next to <em>Alien</em> might spark a sci-fi mood I didn't know I was in. Director-based organization tells stories about artistic evolution. Each arrangement strategy creates a fundamentally different user experience with the same content. Digital products that lock users into a single organizational metaphor miss this insight.</p>
+
+            <h3>Visual rhythm creates cognitive patterns</h3>
+            <p>The way DVD spines create a typographic landscape across my shelf teaches me about scannable hierarchies in ways no design book could. Thick cases break the rhythm like bold headers break up text blocks—both guide the eye and create natural pause points.</p>
+
+            <h3>Empty space signals intention—or absence</h3>
+            <p>The gaps in my collection work both ways: sometimes they represent conscious editorial choices, but other times they signal something missing. When I see the empty spot where <em>The Matrix</em> used to be before I lent it out, that gap feels broken, incomplete. Interface design has the same tension—users can sense when something is missing even if they can't articulate what. That feeling of incompleteness can be interpreted as "broken," "missing," or simply lost. Understanding when white space feels intentional versus when it feels like an error is crucial.</p>
+
+            <h3>Context switching changes everything</h3>
+            <p>Moving the same movie from the "comfort food" shelf to the "show guests" shelf transforms its identity entirely. User-generated tags and categories in digital products should embrace this fluidity rather than forcing rigid taxonomies.</p>
+        </section>
+
+        <section>
+            <h2>The Future of Physical Digital</h2>
+
+            <p>As I continue building digital experiences by day and curating physical ones by evening, I'm struck by how these practices inform each other. AI and its ability to free designers to do amazing things excites me—I can curate prototypes that are very compelling now very quickly. But the ritualistic nature of "make something, look at what you made, and figure out how to improve it" still persists in any form, whether I'm arranging movies on a shelf or iterating on interface designs with AI assistance.</p>
+
+            <p>What remains constant across both practices is the power of empathy, memory, nostalgia, and experience. When I choose which movies deserve space on my shelf, I'm drawing on emotional connections and personal history. What makes a movie memorable goes beyond the scenes, sound, or genre—it's the feeling they evoke or the experience in which you first saw them. A movie can be objectively bad in execution, but if you selected it at the video store with your friends and went home to watch it together, that memory becomes as much part of the experience as the film itself.</p>
+
+            <p>When I design interfaces, I'm tapping into that same well of human understanding—anticipating how users will feel, remembering how I've navigated similar problems, creating experiences that resonate beyond pure functionality. Design and UX work the same way: the context, the emotions, the memories we create around interactions often matter more than the technical execution—although in UX, eventually, technical execution becomes critical. A broken interface kills the emotional connection no matter how thoughtfully designed the experience.</p>
+
+            <p>The future isn't about choosing between digital convenience and analog authenticity—it's about understanding what each does best and designing accordingly.</p>
+
+            <p>Some experiences benefit from frictionless efficiency. Others are enhanced by ritual, intention, and physical presence. The best interfaces—whether made of code or cardboard—understand their medium and respect their users' time, attention, and humanity.</p>
+
+            <p>My Processing visualization sits on my screen now, 410 data points representing 410 intentional choices, 410 moments of interface design spanning nearly a century. Each one a reminder that behind every user experience, digital or physical, lies the fundamental question: How do we help humans connect meaningfully with the information and stories that matter to them?</p>
+
+            <p>Sometimes the answer is an algorithm. Sometimes it's a shelf full of movies and the simple pleasure of choosing one by hand. Sometimes it's reaching for a familiar friend of a movie I've seen dozens of times, finding comfort in the known. But staying open to new experiences—whether it's an unfamiliar title that catches my eye or a fresh approach to an interface challenge—remains equally critical. The best collections, like the best designs, need both comfort and surprise.</p>
+        </section>
+        <hr>
+        <small>
+            Above visualization created with Claude Code (2025) and Processing JS (2008). Datatset is my personal physical media collection from Letterboxd
+            <p>See more at <a href="http://tchr01.github.io">http://tchr01.github.io</a></p>
+        </small>
+    </article>
+</div>
+</body>
+</html>
