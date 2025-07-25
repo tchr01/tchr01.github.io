@@ -46,8 +46,8 @@
     <div id="title">LETTERBOXD COLLECTION WHEEL <br/><small style="font-size:12px;">(A Claude Code and Processing Experiment)</small></div>
     
     <script type="application/processing">
-        // Movie data
-        int numMovies = 0; // Will be set by loadPhysicalMovies()
+        // Movie data from first 50 entries in physical_movies_enhanced.csv
+        int numMovies = 0;
         String[] movieTitles = {};
         String[] movieGenres = {};
         float[] movieRatings = {};
@@ -59,17 +59,17 @@
         float[] zoomFactors = {};
         float[] targetZoomFactors = {};
         
-        boolean dataInitialized = false; // Prevent multiple initialization
+        boolean dataInitialized = false;
         
         int selectedMovie = -1;
         int hoveredMovie = -1;
-        String filteredGenre = ""; // Empty string means show all genres
+        String filteredGenre = "";
         float time = 0;
         float centerX, centerY;
-        float maxRadius = 380;
-        float minRadius = 100;
-        float maxZoomDistance = 200; // Distance from mouse where zoom effect starts
-        float zoomSectionSize = PI/3; // Size of zoom section (60 degrees)
+        float maxRadius = 450;
+        float minRadius = 80;
+        float maxZoomDistance = 200;
+        float zoomSectionSize = PI/3;
         float globalZoomFactor = 1.0;
         float targetGlobalZoom = 1.0;
         float zoomCenterAngle = 0;
@@ -80,95 +80,101 @@
             centerX = width / 2;
             centerY = height / 2;
             
-            // Load data only once with multiple guards
             if (!dataInitialized && numMovies == 0) {
                 loadPhysicalMovies();
                 dataInitialized = true;
             }
         }
         
-       void loadPhysicalMovies() {
-    String[] movieTitles = {
-        "2001: A Space Odyssey (1968)", "50 First Dates (2004)", "The African Queen (1951)", "A.I. Artificial Intelligence (2001)", "Air Force One (1997)",
-        "Almost Famous (2000)", "American History X (1998)", "The Animal (2001)", "Any Given Sunday (1999)", "Aquaman (2018)",
-        "As Good as It Gets (1997)", "Austin Powers: The Spy Who Shagged Me (1999)", "The Avengers (2012)", "Baby Geniuses (1999)", "Batman Forever (1995)",
-        "Beaches (1988)", "Best in Show (2000)", "Big (1988)", "Billy Madison (1995)", "Bruce Almighty (2003)",
-        "Cape Fear (1991)", "Captain Phillips (2013)", "Captain Ron (1992)", "Casablanca (1942)", "Casino (1995)",
-        "Cast Away (2000)", "The Cell (2000)", "Chill Factor (1999)", "City of Angels (1998)", "Clifford (1994)",
-        "Coco (2017)", "The Color Purple (1985)", "Contact (1997)", "Coyote Ugly (2000)", "The Cutting Edge (1992)",
-        "Dangerous Minds (1995)", "Daylight (1996)", "The Day the Earth Stood Still (1951)", "Dead Poets Society (1989)", "Deadpool (2016)",
-        "Deep Impact (1998)", "Double Jeopardy (1999)", "Down to You (2000)", "Dr. Jekyll and Mr. Hyde (1931)", "Ellen DeGeneres: Here and Now (2003)",
-        "End of Days (1999)", "Erin Brockovich (2000)", "E.T. the Extra-Terrestrial (1982)", "Ever After (1998)", "Field of Dreams (1989)",
-        "The Fifth Element (1997)", "Flight of the Navigator (1986)", "The Flintstones (1994)", "Forrest Gump (1994)", "Frantic (1988)",
-        "Freaky Friday (1976)", "Fried Green Tomatoes (1991)", "The Fugitive (1993)", "Galaxy Quest (1999)", "George of the Jungle (1997)",
-        "Ghost (1990)", "The Godfather (1972)", "Gone with the Wind (1939)", "GoodFellas (1990)", "The Green Mile (1999)",
-        "Half Baked (1998)", "Happy Gilmore (1996)", "Hard Rain (1998)", "History of the World: Part I (1981)", "Hollow Man (2000)",
-        "Home Alone (1990)", "Honey, I Shrunk the Kids (1989)", "The Hot Chick (2002)", "Independence Day (1996)", "Indiana Jones and the Last Crusade (1989)",
-        "Indiana Jones and the Temple of Doom (1984)", "Inside Out 2 (2024)", "Iron Man 2 (2010)", "I, Tonya (2017)", "Jurassic Park (1993)",
-        "Jumanji (1995)", "Just Friends (2005)", "Kill Bill: Vol. 1 (2003)", "Kill Bill: Vol. 2 (2004)", "L.A. Confidential (1997)",
-        "Labyrinth (1986)", "Lara Croft: Tomb Raider (2001)", "Lars and the Real Girl (2007)", "Legally Blonde (2001)", "The Lion King (1994)",
-        "Little Miss Sunshine (2006)", "The Lord of the Rings: The Fellowship of the Ring (2001)", "The Lord of the Rings: The Two Towers (2002)", "The Lord of the Rings: The Return of the King (2003)", "Lost in Translation (2003)",
-        "Mad Max: Fury Road (2015)", "The Matrix (1999)", "Mean Girls (2004)", "Men in Black (1997)", "Minority Report (2002)",
-        "Moulin Rouge! (2001)", "Mrs. Doubtfire (1993)", "Mulan (1998)", "The Mummy (1999)", "My Big Fat Greek Wedding (2002)"
-    };
+        void loadPhysicalMovies() {
+            // Fresh data from physical_movies_enhanced.csv - Movies 1-100 with year disambiguation
+            String[] movieTitles = {
+                "2001: A Space Odyssey (1968)", "50 First Dates (2004)", "The African Queen (1951)", 
+                "A.I. Artificial Intelligence (2001)", "Air Force One (1997)", "Almost Famous (2000)", 
+                "American History X (1998)", "The Animal (2001)", "Any Given Sunday (1999)", 
+                "Aquaman (2018)", "As Good as It Gets (1997)", "Austin Powers: The Spy Who Shagged Me (1999)", 
+                "The Avengers (2012)", "Baby Geniuses (1999)", "Batman Forever (1995)", "Beaches (1988)", 
+                "Best in Show (2000)", "Big (1988)", "Billy Madison (1995)", "Bruce Almighty (2003)", 
+                "Cape Fear (1991)", "Captain Phillips (2013)", "Captain Ron (1992)", "Casablanca (1942)", 
+                "Casino (1995)", "Cast Away (2000)", "The Cell (2000)", "Chill Factor (1999)", 
+                "City of Angels (1998)", "Clifford (1994)", "Coco (2017)", "The Color Purple (1985)", 
+                "Contact (1997)", "Coyote Ugly (2000)", "The Cutting Edge (1992)", "Dangerous Minds (1995)", 
+                "Daylight (1996)", "The Day the Earth Stood Still (1951)", "Dead Poets Society (1989)", 
+                "Deadpool (2016)", "Deep Impact (1998)", "Double Jeopardy (1999)", "Down to You (2000)", 
+                "Dr. Jekyll and Mr. Hyde (1931)", "Ellen DeGeneres: Here and Now (2003)", "End of Days (1999)",
+                // Movies 47-100
+                "Erin Brockovich (2000)", "E.T. the Extra-Terrestrial (1982)", "Ever After (1998)", 
+                "Field of Dreams (1989)", "The Fifth Element (1997)", "Flight of the Navigator (1986)", 
+                "The Flintstones (1994)", "Forrest Gump (1994)", "Frantic (1988)", "Freaky Friday (1976)", 
+                "Fried Green Tomatoes (1991)", "The Fugitive (1993)", "Galaxy Quest (1999)", 
+                "George of the Jungle (1997)", "Ghost (1990)", "The Godfather (1972)", 
+                "Gone with the Wind (1939)", "GoodFellas (1990)", "The Green Mile (1999)", 
+                "Half Baked (1998)", "Happy Gilmore (1996)", "Hard Rain (1998)", 
+                "History of the World: Part I (1981)", "Hollow Man (2000)", "Home Alone (1990)", 
+                "Honey, I Shrunk the Kids (1989)", "The Hot Chick (2002)", "Independence Day (1996)", 
+                "Indiana Jones and the Last Crusade (1989)", "Indiana Jones and the Temple of Doom (1984)", 
+                "Inside Out 2 (2024)", "Iron Man 2 (2010)", "I, Tonya (2017)", "Jurassic Park (1993)", 
+                "A League of Their Own (1992)", "Liar Liar (1997)", "The Lighthouse (2019)", 
+                "The Little Rascals (1994)", "The Lost World: Jurassic Park (1997)", "Love & Basketball (2000)", 
+                "The Maltese Falcon (1941)", "The Man with One Red Shoe (1985)", "The Mask (1994)", 
+                "The Mask of Zorro (1998)", "Masterminds (2016)", "Meet the Parents (2000)", 
+                "Me, Myself & Irene (2000)", "Men in Black (1997)"
+            };
 
-    String[] movieGenres = {
-        "Adventure", "Comedy", "Adventure", "Adventure", "Action",
-        "Drama", "Drama", "Comedy", "Drama", "Action",
-        "Romance", "Comedy", "Action", "Comedy", "Action",
-        "Drama", "Comedy", "Comedy", "Comedy", "Comedy",
-        "Thriller", "Drama", "Comedy", "Romance", "Crime",
-        "Drama", "Horror", "Action", "Romance", "Comedy",
-        "Animation", "Drama", "Adventure", "Drama", "Romance",
-        "Drama", "Action", "Adventure", "Drama", "Action",
-        "Sci-Fi", "Crime", "Romance", "Horror", "Comedy",
-        "Action", "Drama", "Sci-Fi", "Romance", "Drama",
-        "Sci-Fi", "Sci-Fi", "Comedy", "Drama", "Action",
-        "Comedy", "Drama", "Action", "Comedy", "Comedy",
-        "Romance", "Crime", "Drama", "Crime", "Drama",
-        "Comedy", "Comedy", "Action", "Comedy", "Sci-Fi",
-        "Comedy", "Comedy", "Comedy", "Sci-Fi", "Adventure",
-        "Adventure", "Animation", "Action", "Drama",
-        "Adventure", "Comedy", "Action", "Action", "Crime",
-        "Fantasy", "Action", "Drama", "Comedy", "Animation",
-        "Comedy", "Adventure", "Adventure", "Adventure", "Drama",
-        "Action", "Sci-Fi", "Comedy", "Action", "Action",
-        "Musical", "Comedy", "Animation", "Action", "Comedy"
-    };
+            float[] movieRatings = {
+                4.66, 3.86, 4.54, 4.44, 3.80, 4.58, 4.70, 3.46, 3.88, 3.86, 
+                4.54, 3.84, 4.60, 3.02, 3.58, 3.90, 4.50, 4.46, 3.78, 3.86, 
+                4.46, 4.56, 3.66, 4.70, 4.64, 4.56, 3.78, 3.54, 3.84, 3.60, 
+                4.68, 4.54, 4.50, 3.64, 3.88, 3.80, 3.70, 4.54, 4.62, 4.60, 
+                3.76, 3.80, 3.50, 4.52, 4.52, 3.66,
+                // Ratings for movies 47-100 (converted from IMDb 0-10 to 3.0-5.0 scale)
+                4.48, 4.58, 4.42, 4.50, 4.52, 3.88, 3.50, 4.76, 3.86, 3.76, 
+                4.54, 4.56, 4.48, 3.60, 4.42, 4.84, 4.64, 4.74, 4.72, 3.82, 
+                3.90, 3.68, 3.86, 3.68, 4.54, 3.78, 3.62, 3.90, 4.64, 4.50, 
+                4.50, 3.88, 4.50, 4.64, 4.48, 3.88, 4.48, 3.76, 3.82, 4.44, 
+                4.58, 3.64, 3.90, 3.86, 3.54, 3.90, 3.82, 4.46
+            };
+            
+            String[] movieGenres = {
+                "Sci-Fi", "Comedy", "Adventure", "Sci-Fi", "Action", "Drama", "Drama", "Comedy", 
+                "Drama", "Action", "Comedy", "Comedy", "Action", "Comedy", "Action", "Drama", 
+                "Comedy", "Comedy", "Comedy", "Comedy", "Thriller", "Action", "Comedy", "Drama", 
+                "Crime", "Drama", "Horror", "Action", "Romance", "Comedy", "Animation", "Drama", 
+                "Sci-Fi", "Comedy", "Romance", "Drama", "Action", "Sci-Fi", "Drama", "Action", 
+                "Sci-Fi", "Crime", "Romance", "Horror", "Comedy", "Action",
+                // Genres for movies 47-100
+                "Drama", "Sci-Fi", "Romance", "Drama", "Sci-Fi", "Adventure", "Comedy", "Drama", 
+                "Crime", "Comedy", "Drama", "Action", "Comedy", "Comedy", "Romance", "Crime", 
+                "Drama", "Crime", "Drama", "Comedy", "Comedy", "Action", "Comedy", "Horror", 
+                "Comedy", "Comedy", "Comedy", "Sci-Fi", "Adventure", "Adventure", "Animation", 
+                "Action", "Drama", "Sci-Fi", "Drama", "Comedy", "Horror", "Comedy", "Sci-Fi", 
+                "Romance", "Crime", "Comedy", "Comedy", "Action", "Comedy", "Comedy", "Comedy", "Action"
+            };
 
-    float[] movieRatings = {
-        8.3, 6.8, 7.7, 7.2, 6.5,
-        7.9, 8.5, 4.8, 6.9, 6.8,
-        7.7, 6.6, 8.0, 2.6, 5.4,
-        7.0, 7.5, 7.3, 6.4, 6.8,
-        7.3, 7.8, 5.7, 8.5, 8.2,
-        7.8, 6.4, 5.2, 6.7, 5.4,
-        8.4, 7.8, 7.5, 5.7, 6.9,
-        6.5, 5.9, 7.1, 8.1, 8.0,
-        6.2, 6.5, 4.9, 7.6, 7.0,
-        5.8, 7.4, 7.8, 7.0, 7.5,
-        7.6, 6.9, 5.0, 8.8, 6.9,
-        6.3, 7.7, 7.8, 7.3, 5.4,
-        7.0, 9.2, 8.2, 8.7, 8.6,
-        6.6, 7.0, 5.8, 6.9, 6.0,
-        6.5, 7.0, 7.5, 6.4, 8.5,
-        7.8, 5.8, 8.2, 8.0, 8.2,
-        8.1, 8.7, 8.8, 9.0, 7.7,
-        8.1, 8.7, 7.1, 7.3, 7.6,
-        7.6, 7.1, 7.7, 6.4, 6.6
-    };
-
-    initializeMovieData(movieTitles, movieRatings, movieGenres, new int[movieTitles.length]);
-}
-
-
+            initializeMovieData(movieTitles, movieRatings, movieGenres);
+        }
         
-        void initializeMovieData(String[] titles, float[] ratings, String[] genres, int[] years) {
+        void initializeMovieData(String[] titles, float[] ratings, String[] genres) {
             numMovies = titles.length;
+            
+            // Create arrays to hold movie data with indices for sorting
+            MovieData[] movies = new MovieData[numMovies];
+            for (int i = 0; i < numMovies; i++) {
+                movies[i] = new MovieData();
+                movies[i].title = titles[i] != null ? titles[i] : "Unknown Movie";
+                movies[i].genre = genres[i] != null ? genres[i] : "Drama";
+                movies[i].rating = ratings[i] > 0 ? ratings[i] : 3.5;
+            }
+            
+            // Sort movies by rating (highest to lowest)
+            sortMoviesByRating(movies);
+            
+            // Initialize arrays
             movieTitles = new String[numMovies];
             movieGenres = new String[numMovies];
             movieRatings = new float[numMovies];
             movieColors = new color[numMovies];
+            movieAngles = new float[numMovies];
             movieRadii = new float[numMovies];
             targetRadii = new float[numMovies];
             currentRadii = new float[numMovies];
@@ -178,37 +184,19 @@
             float angleStep = TWO_PI / numMovies;
             
             for (int i = 0; i < numMovies; i++) {
-                movieTitles[i] = titles[i] != null ? titles[i] : "Unknown Movie";
-                
-                // Handle missing or null genres
-                if (genres[i] != null && genres[i].length() > 0) {
-                    movieGenres[i] = genres[i];
-                } else {
-                    movieGenres[i] = "Drama"; // Default genre
-                }
-                
-                // Convert IMDb rating (0-10 scale) to our visualization scale (3.0-5.0)
-                // Handle missing ratings by using a default
-                if (ratings[i] > 0) {
-                    movieRatings[i] = map(ratings[i], 0, 10, 3.0, 5.0);
-                } else {
-                    // Use year-based fallback for missing ratings
-                    if (years[i] < 1970) {
-                        movieRatings[i] = random(4.0, 5.0);
-                    } else if (years[i] < 1990) {
-                        movieRatings[i] = random(3.5, 4.8);
-                    } else {
-                        movieRatings[i] = random(3.2, 4.5);
-                    }
-                }
-                
+                movieTitles[i] = movies[i].title;
+                movieGenres[i] = movies[i].genre;
+                movieRatings[i] = movies[i].rating;
                 movieColors[i] = getGenreColor(movieGenres[i]);
                 
-                // Arrange movies in a circle
-                movieAngles[i] = i * angleStep;
+                // Start at 12 o'clock (top) and spiral clockwise
+                // Subtract PI/2 to start at 12 o'clock instead of 3 o'clock
+                movieAngles[i] = (i * angleStep) - PI/2;
                 
-                // Radius based on rating - slice height represents rating
-                movieRadii[i] = map(movieRatings[i], 3.0, 5.0, minRadius + 30, maxRadius);
+                // More dramatic scaling - use exponential curve for rating differences
+                float normalizedRating = map(movieRatings[i], 3.0, 5.0, 0, 1);
+                float exponentialRating = pow(normalizedRating, 1.8); // Exponential curve makes differences more dramatic
+                movieRadii[i] = map(exponentialRating, 0, 1, minRadius + 20, maxRadius);
                 targetRadii[i] = movieRadii[i];
                 currentRadii[i] = movieRadii[i];
                 zoomFactors[i] = 1.0;
@@ -216,252 +204,31 @@
             }
         }
         
-        String assignGenre(String title) {
-            // Smart genre detection based on title keywords and known films
-            String lowerTitle = title.toLowerCase();
-            
-            // Animation patterns
-            if (lowerTitle.contains("toy story") || lowerTitle.contains("finding") || 
-                lowerTitle.contains("monsters") || lowerTitle.contains("incredibles") ||
-                lowerTitle.contains("shrek") || lowerTitle.contains("ice age") ||
-                lowerTitle.contains("despicable") || lowerTitle.contains("minions") ||
-                lowerTitle.contains("frozen") || lowerTitle.contains("moana") ||
-                lowerTitle.contains("coco") || lowerTitle.contains("zootopia") ||
-                lowerTitle.contains("lion king") || lowerTitle.contains("beauty and the beast") ||
-                lowerTitle.contains("little mermaid") || lowerTitle.contains("aladdin") ||
-                lowerTitle.contains("mulan") || lowerTitle.contains("pocahontas") ||
-                lowerTitle.contains("pinocchio") || lowerTitle.contains("bambi") ||
-                lowerTitle.contains("dumbo") || lowerTitle.contains("fantasia") ||
-                lowerTitle.contains("sleeping beauty") || lowerTitle.contains("peter pan") ||
-                lowerTitle.contains("alice in wonderland") || lowerTitle.contains("jungle book") ||
-                lowerTitle.contains("fox and the hound") || lowerTitle.contains("great mouse detective") ||
-                lowerTitle.contains("oliver") || lowerTitle.contains("mermaid") ||
-                lowerTitle.contains("hunchback") || lowerTitle.contains("hercules") ||
-                lowerTitle.contains("tarzan") || lowerTitle.contains("emperor") ||
-                lowerTitle.contains("atlantis") || lowerTitle.contains("treasure planet") ||
-                lowerTitle.contains("brother bear") || lowerTitle.contains("home on the range") ||
-                lowerTitle.contains("chicken little") || lowerTitle.contains("meet the robinsons") ||
-                lowerTitle.contains("bolt") || lowerTitle.contains("princess and the frog") ||
-                lowerTitle.contains("tangled") || lowerTitle.contains("winnie") ||
-                lowerTitle.contains("nightmare before christmas") || lowerTitle.contains("corpse bride") ||
-                lowerTitle.contains("antz") || lowerTitle.contains("bug's life") ||
-                lowerTitle.contains("shrek") || lowerTitle.contains("madagascar") ||
-                lowerTitle.contains("kung fu panda") || lowerTitle.contains("how to train your dragon") ||
-                lowerTitle.contains("croods") || lowerTitle.contains("turbo") ||
-                lowerTitle.contains("home") || lowerTitle.contains("trolls") ||
-                lowerTitle.contains("boss baby") || lowerTitle.contains("ferdinand") ||
-                lowerTitle.contains("grinch") || lowerTitle.contains("sing") ||
-                lowerTitle.contains("secret life of pets") || lowerTitle.contains("lego movie")) {
-                return "Animation";
-            }
-            
-            // Horror patterns
-            if (lowerTitle.contains("horror") || lowerTitle.contains("nightmare") ||
-                lowerTitle.contains("scary") || lowerTitle.contains("ghost") ||
-                lowerTitle.contains("haunted") || lowerTitle.contains("evil") ||
-                lowerTitle.contains("dead") || lowerTitle.contains("zombie") ||
-                lowerTitle.contains("vampire") || lowerTitle.contains("monster") ||
-                lowerTitle.contains("psycho") || lowerTitle.contains("exorcist") ||
-                lowerTitle.contains("shining") || lowerTitle.contains("halloween") ||
-                lowerTitle.contains("friday the 13th") || lowerTitle.contains("scream") ||
-                lowerTitle.contains("saw") || lowerTitle.contains("conjuring") ||
-                lowerTitle.contains("insidious") || lowerTitle.contains("sinister") ||
-                lowerTitle.contains("paranormal activity") || lowerTitle.contains("ring") ||
-                lowerTitle.contains("grudge") || lowerTitle.contains("darkness") ||
-                lowerTitle.contains("blair witch") || lowerTitle.contains("texas chainsaw") ||
-                lowerTitle.contains("silence of the lambs") || lowerTitle.contains("hannibal") ||
-                lowerTitle.contains("misery") || lowerTitle.contains("cell") ||
-                lowerTitle.contains("lighthouse") || lowerTitle.contains("color out of space") ||
-                lowerTitle.contains("videodrome") || lowerTitle.contains("session 9") ||
-                lowerTitle.contains("jekyll") || lowerTitle.contains("mummy") ||
-                lowerTitle.contains("fallen") || lowerTitle.contains("28 days later")) {
-                return "Horror";
-            }
-            
-            // Sci-Fi patterns
-            if (lowerTitle.contains("space") || lowerTitle.contains("star") ||
-                lowerTitle.contains("galaxy") || lowerTitle.contains("alien") ||
-                lowerTitle.contains("mars") || lowerTitle.contains("future") ||
-                lowerTitle.contains("robot") || lowerTitle.contains("cyborg") ||
-                lowerTitle.contains("matrix") || lowerTitle.contains("blade runner") ||
-                lowerTitle.contains("terminator") || lowerTitle.contains("2001") ||
-                lowerTitle.contains("contact") || lowerTitle.contains("independence day") ||
-                lowerTitle.contains("men in black") || lowerTitle.contains("fifth element") ||
-                lowerTitle.contains("stargate") || lowerTitle.contains("star trek") ||
-                lowerTitle.contains("star wars") || lowerTitle.contains("interstellar") ||
-                lowerTitle.contains("gravity") || lowerTitle.contains("arrival") ||
-                lowerTitle.contains("prometheus") || lowerTitle.contains("district 9") ||
-                lowerTitle.contains("war games") || lowerTitle.contains("tron") ||
-                lowerTitle.contains("minority report") || lowerTitle.contains("total recall") ||
-                lowerTitle.contains("dark city") || lowerTitle.contains("book of eli") ||
-                lowerTitle.contains("watchmen") || lowerTitle.contains("v for vendetta") ||
-                lowerTitle.contains("constantine") || lowerTitle.contains("aquaman") ||
-                lowerTitle.contains("superman") || lowerTitle.contains("spider-man") ||
-                lowerTitle.contains("avengers") || lowerTitle.contains("iron man") ||
-                lowerTitle.contains("thor") || lowerTitle.contains("guardians") ||
-                lowerTitle.contains("deadpool") || lowerTitle.contains("x-men") ||
-                lowerTitle.contains("fantastic four") || lowerTitle.contains("hulk") ||
-                lowerTitle.contains("captain america") || lowerTitle.contains("ant-man") ||
-                lowerTitle.contains("doctor strange") || lowerTitle.contains("black panther") ||
-                lowerTitle.contains("wonder woman") || lowerTitle.contains("justice league") ||
-                lowerTitle.contains("batman") || lowerTitle.contains("e.t.") ||
-                lowerTitle.contains("close encounters") || lowerTitle.contains("day the earth stood still") ||
-                lowerTitle.contains("planet of the apes") || lowerTitle.contains("godzilla") ||
-                lowerTitle.contains("king kong") || lowerTitle.contains("pacific rim") ||
-                lowerTitle.contains("transformers") || lowerTitle.contains("flight of the navigator") ||
-                lowerTitle.contains("mission to mars") || lowerTitle.contains("deep impact")) {
-                return "Sci-Fi";
-            }
-            
-            // Action patterns
-            if (lowerTitle.contains("die hard") || lowerTitle.contains("mission impossible") ||
-                lowerTitle.contains("james bond") || lowerTitle.contains("007") ||
-                lowerTitle.contains("goldeneye") || lowerTitle.contains("tomorrow never dies") ||
-                lowerTitle.contains("lethal weapon") || lowerTitle.contains("speed") ||
-                lowerTitle.contains("heat") || lowerTitle.contains("face/off") ||
-                lowerTitle.contains("con air") || lowerTitle.contains("rock") ||
-                lowerTitle.contains("expendables") || lowerTitle.contains("rambo") ||
-                lowerTitle.contains("rocky") || lowerTitle.contains("predator") ||
-                lowerTitle.contains("commando") || lowerTitle.contains("demolition man") ||
-                lowerTitle.contains("eraser") || lowerTitle.contains("true lies") ||
-                lowerTitle.contains("broken arrow") || lowerTitle.contains("air force one") ||
-                lowerTitle.contains("perfect storm") || lowerTitle.contains("dante's peak") ||
-                lowerTitle.contains("daylight") || lowerTitle.contains("twister") ||
-                lowerTitle.contains("volcano") || lowerTitle.contains("armageddon") ||
-                lowerTitle.contains("deep impact") || lowerTitle.contains("independence day") ||
-                lowerTitle.contains("jurassic") || lowerTitle.contains("indiana jones") ||
-                lowerTitle.contains("raiders") || lowerTitle.contains("last crusade") ||
-                lowerTitle.contains("temple of doom") || lowerTitle.contains("fugitive") ||
-                lowerTitle.contains("rush hour") || lowerTitle.contains("jackie chan") ||
-                lowerTitle.contains("martial arts") || lowerTitle.contains("karate") ||
-                lowerTitle.contains("ninja") || lowerTitle.contains("samurai") ||
-                lowerTitle.contains("fast and furious") || lowerTitle.contains("gone in 60 seconds") ||
-                lowerTitle.contains("need for speed") || lowerTitle.contains("rush") ||
-                lowerTitle.contains("drive") || lowerTitle.contains("baby driver") ||
-                lowerTitle.contains("john wick") || lowerTitle.contains("taken") ||
-                lowerTitle.contains("bourne") || lowerTitle.contains("mechanic") ||
-                lowerTitle.contains("transporter") || lowerTitle.contains("crank") ||
-                lowerTitle.contains("xxx") || lowerTitle.contains("fast five") ||
-                lowerTitle.contains("furious") || lowerTitle.contains("pirates") ||
-                lowerTitle.contains("mask of zorro") || lowerTitle.contains("three musketeers") ||
-                lowerTitle.contains("robin hood") || lowerTitle.contains("gladiator") ||
-                lowerTitle.contains("braveheart") || lowerTitle.contains("300") ||
-                lowerTitle.contains("troy") || lowerTitle.contains("alexander") ||
-                lowerTitle.contains("kingdom of heaven") || lowerTitle.contains("last samurai") ||
-                lowerTitle.contains("13th warrior") || lowerTitle.contains("valhalla rising") ||
-                lowerTitle.contains("punisher") || lowerTitle.contains("daredevil") ||
-                lowerTitle.contains("green lantern") || lowerTitle.contains("fantastic four") ||
-                lowerTitle.contains("hulk") || lowerTitle.contains("war") ||
-                lowerTitle.contains("patriot") || lowerTitle.contains("saving private ryan") ||
-                lowerTitle.contains("black hawk down") || lowerTitle.contains("we were soldiers") ||
-                lowerTitle.contains("platoon") || lowerTitle.contains("full metal jacket") ||
-                lowerTitle.contains("apocalypse now") || lowerTitle.contains("born on the fourth of july") ||
-                lowerTitle.contains("top gun") || lowerTitle.contains("maverick") ||
-                lowerTitle.contains("crimson tide") || lowerTitle.contains("hunt for red october") ||
-                lowerTitle.contains("under siege") || lowerTitle.contains("executive decision") ||
-                lowerTitle.contains("passenger 57") || lowerTitle.contains("snakes on a plane") ||
-                lowerTitle.contains("turbulence") || lowerTitle.contains("air force one") ||
-                lowerTitle.contains("con air") || lowerTitle.contains("flightplan")) {
-                return "Action";
-            }
-            
-            // Crime patterns
-            if (lowerTitle.contains("godfather") || lowerTitle.contains("goodfellas") ||
-                lowerTitle.contains("casino") || lowerTitle.contains("scarface") ||
-                lowerTitle.contains("departed") || lowerTitle.contains("gangs of new york") ||
-                lowerTitle.contains("once upon a time in america") || lowerTitle.contains("donnie brasco") ||
-                lowerTitle.contains("casino royale") || lowerTitle.contains("heat") ||
-                lowerTitle.contains("reservoir dogs") || lowerTitle.contains("pulp fiction") ||
-                lowerTitle.contains("kill bill") || lowerTitle.contains("jackie brown") ||
-                lowerTitle.contains("sin city") || lowerTitle.contains("la confidential") ||
-                lowerTitle.contains("chinatown") || lowerTitle.contains("maltese falcon") ||
-                lowerTitle.contains("big sleep") || lowerTitle.contains("double indemnity") ||
-                lowerTitle.contains("sunset boulevard") || lowerTitle.contains("touch of evil") ||
-                lowerTitle.contains("third man") || lowerTitle.contains("notorious") ||
-                lowerTitle.contains("north by northwest") || lowerTitle.contains("dial m for murder") ||
-                lowerTitle.contains("rear window") || lowerTitle.contains("vertigo") ||
-                lowerTitle.contains("psycho") || lowerTitle.contains("birds") ||
-                lowerTitle.contains("frenzy") || lowerTitle.contains("torn curtain") ||
-                lowerTitle.contains("topaz") || lowerTitle.contains("family plot") ||
-                lowerTitle.contains("man who knew too much") || lowerTitle.contains("39 steps") ||
-                lowerTitle.contains("lady vanishes") || lowerTitle.contains("saboteur") ||
-                lowerTitle.contains("lifeboat") || lowerTitle.contains("spellbound") ||
-                lowerTitle.contains("rebecca") || lowerTitle.contains("shadow of a doubt") ||
-                lowerTitle.contains("strangers on a train") || lowerTitle.contains("rope") ||
-                lowerTitle.contains("under capricorn") || lowerTitle.contains("stage fright") ||
-                lowerTitle.contains("i confess") || lowerTitle.contains("wrong man") ||
-                lowerTitle.contains("marnie") || lowerTitle.contains("se7en") ||
-                lowerTitle.contains("zodiac") || lowerTitle.contains("gone girl") ||
-                lowerTitle.contains("fight club") || lowerTitle.contains("panic room") ||
-                lowerTitle.contains("game") || lowerTitle.contains("curious case") ||
-                lowerTitle.contains("social network") || lowerTitle.contains("girl with the dragon tattoo") ||
-                lowerTitle.contains("silence of the lambs") || lowerTitle.contains("manhunter") ||
-                lowerTitle.contains("red dragon") || lowerTitle.contains("hannibal") ||
-                lowerTitle.contains("cape fear") || lowerTitle.contains("shutter island") ||
-                lowerTitle.contains("taxi driver") || lowerTitle.contains("mean streets") ||
-                lowerTitle.contains("raging bull") || lowerTitle.contains("king of comedy") ||
-                lowerTitle.contains("after hours") || lowerTitle.contains("color of money") ||
-                lowerTitle.contains("casino") || lowerTitle.contains("goodfellas") ||
-                lowerTitle.contains("gangs of new york") || lowerTitle.contains("aviator") ||
-                lowerTitle.contains("departed") || lowerTitle.contains("wolf of wall street") ||
-                lowerTitle.contains("irishman") || lowerTitle.contains("killers of the flower moon") ||
-                lowerTitle.contains("ocean's") || lowerTitle.contains("italian job") ||
-                lowerTitle.contains("thomas crown affair") || lowerTitle.contains("entrapment") ||
-                lowerTitle.contains("heist") || lowerTitle.contains("inside man") ||
-                lowerTitle.contains("bank job") || lowerTitle.contains("town") ||
-                lowerTitle.contains("heat") || lowerTitle.contains("thief") ||
-                lowerTitle.contains("french connection") || lowerTitle.contains("popeye doyle") ||
-                lowerTitle.contains("serpico") || lowerTitle.contains("prince of the city") ||
-                lowerTitle.contains("q&a") || lowerTitle.contains("night falls on manhattan") ||
-                lowerTitle.contains("find me guilty") || lowerTitle.contains("righteous kill") ||
-                lowerTitle.contains("cop land") || lowerTitle.contains("carlito's way") ||
-                lowerTitle.contains("donnie brasco") || lowerTitle.contains("analyze this") ||
-                lowerTitle.contains("analyze that") || lowerTitle.contains("meet the parents") ||
-                lowerTitle.contains("meet the fockers") || lowerTitle.contains("little fockers") ||
-                lowerTitle.contains("mystic river") || lowerTitle.contains("gone baby gone") ||
-                lowerTitle.contains("live by night") || lowerTitle.contains("argo") ||
-                lowerTitle.contains("accountant") || lowerTitle.contains("way back")) {
-                return "Crime";
-            }
-            
-            // Return a default genre based on common patterns or just cycle through genres
-            String[] defaultGenres = {"Drama", "Comedy", "Action", "Thriller", "Romance", "Adventure"};
-            return defaultGenres[abs(title.hashCode()) % defaultGenres.length];
+        // Simple movie data structure for sorting
+        class MovieData {
+            String title;
+            String genre;
+            float rating;
         }
         
-        boolean isClassicFilm(String title) {
-            String lowerTitle = title.toLowerCase();
-            return lowerTitle.contains("godfather") || lowerTitle.contains("casablanca") ||
-                   lowerTitle.contains("citizen kane") || lowerTitle.contains("gone with the wind") ||
-                   lowerTitle.contains("lawrence of arabia") || lowerTitle.contains("wizard of oz") ||
-                   lowerTitle.contains("sunset boulevard") || lowerTitle.contains("vertigo") ||
-                   lowerTitle.contains("singin' in the rain") || lowerTitle.contains("some like it hot") ||
-                   lowerTitle.contains("maltese falcon") || lowerTitle.contains("third man") ||
-                   lowerTitle.contains("notorious") || lowerTitle.contains("rebecca") ||
-                   lowerTitle.contains("psycho") || lowerTitle.contains("2001") ||
-                   lowerTitle.contains("apocalypse now") || lowerTitle.contains("taxi driver") ||
-                   lowerTitle.contains("goodfellas") || lowerTitle.contains("pulp fiction") ||
-                   lowerTitle.contains("schindler's list") || lowerTitle.contains("shawshank redemption") ||
-                   lowerTitle.contains("raiders of the lost ark") || lowerTitle.contains("e.t.") ||
-                   lowerTitle.contains("jaws") || lowerTitle.contains("alien") ||
-                   lowerTitle.contains("blade runner") || lowerTitle.contains("terminator") ||
-                   lowerTitle.contains("matrix") || lowerTitle.contains("star wars") ||
-                   lowerTitle.contains("empire strikes back") || lowerTitle.contains("return of the jedi") ||
-                   lowerTitle.contains("forrest gump") || lowerTitle.contains("titanic") ||
-                   lowerTitle.contains("silence of the lambs") || lowerTitle.contains("one flew over") ||
-                   lowerTitle.contains("chinatown") || lowerTitle.contains("raging bull") ||
-                   lowerTitle.contains("deer hunter") || lowerTitle.contains("rocky") ||
-                   lowerTitle.contains("annie hall") || lowerTitle.contains("manhattan") ||
-                   lowerTitle.contains("network") || lowerTitle.contains("all the president's men") ||
-                   lowerTitle.contains("french connection") || lowerTitle.contains("serpico") ||
-                   lowerTitle.contains("dog day afternoon") || lowerTitle.contains("mean streets");
+        // Sort movies by rating (highest to lowest)
+        void sortMoviesByRating(MovieData[] movies) {
+            // Simple bubble sort for ratings (highest to lowest)
+            for (int i = 0; i < movies.length - 1; i++) {
+                for (int j = 0; j < movies.length - i - 1; j++) {
+                    if (movies[j].rating < movies[j + 1].rating) {
+                        // Swap movies
+                        MovieData temp = movies[j];
+                        movies[j] = movies[j + 1];
+                        movies[j + 1] = temp;
+                    }
+                }
+            }
         }
         
         void draw() {
             background(0);
-            // time += 0.02; - disabled to stop all animation
             
-            // Don't draw anything until data is fully initialized
             if (!dataInitialized || numMovies == 0) {
                 fill(0, 255, 0);
                 textAlign(CENTER);
@@ -469,31 +236,26 @@
                 return;
             }
             
-            // Data is embedded and loaded once during setup
-            
-            // Optimized rendering for large dataset
-            
-            // Draw concentric circles for rating levels
+            // Draw concentric circles for rating levels (adjusted for dramatic scale)
             stroke(0, 255, 0, 30);
             strokeWeight(1);
             noFill();
-            for (float r = minRadius; r <= maxRadius; r += 40) {
+            
+            // Draw circles at specific rating intervals using the same exponential mapping
+            for (float rating = 3.0; rating <= 5.0; rating += 0.5) {
+                float normalizedRating = map(rating, 3.0, 5.0, 0, 1);
+                float exponentialRating = pow(normalizedRating, 1.8);
+                float r = map(exponentialRating, 0, 1, minRadius + 20, maxRadius);
                 ellipse(centerX, centerY, r * 2, r * 2);
             }
             
-            
-            // Calculate mouse angle and distance from center
+            // Calculate mouse interaction
             float mouseAngle = atan2(mouseY - centerY, mouseX - centerX);
             if (mouseAngle < 0) mouseAngle += TWO_PI;
             float mouseDistFromCenter = dist(mouseX, mouseY, centerX, centerY);
-            
-            // Only apply zoom if mouse is within the visualization area
             boolean mouseInArea = mouseDistFromCenter >= minRadius && mouseDistFromCenter <= maxRadius + 50;
             
-            // Disable all zoom for debugging
-            // pushMatrix(); - commented out to disable transformations
-            
-            // Draw radial lines for each movie slice with spatial transformation
+            // Draw movie slices
             hoveredMovie = -1;
             float angleStep = TWO_PI / numMovies;
             
@@ -502,18 +264,20 @@
                 float startAngle = baseAngle - angleStep/2;
                 float endAngle = baseAngle + angleStep/2;
                 
-                // Check if mouse is over this slice
+                // Check hover (using current slice dimensions)
                 boolean isHovered = false;
                 if (mouseInArea) {
                     float mouseAngleNorm = mouseAngle;
-                    float sliceStart = startAngle;
-                    float sliceEnd = endAngle;
+                    
+                    // Use current animated dimensions for hover detection
+                    float midAngle = baseAngle;
+                    float currentAngleSpread = (angleStep/2) * zoomFactors[i];
+                    float sliceStart = midAngle - currentAngleSpread;
+                    float sliceEnd = midAngle + currentAngleSpread;
 
-                    // Handle wrap-around for angles (crossing 0 radians)
                     if (sliceEnd < sliceStart) sliceEnd += TWO_PI;
                     if (mouseAngleNorm < sliceStart) mouseAngleNorm += TWO_PI;
 
-                    // Check if mouse angle falls within this slice
                     boolean angleInRange = (mouseAngleNorm >= sliceStart && mouseAngleNorm <= sliceEnd);
                     boolean radiusInRange = (mouseDistFromCenter >= minRadius && mouseDistFromCenter <= currentRadii[i]);
 
@@ -523,42 +287,56 @@
                 if (isHovered) hoveredMovie = i;
                 boolean isSelected = selectedMovie == i;
                 
-                // Static rendering - no animation
+                // Update target radius for smooth hover effect
                 if (isHovered || isSelected) {
-                    currentRadii[i] = movieRadii[i] + 25; // Immediate extend on hover
+                    targetRadii[i] = movieRadii[i] + 35; // Slightly bigger grow effect
                 } else {
-                    currentRadii[i] = movieRadii[i]; // Base radius
+                    targetRadii[i] = movieRadii[i];
                 }
                 
-                // Check if this movie should be highlighted based on genre filter
+                // Smooth easing animation using lerp
+                currentRadii[i] = lerp(currentRadii[i], targetRadii[i], 0.15);
+                
+                // Check genre filter
                 boolean isFiltered = !filteredGenre.equals("") && !movieGenres[i].equals(filteredGenre);
                 
-                // Draw the pie slice - only to the movie's rating height
+                // Draw pie slice
                 float alpha = (isHovered || isSelected) ? 220 : 160;
-                if (isFiltered) {
-                    alpha *= 0.2; // Dim filtered out movies
-                }
+                if (isFiltered) alpha *= 0.2;
+                
                 fill(red(movieColors[i]), green(movieColors[i]), blue(movieColors[i]), alpha);
                 if (isFiltered) {
                     stroke(red(movieColors[i]), green(movieColors[i]), blue(movieColors[i]), 50);
                 } else {
                     stroke(red(movieColors[i]), green(movieColors[i]), blue(movieColors[i]), 255);
                 }
-                strokeWeight(2); // Thicker stroke to make slices more visible
+                strokeWeight(2);
                 
-                // Draw line from center to edge (simpler and more visible for many slices)
+                // Draw triangular slice with smooth hover scaling
                 float midAngle = startAngle + (endAngle - startAngle) / 2;
-                float x1 = centerX + cos(midAngle) * minRadius;
-                float y1 = centerY + sin(midAngle) * minRadius;
-                float x2 = centerX + cos(midAngle) * currentRadii[i];
-                float y2 = centerY + sin(midAngle) * currentRadii[i];
-                line(x1, y1, x2, y2);
                 
+                // Add subtle width expansion on hover
+                float hoverWidthMultiplier = (isHovered || isSelected) ? 1.1 : 1.0;
+                float smoothWidthMultiplier = lerp(zoomFactors[i], hoverWidthMultiplier, 0.12);
+                zoomFactors[i] = smoothWidthMultiplier;
                 
-                // Store info for drawing outside transform
-                if (isHovered || isSelected) {
-                    // We'll draw this outside the transform matrix
+                float adjustedStartAngle = midAngle - (angleStep/2) * smoothWidthMultiplier;
+                float adjustedEndAngle = midAngle + (angleStep/2) * smoothWidthMultiplier;
+                
+                // Create triangular pie slice
+                beginShape();
+                vertex(centerX, centerY); // Center point
+                
+                // Arc from start to end angle with smooth scaling
+                for (float a = adjustedStartAngle; a <= adjustedEndAngle; a += 0.05) {
+                    float x = centerX + cos(a) * currentRadii[i];
+                    float y = centerY + sin(a) * currentRadii[i];
+                    vertex(x, y);
                 }
+                
+                // Complete the triangle back to center
+                vertex(centerX, centerY);
+                endShape(CLOSE);
             }
             
             // Draw center circle
@@ -573,10 +351,7 @@
             text("PHYSICAL MEDIA", centerX, centerY + 5);
             text("COLLECTION", centerX, centerY + 20);
             
-            // popMatrix(); - commented out since pushMatrix is disabled
-            
-            // Draw movie info box on top (outside transform so it's always visible)
-            // Only show info for movies that match current filter (or all if no filter)
+            // Draw movie info box
             if (hoveredMovie != -1 || selectedMovie != -1) {
                 int infoMovie = hoveredMovie != -1 ? hoveredMovie : selectedMovie;
                 boolean movieMatchesFilter = filteredGenre.equals("") || movieGenres[infoMovie].equals(filteredGenre);
@@ -593,36 +368,35 @@
             String info = movieTitles[index];
             String rating = movieGenres[index] + " • " + nf(movieRatings[index], 1, 1) + " ★";
             
-            float boxWidth = max(textWidth(info), textWidth(rating)) + 50; // Much wider
-            float boxHeight = 80; // Much taller
+            float boxWidth = max(textWidth(info), textWidth(rating)) + 50;
+            float boxHeight = 80;
             
-            // Position box at top center of screen for maximum visibility
             float boxX = (width - boxWidth) / 2;
             float boxY = 20;
             
-            // Draw completely solid black background
-            fill(0, 0, 0, 255); // Completely opaque black background
-            noStroke(); // No stroke for the main background
-            rect(boxX, boxY, boxWidth, boxHeight, 8); // Rounded corners
+            // Solid black background
+            fill(0, 0, 0, 255);
+            noStroke();
+            rect(boxX, boxY, boxWidth, boxHeight, 8);
             
-            // Draw bright yellow border on top
+            // Yellow border
             noFill();
-            stroke(255, 255, 0, 255); // Bright yellow border
+            stroke(255, 255, 0, 255);
             strokeWeight(3);
-            rect(boxX, boxY, boxWidth, boxHeight, 8); // Rounded corners
+            rect(boxX, boxY, boxWidth, boxHeight, 8);
             
-            // Draw inner glow effect
+            // Inner glow
             stroke(0, 255, 0, 150);
             strokeWeight(1);
             rect(boxX + 3, boxY + 3, boxWidth - 6, boxHeight - 6, 6);
             
-            // Movie title in bright white for maximum contrast
+            // Movie title in white
             fill(255, 255, 255, 255);
             noStroke();
             textAlign(CENTER);
             text(info, boxX + boxWidth/2, boxY + 35);
             
-            // Rating and genre in bright yellow
+            // Rating in yellow
             fill(255, 255, 0, 255);
             text(rating, boxX + boxWidth/2, boxY + 60);
         }
@@ -637,11 +411,9 @@
             for (int i = 0; i < genres.length; i++) {
                 boolean isActive = filteredGenre.equals("") || filteredGenre.equals(genres[i]);
                 
-                // Highlight selected genre or dim unselected ones
                 fill(getGenreColor(genres[i]), isActive ? 255 : 100);
                 ellipse(30, 50 + i * 20, 12, 12);
                 
-                // Add selection ring for active filter
                 if (filteredGenre.equals(genres[i])) {
                     stroke(255, 255, 0);
                     strokeWeight(2);
@@ -672,26 +444,11 @@
             text("Each slice = one movie", width - 20, height - 75);
             text("Distance from center = rating", width - 20, height - 60);
             text("Color = genre", width - 20, height - 45);
-            text("Move mouse for section zoom", width - 20, height - 30);
-            
-            
-            // Mouse debug
-            /* fill(0, 255, 0, 80);
-            textAlign(LEFT);
-            text("Mouse: " + mouseX + ", " + mouseY, 20, height - 35);
-            if (hoveredMovie != -1) {
-                text("Hovering: " + movieTitles[hoveredMovie], 20, height - 20);
-            }*/
-            
-            // Show if zoom is active
-            if (globalZoomFactor > 1.1) {
-                fill(255, 255, 0, 150);
-                // text("SPATIAL ZOOM ACTIVE: " + nf(globalZoomFactor, 1, 1) + "x", 20, height - 5);
-            }
+            text("Highest rated at 12 o'clock, spiral down", width - 20, height - 30);
         }
         
         color getGenreColor(String genre) {
-            if (genre == null) return color(150, 255, 150); // Default to Drama green
+            if (genre == null) return color(150, 255, 150);
             
             if (genre.equals("Sci-Fi")) return color(0, 200, 255);
             if (genre.equals("Horror")) return color(255, 50, 50);
@@ -703,35 +460,34 @@
             if (genre.equals("Romance")) return color(255, 150, 200);
             if (genre.equals("Adventure")) return color(100, 255, 150);
             if (genre.equals("Animation")) return color(100, 255, 255);
-            return color(150, 255, 150); // Default to Drama green
+            return color(150, 255, 150);
         }
         
         void mousePressed() {
-            // Check if clicking on genre legend
+            // Check genre legend clicks
             String[] genres = {"Sci-Fi", "Horror", "Crime", "Drama", "Comedy", "Thriller", "Action", "Romance", "Adventure", "Animation"};
             boolean clickedGenre = false;
             
             for (int i = 0; i < genres.length; i++) {
                 float genreY = 50 + i * 20;
                 if (mouseX >= 20 && mouseX <= 100 && mouseY >= genreY - 10 && mouseY <= genreY + 10) {
-                    // Toggle genre filter
                     if (filteredGenre.equals(genres[i])) {
-                        filteredGenre = ""; // Turn off filter if already selected
+                        filteredGenre = "";
                     } else {
-                        filteredGenre = genres[i]; // Apply new filter
+                        filteredGenre = genres[i];
                     }
                     clickedGenre = true;
                     break;
                 }
             }
             
-            // Check if clicking reset button
+            // Check reset button
             if (mouseX >= 20 && mouseX <= 80 && mouseY >= height - 100 && mouseY <= height - 80) {
                 filteredGenre = "";
                 clickedGenre = true;
             }
             
-            // Only handle movie selection if not clicking on UI elements
+            // Handle movie selection
             if (!clickedGenre) {
                 if (hoveredMovie != -1) {
                     selectedMovie = (selectedMovie == hoveredMovie) ? -1 : hoveredMovie;
@@ -843,7 +599,7 @@
         </section>
         <hr>
         <small>
-            Above visualization created with Claude Code (2025) and Processing JS (2008). Datatset is my personal physical media collection from Letterboxd
+            Above visualization created with Claude Code (2025) and Processing JS (2008). Dataset is my personal physical media collection from Letterboxd
             <p>See more at <a href="http://tchr01.github.io">http://tchr01.github.io</a></p>
         </small>
     </article>
