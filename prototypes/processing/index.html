@@ -43,7 +43,7 @@
     </style>
 </head>
 <body>
-    <div id="title">LETTERBOXD COLLECTION WHEEL</div>
+    <div id="title">LETTERBOXD COLLECTION WHEEL <br/><small style="font-size:12px;">(A Claude Code and Processing Experiment)</small></div>
     
     <script type="application/processing">
         // Movie data
@@ -538,6 +538,7 @@
             textAlign(CENTER);
             text("PHYSICAL", centerX, centerY - 10);
             text("COLLECTION", centerX, centerY + 5);
+       
             
             // Restore transformation matrix
             popMatrix();
