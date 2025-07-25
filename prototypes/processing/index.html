@@ -89,7 +89,7 @@
         }
         
         void loadPhysicalMovies() {
-            // Fresh data from physical_movies_enhanced.csv - Movies 1-100 with year disambiguation
+            // Fresh data from physical_movies_enhanced.csv - Movies 1-150 with year disambiguation
             String[] movieTitles = {
                 "2001: A Space Odyssey (1968)", "50 First Dates (2004)", "The African Queen (1951)", 
                 "A.I. Artificial Intelligence (2001)", "Air Force One (1997)", "Almost Famous (2000)", 
@@ -120,7 +120,21 @@
                 "The Little Rascals (1994)", "The Lost World: Jurassic Park (1997)", "Love & Basketball (2000)", 
                 "The Maltese Falcon (1941)", "The Man with One Red Shoe (1985)", "The Mask (1994)", 
                 "The Mask of Zorro (1998)", "Masterminds (2016)", "Meet the Parents (2000)", 
-                "Me, Myself & Irene (2000)", "Men in Black (1997)"
+                "Me, Myself & Irene (2000)", "Men in Black (1997)",
+                // Movies 101-150
+                "The Mexican (2001)", "Michael (1996)", "The Money Pit (1986)", "Monster (2003)", 
+                "Mr. Deeds (2002)", "Mrs. Doubtfire (1993)", "The Mummy (1932)", "The Mummy (1999)", 
+                "The Mummy Returns (2001)", "My Big Fat Greek Wedding (2002)", "The Net (1995)", 
+                "Never Been Kissed (1999)", "Notorious (1946)", "The Nutty Professor (1996)", 
+                "Office Space (1999)", "The Other Sister (1999)", "Overboard (1987)", "Patch Adams (1998)", 
+                "The Patriot (2000)", "The Perfect Storm (2000)", "Peter Pan (1953)", "Pink Floyd: The Wall (1982)", 
+                "Pirates of the Caribbean: The Curse of the Black Pearl (2003)", "Pleasantville (1998)", 
+                "Powder (1995)", "Pretty Woman (1990)", "Problem Child (1990)", "Psycho (1960)", 
+                "Pulp Fiction (1994)", "Radio (2003)", "Raiders of the Lost Ark (1981)", "Rain Man (1988)", 
+                "Ransom (1996)", "Rebecca (1940)", "Red Dragon (2002)", "Remember the Titans (2000)", 
+                "The Ring (2002)", "Rush Hour 2 (2001)", "Ruthless People (1986)", "Saved! (2004)", 
+                "Saving Private Ryan (1998)", "Se7en (1995)", "Serendipity (2001)", "The Shawshank Redemption (1994)", 
+                "The Silence of the Lambs (1991)"
             };
 
             float[] movieRatings = {
@@ -134,7 +148,13 @@
                 4.54, 4.56, 4.48, 3.60, 4.42, 4.84, 4.64, 4.74, 4.72, 3.82, 
                 3.90, 3.68, 3.86, 3.68, 4.54, 3.78, 3.62, 3.90, 4.64, 4.50, 
                 4.50, 3.88, 4.50, 4.64, 4.48, 3.88, 4.48, 3.76, 3.82, 4.44, 
-                4.58, 3.64, 3.90, 3.86, 3.54, 3.90, 3.82, 4.46
+                4.58, 3.64, 3.90, 3.86, 3.54, 3.90, 3.82, 4.46,
+                // Ratings for movies 101-150 (converted from IMDb 0-10 to 3.0-5.0 scale)
+                3.72, 3.64, 3.78, 4.46, 3.66, 4.42, 3.90, 4.42, 3.78, 3.82, 
+                3.70, 3.70, 4.58, 3.64, 4.52, 3.78, 3.88, 3.86, 4.44, 3.80, 
+                4.46, 4.60, 4.62, 4.50, 3.82, 4.42, 3.60, 4.70, 4.76, 3.88, 
+                4.68, 4.60, 3.84, 4.62, 4.44, 4.56, 4.42, 3.84, 3.84, 4.72, 
+                4.72, 3.86, 4.86, 4.72
             };
             
             String[] movieGenres = {
@@ -150,7 +170,14 @@
                 "Drama", "Crime", "Drama", "Comedy", "Comedy", "Action", "Comedy", "Horror", 
                 "Comedy", "Comedy", "Comedy", "Sci-Fi", "Adventure", "Adventure", "Animation", 
                 "Action", "Drama", "Sci-Fi", "Drama", "Comedy", "Horror", "Comedy", "Sci-Fi", 
-                "Romance", "Crime", "Comedy", "Comedy", "Action", "Comedy", "Comedy", "Comedy", "Action"
+                "Romance", "Crime", "Comedy", "Comedy", "Action", "Comedy", "Comedy", "Comedy", "Action",
+                // Genres for movies 101-150
+                "Adventure", "Comedy", "Comedy", "Drama", "Comedy", "Comedy", "Horror", "Action", 
+                "Action", "Comedy", "Action", "Comedy", "Romance", "Comedy", "Comedy", "Drama", 
+                "Romance", "Drama", "Action", "Adventure", "Animation", "Drama", "Adventure", "Comedy", 
+                "Drama", "Romance", "Comedy", "Horror", "Crime", "Drama", "Adventure", "Drama", 
+                "Action", "Romance", "Crime", "Drama", "Horror", "Action", "Comedy", "Comedy", 
+                "Drama", "Crime", "Romance", "Drama", "Horror"
             };
 
             initializeMovieData(movieTitles, movieRatings, movieGenres);
@@ -191,9 +218,10 @@
                 movieRatings[i] = movies[i].rating;
                 movieColors[i] = getGenreColor(movieGenres[i]);
                 
-                // Start at 12 o'clock (top) and spiral clockwise
-                // Subtract PI/2 to start at 12 o'clock instead of 3 o'clock
-                movieAngles[i] = (i * angleStep) - PI/2;
+                // Start at exactly 12 o'clock (top) and spiral clockwise
+                // The first movie (highest rated) should point straight up from center
+                // Need to subtract 3*PI/2 to get from 3 o'clock to 12 o'clock position
+                movieAngles[i] = (i * angleStep) - (3 * PI / 2);
                 
                 // More dramatic scaling - use exponential curve for rating differences
                 float normalizedRating = map(movieRatings[i], 3.0, 5.0, 0, 1);
@@ -351,9 +379,13 @@
                 float adjustedStartAngle = midAngle - (angleStep/2) * smoothWidthMultiplier;
                 float adjustedEndAngle = midAngle + (angleStep/2) * smoothWidthMultiplier;
                 
-                // Create triangular pie slice
+                // Create triangular pie slice starting from edge of center circle
                 beginShape();
-                vertex(centerX, centerY); // Center point
+                
+                // Start from edge of center circle at the beginning angle
+                float startX = centerX + cos(adjustedStartAngle) * minRadius;
+                float startY = centerY + sin(adjustedStartAngle) * minRadius;
+                vertex(startX, startY);
                 
                 // Arc from start to end angle with smooth scaling
                 for (float a = adjustedStartAngle; a <= adjustedEndAngle; a += 0.05) {
@@ -362,8 +394,11 @@
                     vertex(x, y);
                 }
                 
-                // Complete the triangle back to center
-                vertex(centerX, centerY);
+                // Complete back to edge of center circle at the end angle
+                float endX = centerX + cos(adjustedEndAngle) * minRadius;
+                float endY = centerY + sin(adjustedEndAngle) * minRadius;
+                vertex(endX, endY);
+                
                 endShape(CLOSE);
             }
             
