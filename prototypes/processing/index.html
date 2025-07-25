@@ -455,10 +455,19 @@
                 ellipse(centerX, centerY, r * 2, r * 2);
             }
             
-            // Calculate mouse interaction and spatial zoom
-            float mouseAngle = atan2(mouseY - centerY, mouseX - centerX);
+            // Transform mouse coordinates to account for zoom/translation
+            // Inverse of the transformation applied in pushMatrix/popMatrix
+            float transformedMouseX = mouseX;
+            float transformedMouseY = mouseY;
+            
+            // Reverse the zoom transformation to get true mouse position relative to slices
+            transformedMouseX = (transformedMouseX - width/2) / globalZoomFactor + zoomCenterX + width/2;
+            transformedMouseY = (transformedMouseY - height/2) / globalZoomFactor + zoomCenterY + height/2;
+            
+            // Calculate mouse interaction using transformed coordinates
+            float mouseAngle = atan2(transformedMouseY - centerY, transformedMouseX - centerX);
             if (mouseAngle < 0) mouseAngle += TWO_PI;
-            float mouseDistFromCenter = dist(mouseX, mouseY, centerX, centerY);
+            float mouseDistFromCenter = dist(transformedMouseX, transformedMouseY, centerX, centerY);
             boolean mouseInArea = mouseDistFromCenter >= minRadius && mouseDistFromCenter <= maxRadius + 50;
             
             // Calculate zoom based on mouse position
@@ -499,19 +508,37 @@
                 // Check hover (using current slice dimensions)
                 boolean isHovered = false;
                 if (mouseInArea) {
-                    float mouseAngleNorm = mouseAngle;
+                    // Pixel-perfect hover detection matching exact slice geometry
+                    // Use the EXACT same angle calculations as slice drawing
+                    float startAngle = baseAngle - angleStep/2;
+                    float endAngle = baseAngle + angleStep/2;
                     
-                    // Use current animated dimensions for hover detection
-                    float midAngle = baseAngle;
-                    float currentAngleSpread = (angleStep/2) * zoomFactors[i];
-                    float sliceStart = midAngle - currentAngleSpread;
-                    float sliceEnd = midAngle + currentAngleSpread;
-
-                    if (sliceEnd < sliceStart) sliceEnd += TWO_PI;
-                    if (mouseAngleNorm < sliceStart) mouseAngleNorm += TWO_PI;
-
-                    boolean angleInRange = (mouseAngleNorm >= sliceStart && mouseAngleNorm <= sliceEnd);
-                    boolean radiusInRange = (mouseDistFromCenter >= minRadius && mouseDistFromCenter <= currentRadii[i]);
+                    // Handle angle wrapping for precise detection using transformed mouse coordinates
+                    float mouseAngleNorm = mouseAngle;
+                    float startAngleNorm = startAngle;
+                    float endAngleNorm = endAngle;
+                    
+                    // Normalize all angles to 0-2PI range
+                    while (mouseAngleNorm < 0) mouseAngleNorm += TWO_PI;
+                    while (mouseAngleNorm >= TWO_PI) mouseAngleNorm -= TWO_PI;
+                    while (startAngleNorm < 0) startAngleNorm += TWO_PI;
+                    while (startAngleNorm >= TWO_PI) startAngleNorm -= TWO_PI;
+                    while (endAngleNorm < 0) endAngleNorm += TWO_PI;
+                    while (endAngleNorm >= TWO_PI) endAngleNorm -= TWO_PI;
+                    
+                    // Handle wrap-around case where slice crosses 0 degrees
+                    boolean angleInRange;
+                    if (endAngleNorm < startAngleNorm) {
+                        // Slice wraps around 0 degrees
+                        angleInRange = (mouseAngleNorm >= startAngleNorm) || (mouseAngleNorm <= endAngleNorm);
+                    } else {
+                        // Normal case
+                        angleInRange = (mouseAngleNorm >= startAngleNorm) && (mouseAngleNorm <= endAngleNorm);
+                    }
+                    
+                    // Precise radius check - use the actual current radius for this slice
+                    boolean radiusInRange = (mouseDistFromCenter >= minRadius) && 
+                                           (mouseDistFromCenter <= currentRadii[i]);
 
                     isHovered = angleInRange && radiusInRange;
                 }
