@@ -72,8 +72,10 @@
         float zoomSectionSize = PI/3;
         float globalZoomFactor = 1.0;
         float targetGlobalZoom = 1.0;
-        float zoomCenterAngle = 0;
-        float targetZoomCenterAngle = 0;
+        float zoomCenterX = 0;
+        float zoomCenterY = 0;
+        float targetZoomCenterX = 0;
+        float targetZoomCenterY = 0;
         
         void setup() {
             size(1200, 700);
@@ -249,11 +251,37 @@
                 ellipse(centerX, centerY, r * 2, r * 2);
             }
             
-            // Calculate mouse interaction
+            // Calculate mouse interaction and spatial zoom
             float mouseAngle = atan2(mouseY - centerY, mouseX - centerX);
             if (mouseAngle < 0) mouseAngle += TWO_PI;
             float mouseDistFromCenter = dist(mouseX, mouseY, centerX, centerY);
             boolean mouseInArea = mouseDistFromCenter >= minRadius && mouseDistFromCenter <= maxRadius + 50;
+            
+            // Calculate zoom based on mouse position
+            if (mouseInArea) {
+                // Calculate target zoom center (point to zoom toward)
+                float zoomDistance = 120; // How far to offset the zoom center
+                targetZoomCenterX = cos(mouseAngle) * zoomDistance;
+                targetZoomCenterY = sin(mouseAngle) * zoomDistance;
+                targetGlobalZoom = 1.8; // Zoom level when hovering
+            } else {
+                // Return to center when not hovering
+                targetZoomCenterX = 0;
+                targetZoomCenterY = 0;
+                targetGlobalZoom = 1.0;
+            }
+            
+            // Smooth zoom transitions
+            zoomCenterX = lerp(zoomCenterX, targetZoomCenterX, 0.08);
+            zoomCenterY = lerp(zoomCenterY, targetZoomCenterY, 0.08);
+            globalZoomFactor = lerp(globalZoomFactor, targetGlobalZoom, 0.08);
+            
+            // Apply zoom transformation
+            pushMatrix();
+            translate(width/2, height/2); // Move to screen center
+            scale(globalZoomFactor); // Apply zoom
+            translate(-zoomCenterX, -zoomCenterY); // Move toward zoom target
+            translate(-width/2, -height/2); // Move back
             
             // Draw movie slices
             hoveredMovie = -1;
@@ -351,7 +379,10 @@
             text("PHYSICAL MEDIA", centerX, centerY + 5);
             text("COLLECTION", centerX, centerY + 20);
             
-            // Draw movie info box
+            // End zoom transformation
+            popMatrix();
+            
+            // Draw movie info box (outside zoom transformation)
             if (hoveredMovie != -1 || selectedMovie != -1) {
                 int infoMovie = hoveredMovie != -1 ? hoveredMovie : selectedMovie;
                 boolean movieMatchesFilter = filteredGenre.equals("") || movieGenres[infoMovie].equals(filteredGenre);
@@ -360,7 +391,7 @@
                 }
             }
             
-            // Draw UI
+            // Draw UI (outside zoom transformation)
             drawUI();
         }
         
@@ -445,6 +476,7 @@
             text("Distance from center = rating", width - 20, height - 60);
             text("Color = genre", width - 20, height - 45);
             text("Highest rated at 12 o'clock, spiral down", width - 20, height - 30);
+            text("Hover over visualization to zoom in", width - 20, height - 15);
         }
         
         color getGenreColor(String genre) {
