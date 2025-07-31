@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: monospace; background: #000; color: #0f0; padding: 10px; }
+        
+        .app-layout {
+            display: grid;
+            grid-template-columns: 1fr 280px;
+            gap: 15px;
+            height: 90vh;
+        }
+        
+        .main-content {
+            background: #111;
+            border: 2px solid #0f0;
+            padding: 10px;
+        }
+        
+        .sidebar {
+            background: #f00;
+            border: 3px solid #ff0;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-layout">
+        <div class="main-content">
+            <h1>MAIN CONTENT (LEFT)</h1>
+            <p>This should be on the left side</p>
+        </div>
+        <div class="sidebar">
+            <h2>SIDEBAR (RIGHT)</h2>
+            <p>This should be on the right side</p>
+        </div>
+    </div>
+</body>
+</html>
