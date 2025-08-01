@@ -10,10 +10,10 @@ class NESSequencer {
             pulse1: {
                 notes: [523.25, 440, 349.23, 293.66, 261.63, 220],
                 sequence: [
-                    [true, false, false, false, true, false, false, false, true, false, false, false, true, false, false, false], // C5 - beat pattern
-                    [false, false, true, false, false, false, true, false, false, false, true, false, false, false, false, false], // A4 - accent
-                    [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false], // F4
-                    [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false], // D4
+                    [true, false, false, false, false, false, false, false, true, false, false, false, false, false, false, false], // C5 - melody start
+                    [false, false, false, false, true, false, false, false, false, false, false, false, true, false, false, false], // A4 - melody
+                    [false, false, true, false, false, false, false, false, false, false, true, false, false, false, false, false], // F4 - melody
+                    [false, false, false, false, false, false, true, false, false, false, false, false, false, false, true, false], // D4 - melody
                     [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false], // C4
                     [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false] // A3
                 ],
@@ -26,15 +26,15 @@ class NESSequencer {
             pulse2: {
                 notes: [1046.5, 659.25, 523.25, 392, 329.63, 293.66],
                 sequence: [
-                    [true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false], // C6 - arpeggio start
-                    [false, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false], // E5
-                    [false, false, true, false, false, false, false, false, false, false, false, false, false, false, false, false], // C5
-                    [false, false, false, true, false, false, false, false, false, false, false, false, false, false, false, false], // G4
-                    [false, false, false, false, true, false, false, false, false, false, false, false, false, false, false, false], // E4
-                    [false, false, false, false, false, true, false, false, false, false, false, false, false, false, false, false] // D4 - arpeggio end
+                    [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false], // C6
+                    [false, false, false, true, false, false, false, true, false, false, false, true, false, false, false, true], // E5 - harmony
+                    [false, true, false, false, false, true, false, false, false, true, false, false, false, true, false, false], // C5 - counter melody
+                    [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false], // G4
+                    [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false], // E4
+                    [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false] // D4
                 ],
                 type: 'sawtooth',
-                sustain: true,
+                sustain: false,
                 sustainedOscillator: null,
                 sustainedGain: null,
                 currentNote: null
@@ -42,15 +42,15 @@ class NESSequencer {
             triangle: {
                 notes: [130.81, 98, 73.42, 65.41, 49, 36.71],
                 sequence: [
-                    [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false], // C3
-                    [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false], // G2
-                    [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false], // D2
-                    [true, false, false, false, false, false, false, false, true, false, false, false, false, false, false, false], // C2 - bass
+                    [true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false], // C3 - bass line
+                    [false, false, false, false, false, false, false, false, true, false, false, false, false, false, false, false], // G2 - bass line
+                    [false, false, false, false, true, false, false, false, false, false, false, false, false, false, false, false], // D2 - bass line
+                    [false, false, false, false, false, false, false, false, false, false, false, false, true, false, false, false], // C2 - bass line
                     [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false], // G1
                     [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false] // D1
                 ],
                 type: 'triangle',
-                sustain: false,
+                sustain: true,
                 sustainedOscillator: null,
                 sustainedGain: null,
                 currentNote: null
@@ -58,12 +58,12 @@ class NESSequencer {
             noise: {
                 notes: [0, 1, 2, 3, 4, 5],
                 sequence: [
-                    [false, false, true, false, false, false, true, false, false, false, true, false, false, false, true, false], // HI - snare
-                    [true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false], // LO - hat
+                    [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false], // HI
+                    [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false], // LO
                     [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false], // MID1
                     [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false], // MID2
                     [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false], // CRASH
-                    [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false] // KICK
+                    [true, false, false, false, false, false, false, false, true, false, false, false, false, false, false, false] // KICK - subtle rhythm
                 ],
                 type: 'noise',
                 sustain: false,
@@ -109,6 +109,10 @@ class NESSequencer {
         try {
             this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
             this.setupEffects();
+            // Ensure impulse response is created after context is ready
+            setTimeout(() => {
+                this.createReverbImpulse(this.effects.reverb.size, this.effects.reverb.decay);
+            }, 100);
         } catch (error) {
             console.error('Web Audio API not supported:', error);
         }
@@ -149,6 +153,7 @@ class NESSequencer {
         reverb.convolver = this.audioContext.createConvolver();
         reverb.wetGain = this.audioContext.createGain();
         reverb.dryGain = this.audioContext.createGain();
+        reverb.mixNode = this.audioContext.createGain();
         
         reverb.wetGain.gain.setValueAtTime(reverb.mix, this.audioContext.currentTime);
         reverb.dryGain.gain.setValueAtTime(1 - reverb.mix, this.audioContext.currentTime);
@@ -156,12 +161,15 @@ class NESSequencer {
         this.createReverbImpulse(reverb.size, reverb.decay);
         
         reverb.convolver.connect(reverb.wetGain);
-        reverb.wetGain.connect(this.masterGain);
-        reverb.dryGain.connect(this.masterGain);
+        reverb.wetGain.connect(reverb.mixNode);
+        reverb.dryGain.connect(reverb.mixNode);
+        reverb.mixNode.connect(this.masterGain);
     }
     
     createReverbImpulse(roomSize, decay) {
-        const length = this.audioContext.sampleRate * roomSize;
+        if (!this.audioContext) return;
+        
+        const length = Math.floor(this.audioContext.sampleRate * roomSize);
         const impulse = this.audioContext.createBuffer(2, length, this.audioContext.sampleRate);
         
         for (let channel = 0; channel < 2; channel++) {
@@ -172,7 +180,9 @@ class NESSequencer {
             }
         }
         
-        this.effects.reverb.convolver.buffer = impulse;
+        if (this.effects.reverb.convolver) {
+            this.effects.reverb.convolver.buffer = impulse;
+        }
     }
     
     initUI() {
@@ -664,20 +674,24 @@ class NESSequencer {
     }
     
     connectToEffects(sourceNode) {
-        let currentNode = sourceNode;
+        let outputNode = sourceNode;
         
+        // Apply delay if enabled
         if (this.effects.delay.enabled && this.effects.delay.delayNode) {
-            currentNode.connect(this.effects.delay.delayNode);
-            currentNode.connect(this.effects.delay.dryGain);
-            currentNode = this.effects.delay.mixNode;
+            outputNode.connect(this.effects.delay.delayNode);
+            outputNode.connect(this.effects.delay.dryGain);
+            outputNode = this.effects.delay.mixNode;
         }
         
+        // Apply reverb if enabled
         if (this.effects.reverb.enabled && this.effects.reverb.convolver) {
-            currentNode.connect(this.effects.reverb.convolver);
-            currentNode.connect(this.effects.reverb.dryGain);
-        } else {
-            currentNode.connect(this.masterGain);
+            outputNode.connect(this.effects.reverb.convolver);
+            outputNode.connect(this.effects.reverb.dryGain);
+            outputNode = this.effects.reverb.mixNode;
         }
+        
+        // Connect to master gain
+        outputNode.connect(this.masterGain);
     }
     
     updateStepIndicator() {
