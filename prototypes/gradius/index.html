@@ -33,7 +33,10 @@
             <div class="channel-section">
                 <div class="channel-header">
                     <span>PULSE 1</span>
-                    <button class="sustain-toggle" id="pulse1Sustain">SUSTAIN: OFF</button>
+                    <div class="channel-controls">
+                        <button class="wave-toggle" id="pulse1Wave">SQUARE</button>
+                        <button class="sustain-toggle" id="pulse1Sustain">SUSTAIN: OFF</button>
+                    </div>
                 </div>
                 <div class="grid">
                     <div class="row">
@@ -156,7 +159,10 @@
             <div class="channel-section">
                 <div class="channel-header">
                     <span>PULSE 2</span>
-                    <button class="sustain-toggle active" id="pulse2Sustain">SUSTAIN: ON</button>
+                    <div class="channel-controls">
+                        <button class="wave-toggle" id="pulse2Wave">SAWTOOTH</button>
+                        <button class="sustain-toggle active" id="pulse2Sustain">SUSTAIN: ON</button>
+                    </div>
                 </div>
                 <div class="grid">
                     <div class="row">
@@ -279,7 +285,10 @@
             <div class="channel-section">
                 <div class="channel-header">
                     <span>TRIANGLE</span>
-                    <button class="sustain-toggle active" id="triangleSustain">SUSTAIN: ON</button>
+                    <div class="channel-controls">
+                        <button class="wave-toggle" id="triangleWave">TRIANGLE</button>
+                        <button class="sustain-toggle active" id="triangleSustain">SUSTAIN: ON</button>
+                    </div>
                 </div>
                 <div class="grid">
                     <div class="row">
@@ -562,6 +571,29 @@
                                 <label for="delayMix">MIX:</label>
                                 <input type="range" id="delayMix" min="0" max="1" step="0.05" value="0.2">
                                 <span id="delayMixValue">20%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="effect-section">
+                        <div class="effect-header">
+                            <span class="effect-title">OSCILLATOR</span>
+                            <button class="effect-toggle" id="oscillatorToggle">OFF</button>
+                        </div>
+                        <div class="effect-controls">
+                            <div class="control-group">
+                                <label for="oscillatorRate">RATE:</label>
+                                <input type="range" id="oscillatorRate" min="0.1" max="8.0" step="0.1" value="2.0">
+                                <span id="oscillatorRateValue">2.0Hz</span>
+                            </div>
+                            <div class="control-group">
+                                <label for="oscillatorDepth">DEPTH:</label>
+                                <input type="range" id="oscillatorDepth" min="0" max="100" step="5" value="30">
+                                <span id="oscillatorDepthValue">30</span>
+                            </div>
+                            <div class="control-group">
+                                <label for="oscillatorType">TYPE:</label>
+                                <button class="effect-type-toggle" id="oscillatorType">LFO</button>
                             </div>
                         </div>
                     </div>

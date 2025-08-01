@@ -211,6 +211,31 @@ h1 {
     opacity: 0.8;
 }
 
+.effect-type-toggle {
+    background: #333300;
+    border: 1px solid #666600;
+    color: #cccc00;
+    padding: 2px 8px;
+    font-family: 'Courier New', monospace;
+    font-size: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+    width: 50px;
+    text-align: center;
+}
+
+.effect-type-toggle:hover {
+    opacity: 0.8;
+}
+
+.effect-type-toggle.tremolo {
+    background: #660033;
+    border-color: #cc0066;
+    color: #ff66cc;
+}
+
 .effect-controls {
     display: flex;
     flex-direction: column;
@@ -345,6 +370,47 @@ h1 {
     border: 1px solid #00ff00;
     margin-bottom: 4px;
     text-shadow: 0 0 5px #00ff00;
+}
+
+.channel-controls {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+.wave-toggle {
+    background: #003366;
+    border: 1px solid #0066cc;
+    color: #66ccff;
+    padding: 2px 6px;
+    font-family: 'Courier New', monospace;
+    font-size: 9px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+}
+
+.wave-toggle:hover {
+    opacity: 0.8;
+}
+
+.wave-toggle.sawtooth {
+    background: #664400;
+    border-color: #cc8800;
+    color: #ffcc66;
+}
+
+.wave-toggle.triangle {
+    background: #006644;
+    border-color: #00cc88;
+    color: #66ffcc;
+}
+
+.wave-toggle.square {
+    background: #003366;
+    border-color: #0066cc;
+    color: #66ccff;
 }
 
 .sustain-toggle {

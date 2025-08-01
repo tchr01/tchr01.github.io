@@ -85,6 +85,15 @@ class NESSequencer {
                 wetGain: null,
                 dryGain: null
             },
+            oscillator: {
+                enabled: false,
+                rate: 2.0,
+                depth: 30,
+                type: 'lfo', // 'lfo' or 'tremolo'
+                lfoOscillator: null,
+                gainNode: null,
+                mixNode: null
+            },
             reverb: {
                 enabled: true,
                 size: 3.6,
@@ -92,7 +101,8 @@ class NESSequencer {
                 mix: 0.6,
                 convolver: null,
                 wetGain: null,
-                dryGain: null
+                dryGain: null,
+                mixNode: null
             }
         };
         
@@ -103,6 +113,14 @@ class NESSequencer {
         this.initUI();
         this.bindEvents();
         this.updateUIFromSequence();
+        this.initializeWaveToggles();
+    }
+    
+    initializeWaveToggles() {
+        // Initialize wave toggle button states
+        this.pulse1Wave.classList.add('square');
+        this.pulse2Wave.classList.add('sawtooth');
+        this.triangleWave.classList.add('triangle');
     }
     
     async initAudio() {
@@ -123,6 +141,7 @@ class NESSequencer {
         this.masterGain.connect(this.audioContext.destination);
         
         this.setupDelay();
+        this.setupOscillator();
         this.setupReverb();
     }
     
@@ -145,7 +164,22 @@ class NESSequencer {
         
         delay.wetGain.connect(delay.mixNode);
         delay.dryGain.connect(delay.mixNode);
-        delay.mixNode.connect(this.masterGain);
+    }
+    
+    setupOscillator() {
+        const osc = this.effects.oscillator;
+        osc.lfoOscillator = this.audioContext.createOscillator();
+        osc.gainNode = this.audioContext.createGain();
+        osc.mixNode = this.audioContext.createGain();
+        
+        osc.lfoOscillator.type = 'sine';
+        osc.lfoOscillator.frequency.setValueAtTime(osc.rate, this.audioContext.currentTime);
+        
+        // Set up modulation depth
+        osc.gainNode.gain.setValueAtTime(osc.depth / 100, this.audioContext.currentTime);
+        
+        osc.lfoOscillator.connect(osc.gainNode);
+        osc.lfoOscillator.start();
     }
     
     setupReverb() {
@@ -163,7 +197,6 @@ class NESSequencer {
         reverb.convolver.connect(reverb.wetGain);
         reverb.wetGain.connect(reverb.mixNode);
         reverb.dryGain.connect(reverb.mixNode);
-        reverb.mixNode.connect(this.masterGain);
     }
     
     createReverbImpulse(roomSize, decay) {
@@ -209,6 +242,17 @@ class NESSequencer {
         this.reverbMix = document.getElementById('reverbMix');
         this.reverbMixValue = document.getElementById('reverbMixValue');
         
+        this.oscillatorToggle = document.getElementById('oscillatorToggle');
+        this.oscillatorRate = document.getElementById('oscillatorRate');
+        this.oscillatorRateValue = document.getElementById('oscillatorRateValue');
+        this.oscillatorDepth = document.getElementById('oscillatorDepth');
+        this.oscillatorDepthValue = document.getElementById('oscillatorDepthValue');
+        this.oscillatorType = document.getElementById('oscillatorType');
+        
+        this.pulse1Wave = document.getElementById('pulse1Wave');
+        this.pulse2Wave = document.getElementById('pulse2Wave');
+        this.triangleWave = document.getElementById('triangleWave');
+        
         this.pulse1Sustain = document.getElementById('pulse1Sustain');
         this.pulse2Sustain = document.getElementById('pulse2Sustain');
         this.triangleSustain = document.getElementById('triangleSustain');
@@ -253,6 +297,15 @@ class NESSequencer {
         this.reverbSize.addEventListener('input', (e) => this.updateReverbSize(parseFloat(e.target.value)));
         this.reverbDecay.addEventListener('input', (e) => this.updateReverbDecay(parseFloat(e.target.value)));
         this.reverbMix.addEventListener('input', (e) => this.updateReverbMix(parseFloat(e.target.value)));
+        
+        this.oscillatorToggle.addEventListener('click', () => this.toggleOscillator());
+        this.oscillatorRate.addEventListener('input', (e) => this.updateOscillatorRate(parseFloat(e.target.value)));
+        this.oscillatorDepth.addEventListener('input', (e) => this.updateOscillatorDepth(parseFloat(e.target.value)));
+        this.oscillatorType.addEventListener('click', () => this.toggleOscillatorType());
+        
+        this.pulse1Wave.addEventListener('click', () => this.toggleWaveType('pulse1'));
+        this.pulse2Wave.addEventListener('click', () => this.toggleWaveType('pulse2'));
+        this.triangleWave.addEventListener('click', () => this.toggleWaveType('triangle'));
         
         this.pulse1Sustain.addEventListener('click', () => this.toggleSustain('pulse1'));
         this.pulse2Sustain.addEventListener('click', () => this.toggleSustain('pulse2'));
@@ -342,6 +395,59 @@ class NESSequencer {
         if (this.effects.reverb.wetGain && this.effects.reverb.dryGain) {
             this.effects.reverb.wetGain.gain.setValueAtTime(value, this.audioContext.currentTime);
             this.effects.reverb.dryGain.gain.setValueAtTime(1 - value, this.audioContext.currentTime);
+        }
+    }
+    
+    toggleOscillator() {
+        this.effects.oscillator.enabled = !this.effects.oscillator.enabled;
+        this.oscillatorToggle.textContent = this.effects.oscillator.enabled ? 'ON' : 'OFF';
+        this.oscillatorToggle.classList.toggle('active', this.effects.oscillator.enabled);
+    }
+    
+    updateOscillatorRate(value) {
+        this.effects.oscillator.rate = value;
+        this.oscillatorRateValue.textContent = value.toFixed(1) + 'Hz';
+        if (this.effects.oscillator.lfoOscillator) {
+            this.effects.oscillator.lfoOscillator.frequency.setValueAtTime(value, this.audioContext.currentTime);
+        }
+    }
+    
+    updateOscillatorDepth(value) {
+        this.effects.oscillator.depth = value;
+        this.oscillatorDepthValue.textContent = value.toString();
+        if (this.effects.oscillator.gainNode) {
+            this.effects.oscillator.gainNode.gain.setValueAtTime(value / 100, this.audioContext.currentTime);
+        }
+    }
+    
+    toggleOscillatorType() {
+        this.effects.oscillator.type = this.effects.oscillator.type === 'lfo' ? 'tremolo' : 'lfo';
+        this.oscillatorType.textContent = this.effects.oscillator.type.toUpperCase();
+        this.oscillatorType.classList.toggle('tremolo', this.effects.oscillator.type === 'tremolo');
+    }
+    
+    toggleWaveType(channelName) {
+        const channel = this.channels[channelName];
+        const button = document.getElementById(`${channelName}Wave`);
+        
+        if (channelName === 'triangle') {
+            // Triangle can switch between triangle and sawtooth
+            channel.type = channel.type === 'triangle' ? 'sawtooth' : 'triangle';
+            button.textContent = channel.type.toUpperCase();
+            button.classList.toggle('sawtooth', channel.type === 'sawtooth');
+        } else {
+            // Pulse channels can switch between square and sawtooth
+            channel.type = channel.type === 'square' ? 'sawtooth' : 'square';
+            button.textContent = channel.type.toUpperCase();
+            button.classList.toggle('sawtooth', channel.type === 'sawtooth');
+        }
+        
+        // Update any currently sustained notes
+        if (channel.sustain && channel.sustainedOscillator) {
+            this.stopSustainedNote(channelName);
+            if (channel.currentNote !== null) {
+                this.playSustainedNote(channelName, channel.currentNote);
+            }
         }
     }
     
@@ -683,6 +789,25 @@ class NESSequencer {
             outputNode = this.effects.delay.mixNode;
         }
         
+        // Apply oscillator modulation if enabled
+        if (this.effects.oscillator.enabled && this.effects.oscillator.gainNode) {
+            const modulatedGain = this.audioContext.createGain();
+            modulatedGain.gain.setValueAtTime(1, this.audioContext.currentTime);
+            
+            // Connect LFO to modulate the gain
+            if (this.effects.oscillator.type === 'tremolo') {
+                this.effects.oscillator.gainNode.connect(modulatedGain.gain);
+            } else {
+                // LFO modulation for frequency (vibrato-like effect)
+                if (outputNode.frequency) {
+                    this.effects.oscillator.gainNode.connect(outputNode.frequency);
+                }
+            }
+            
+            outputNode.connect(modulatedGain);
+            outputNode = modulatedGain;
+        }
+        
         // Apply reverb if enabled
         if (this.effects.reverb.enabled && this.effects.reverb.convolver) {
             outputNode.connect(this.effects.reverb.convolver);
@@ -690,7 +815,7 @@ class NESSequencer {
             outputNode = this.effects.reverb.mixNode;
         }
         
-        // Connect to master gain
+        // Connect final output to master gain
         outputNode.connect(this.masterGain);
     }
     
