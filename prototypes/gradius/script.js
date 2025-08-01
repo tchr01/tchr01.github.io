@@ -34,7 +34,7 @@ class NESSequencer {
                     [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false] // D4
                 ],
                 type: 'sawtooth',
-                sustain: false,
+                sustain: true,
                 sustainedOscillator: null,
                 sustainedGain: null,
                 currentNote: null
@@ -114,6 +114,7 @@ class NESSequencer {
         this.bindEvents();
         this.updateUIFromSequence();
         this.initializeWaveToggles();
+        this.initializeSustainToggles();
     }
     
     initializeWaveToggles() {
@@ -121,6 +122,18 @@ class NESSequencer {
         this.pulse1Wave.classList.add('square');
         this.pulse2Wave.classList.add('sawtooth');
         this.triangleWave.classList.add('triangle');
+    }
+    
+    initializeSustainToggles() {
+        // Ensure sustain toggle buttons match internal state
+        Object.keys(this.channels).forEach(channelName => {
+            const channel = this.channels[channelName];
+            const button = document.getElementById(`${channelName}Sustain`);
+            if (button) {
+                button.textContent = `SUSTAIN: ${channel.sustain ? 'ON' : 'OFF'}`;
+                button.classList.toggle('active', channel.sustain);
+            }
+        });
     }
     
     async initAudio() {
