@@ -14,10 +14,11 @@
             <div class="controls">
                 <button id="playBtn" class="control-btn">PLAY</button>
                 <button id="stopBtn" class="control-btn">STOP</button>
+                <button id="clearBtn" class="control-btn">CLEAR ALL</button>
                 <div class="tempo-control">
                     <label for="tempoSlider">TEMPO:</label>
-                    <input type="range" id="tempoSlider" min="60" max="180" value="120">
-                    <span id="tempoValue">120</span>
+                    <input type="range" id="tempoSlider" min="60" max="180" value="80">
+                    <span id="tempoValue">80</span>
                 </div>
             </div>
             
@@ -106,7 +107,7 @@
                         <div class="step pulse1" data-step="15" data-note="2" data-channel="pulse1"></div>
                     </div>
                     <div class="row">
-                        <div class="note-label">C4</div>
+                        <div class="note-label">D4</div>
                         <div class="step pulse1" data-step="0" data-note="3" data-channel="pulse1"></div>
                         <div class="step pulse1" data-step="1" data-note="3" data-channel="pulse1"></div>
                         <div class="step pulse1" data-step="2" data-note="3" data-channel="pulse1"></div>
@@ -124,13 +125,51 @@
                         <div class="step pulse1" data-step="14" data-note="3" data-channel="pulse1"></div>
                         <div class="step pulse1" data-step="15" data-note="3" data-channel="pulse1"></div>
                     </div>
+                    <div class="row">
+                        <div class="note-label">C4</div>
+                        <div class="step pulse1" data-step="0" data-note="4" data-channel="pulse1"></div>
+                        <div class="step pulse1" data-step="1" data-note="4" data-channel="pulse1"></div>
+                        <div class="step pulse1" data-step="2" data-note="4" data-channel="pulse1"></div>
+                        <div class="step pulse1" data-step="3" data-note="4" data-channel="pulse1"></div>
+                        <div class="step pulse1" data-step="4" data-note="4" data-channel="pulse1"></div>
+                        <div class="step pulse1" data-step="5" data-note="4" data-channel="pulse1"></div>
+                        <div class="step pulse1" data-step="6" data-note="4" data-channel="pulse1"></div>
+                        <div class="step pulse1" data-step="7" data-note="4" data-channel="pulse1"></div>
+                        <div class="step pulse1" data-step="8" data-note="4" data-channel="pulse1"></div>
+                        <div class="step pulse1" data-step="9" data-note="4" data-channel="pulse1"></div>
+                        <div class="step pulse1" data-step="10" data-note="4" data-channel="pulse1"></div>
+                        <div class="step pulse1" data-step="11" data-note="4" data-channel="pulse1"></div>
+                        <div class="step pulse1" data-step="12" data-note="4" data-channel="pulse1"></div>
+                        <div class="step pulse1" data-step="13" data-note="4" data-channel="pulse1"></div>
+                        <div class="step pulse1" data-step="14" data-note="4" data-channel="pulse1"></div>
+                        <div class="step pulse1" data-step="15" data-note="4" data-channel="pulse1"></div>
+                    </div>
+                    <div class="row">
+                        <div class="note-label">A3</div>
+                        <div class="step pulse1" data-step="0" data-note="5" data-channel="pulse1"></div>
+                        <div class="step pulse1" data-step="1" data-note="5" data-channel="pulse1"></div>
+                        <div class="step pulse1" data-step="2" data-note="5" data-channel="pulse1"></div>
+                        <div class="step pulse1" data-step="3" data-note="5" data-channel="pulse1"></div>
+                        <div class="step pulse1" data-step="4" data-note="5" data-channel="pulse1"></div>
+                        <div class="step pulse1" data-step="5" data-note="5" data-channel="pulse1"></div>
+                        <div class="step pulse1" data-step="6" data-note="5" data-channel="pulse1"></div>
+                        <div class="step pulse1" data-step="7" data-note="5" data-channel="pulse1"></div>
+                        <div class="step pulse1" data-step="8" data-note="5" data-channel="pulse1"></div>
+                        <div class="step pulse1" data-step="9" data-note="5" data-channel="pulse1"></div>
+                        <div class="step pulse1" data-step="10" data-note="5" data-channel="pulse1"></div>
+                        <div class="step pulse1" data-step="11" data-note="5" data-channel="pulse1"></div>
+                        <div class="step pulse1" data-step="12" data-note="5" data-channel="pulse1"></div>
+                        <div class="step pulse1" data-step="13" data-note="5" data-channel="pulse1"></div>
+                        <div class="step pulse1" data-step="14" data-note="5" data-channel="pulse1"></div>
+                        <div class="step pulse1" data-step="15" data-note="5" data-channel="pulse1"></div>
+                    </div>
                 </div>
             </div>
 
             <div class="channel-section">
                 <div class="channel-header">
                     <span>PULSE 2</span>
-                    <button class="sustain-toggle" id="pulse2Sustain">SUSTAIN: OFF</button>
+                    <button class="sustain-toggle active" id="pulse2Sustain">SUSTAIN: ON</button>
                 </div>
                 <div class="grid">
                     <div class="row">
@@ -208,6 +247,44 @@
                         <div class="step pulse2" data-step="13" data-note="3" data-channel="pulse2"></div>
                         <div class="step pulse2" data-step="14" data-note="3" data-channel="pulse2"></div>
                         <div class="step pulse2" data-step="15" data-note="3" data-channel="pulse2"></div>
+                    </div>
+                    <div class="row">
+                        <div class="note-label">E4</div>
+                        <div class="step pulse2" data-step="0" data-note="4" data-channel="pulse2"></div>
+                        <div class="step pulse2" data-step="1" data-note="4" data-channel="pulse2"></div>
+                        <div class="step pulse2" data-step="2" data-note="4" data-channel="pulse2"></div>
+                        <div class="step pulse2" data-step="3" data-note="4" data-channel="pulse2"></div>
+                        <div class="step pulse2" data-step="4" data-note="4" data-channel="pulse2"></div>
+                        <div class="step pulse2" data-step="5" data-note="4" data-channel="pulse2"></div>
+                        <div class="step pulse2" data-step="6" data-note="4" data-channel="pulse2"></div>
+                        <div class="step pulse2" data-step="7" data-note="4" data-channel="pulse2"></div>
+                        <div class="step pulse2" data-step="8" data-note="4" data-channel="pulse2"></div>
+                        <div class="step pulse2" data-step="9" data-note="4" data-channel="pulse2"></div>
+                        <div class="step pulse2" data-step="10" data-note="4" data-channel="pulse2"></div>
+                        <div class="step pulse2" data-step="11" data-note="4" data-channel="pulse2"></div>
+                        <div class="step pulse2" data-step="12" data-note="4" data-channel="pulse2"></div>
+                        <div class="step pulse2" data-step="13" data-note="4" data-channel="pulse2"></div>
+                        <div class="step pulse2" data-step="14" data-note="4" data-channel="pulse2"></div>
+                        <div class="step pulse2" data-step="15" data-note="4" data-channel="pulse2"></div>
+                    </div>
+                    <div class="row">
+                        <div class="note-label">D4</div>
+                        <div class="step pulse2" data-step="0" data-note="5" data-channel="pulse2"></div>
+                        <div class="step pulse2" data-step="1" data-note="5" data-channel="pulse2"></div>
+                        <div class="step pulse2" data-step="2" data-note="5" data-channel="pulse2"></div>
+                        <div class="step pulse2" data-step="3" data-note="5" data-channel="pulse2"></div>
+                        <div class="step pulse2" data-step="4" data-note="5" data-channel="pulse2"></div>
+                        <div class="step pulse2" data-step="5" data-note="5" data-channel="pulse2"></div>
+                        <div class="step pulse2" data-step="6" data-note="5" data-channel="pulse2"></div>
+                        <div class="step pulse2" data-step="7" data-note="5" data-channel="pulse2"></div>
+                        <div class="step pulse2" data-step="8" data-note="5" data-channel="pulse2"></div>
+                        <div class="step pulse2" data-step="9" data-note="5" data-channel="pulse2"></div>
+                        <div class="step pulse2" data-step="10" data-note="5" data-channel="pulse2"></div>
+                        <div class="step pulse2" data-step="11" data-note="5" data-channel="pulse2"></div>
+                        <div class="step pulse2" data-step="12" data-note="5" data-channel="pulse2"></div>
+                        <div class="step pulse2" data-step="13" data-note="5" data-channel="pulse2"></div>
+                        <div class="step pulse2" data-step="14" data-note="5" data-channel="pulse2"></div>
+                        <div class="step pulse2" data-step="15" data-note="5" data-channel="pulse2"></div>
                     </div>
                 </div>
             </div>
@@ -379,6 +456,82 @@
                         <div class="step noise" data-step="14" data-note="1" data-channel="noise"></div>
                         <div class="step noise" data-step="15" data-note="1" data-channel="noise"></div>
                     </div>
+                    <div class="row">
+                        <div class="note-label">MID1</div>
+                        <div class="step noise" data-step="0" data-note="2" data-channel="noise"></div>
+                        <div class="step noise" data-step="1" data-note="2" data-channel="noise"></div>
+                        <div class="step noise" data-step="2" data-note="2" data-channel="noise"></div>
+                        <div class="step noise" data-step="3" data-note="2" data-channel="noise"></div>
+                        <div class="step noise" data-step="4" data-note="2" data-channel="noise"></div>
+                        <div class="step noise" data-step="5" data-note="2" data-channel="noise"></div>
+                        <div class="step noise" data-step="6" data-note="2" data-channel="noise"></div>
+                        <div class="step noise" data-step="7" data-note="2" data-channel="noise"></div>
+                        <div class="step noise" data-step="8" data-note="2" data-channel="noise"></div>
+                        <div class="step noise" data-step="9" data-note="2" data-channel="noise"></div>
+                        <div class="step noise" data-step="10" data-note="2" data-channel="noise"></div>
+                        <div class="step noise" data-step="11" data-note="2" data-channel="noise"></div>
+                        <div class="step noise" data-step="12" data-note="2" data-channel="noise"></div>
+                        <div class="step noise" data-step="13" data-note="2" data-channel="noise"></div>
+                        <div class="step noise" data-step="14" data-note="2" data-channel="noise"></div>
+                        <div class="step noise" data-step="15" data-note="2" data-channel="noise"></div>
+                    </div>
+                    <div class="row">
+                        <div class="note-label">MID2</div>
+                        <div class="step noise" data-step="0" data-note="3" data-channel="noise"></div>
+                        <div class="step noise" data-step="1" data-note="3" data-channel="noise"></div>
+                        <div class="step noise" data-step="2" data-note="3" data-channel="noise"></div>
+                        <div class="step noise" data-step="3" data-note="3" data-channel="noise"></div>
+                        <div class="step noise" data-step="4" data-note="3" data-channel="noise"></div>
+                        <div class="step noise" data-step="5" data-note="3" data-channel="noise"></div>
+                        <div class="step noise" data-step="6" data-note="3" data-channel="noise"></div>
+                        <div class="step noise" data-step="7" data-note="3" data-channel="noise"></div>
+                        <div class="step noise" data-step="8" data-note="3" data-channel="noise"></div>
+                        <div class="step noise" data-step="9" data-note="3" data-channel="noise"></div>
+                        <div class="step noise" data-step="10" data-note="3" data-channel="noise"></div>
+                        <div class="step noise" data-step="11" data-note="3" data-channel="noise"></div>
+                        <div class="step noise" data-step="12" data-note="3" data-channel="noise"></div>
+                        <div class="step noise" data-step="13" data-note="3" data-channel="noise"></div>
+                        <div class="step noise" data-step="14" data-note="3" data-channel="noise"></div>
+                        <div class="step noise" data-step="15" data-note="3" data-channel="noise"></div>
+                    </div>
+                    <div class="row">
+                        <div class="note-label">CRASH</div>
+                        <div class="step noise" data-step="0" data-note="4" data-channel="noise"></div>
+                        <div class="step noise" data-step="1" data-note="4" data-channel="noise"></div>
+                        <div class="step noise" data-step="2" data-note="4" data-channel="noise"></div>
+                        <div class="step noise" data-step="3" data-note="4" data-channel="noise"></div>
+                        <div class="step noise" data-step="4" data-note="4" data-channel="noise"></div>
+                        <div class="step noise" data-step="5" data-note="4" data-channel="noise"></div>
+                        <div class="step noise" data-step="6" data-note="4" data-channel="noise"></div>
+                        <div class="step noise" data-step="7" data-note="4" data-channel="noise"></div>
+                        <div class="step noise" data-step="8" data-note="4" data-channel="noise"></div>
+                        <div class="step noise" data-step="9" data-note="4" data-channel="noise"></div>
+                        <div class="step noise" data-step="10" data-note="4" data-channel="noise"></div>
+                        <div class="step noise" data-step="11" data-note="4" data-channel="noise"></div>
+                        <div class="step noise" data-step="12" data-note="4" data-channel="noise"></div>
+                        <div class="step noise" data-step="13" data-note="4" data-channel="noise"></div>
+                        <div class="step noise" data-step="14" data-note="4" data-channel="noise"></div>
+                        <div class="step noise" data-step="15" data-note="4" data-channel="noise"></div>
+                    </div>
+                    <div class="row">
+                        <div class="note-label">KICK</div>
+                        <div class="step noise" data-step="0" data-note="5" data-channel="noise"></div>
+                        <div class="step noise" data-step="1" data-note="5" data-channel="noise"></div>
+                        <div class="step noise" data-step="2" data-note="5" data-channel="noise"></div>
+                        <div class="step noise" data-step="3" data-note="5" data-channel="noise"></div>
+                        <div class="step noise" data-step="4" data-note="5" data-channel="noise"></div>
+                        <div class="step noise" data-step="5" data-note="5" data-channel="noise"></div>
+                        <div class="step noise" data-step="6" data-note="5" data-channel="noise"></div>
+                        <div class="step noise" data-step="7" data-note="5" data-channel="noise"></div>
+                        <div class="step noise" data-step="8" data-note="5" data-channel="noise"></div>
+                        <div class="step noise" data-step="9" data-note="5" data-channel="noise"></div>
+                        <div class="step noise" data-step="10" data-note="5" data-channel="noise"></div>
+                        <div class="step noise" data-step="11" data-note="5" data-channel="noise"></div>
+                        <div class="step noise" data-step="12" data-note="5" data-channel="noise"></div>
+                        <div class="step noise" data-step="13" data-note="5" data-channel="noise"></div>
+                        <div class="step noise" data-step="14" data-note="5" data-channel="noise"></div>
+                        <div class="step noise" data-step="15" data-note="5" data-channel="noise"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -434,6 +587,19 @@
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+
+            <div class="export-panel">
+                <div class="export-header">EXPORT</div>
+                <div class="export-controls">
+                    <div class="control-group">
+                        <label for="exportLoops">LOOPS:</label>
+                        <input type="number" id="exportLoops" min="1" max="16" value="4">
+                        <span id="exportLoopsLabel">x4</span>
+                    </div>
+                    <button class="export-btn" id="exportBtn">EXPORT WAV</button>
+                    <div class="export-status" id="exportStatus"></div>
                 </div>
             </div>
         </div>

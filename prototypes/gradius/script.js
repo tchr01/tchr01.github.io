@@ -3,13 +3,20 @@ class NESSequencer {
         this.audioContext = null;
         this.isPlaying = false;
         this.currentStep = 0;
-        this.tempo = 120;
+        this.tempo = 80;
         this.stepInterval = null;
         
         this.channels = {
             pulse1: {
-                notes: [523.25, 440, 349.23, 261.63],
-                sequence: Array(4).fill().map(() => Array(16).fill(false)),
+                notes: [523.25, 440, 349.23, 293.66, 261.63, 220],
+                sequence: [
+                    [true, false, false, false, true, false, false, false, true, false, false, false, true, false, false, false], // C5 - beat pattern
+                    [false, false, true, false, false, false, true, false, false, false, true, false, false, false, false, false], // A4 - accent
+                    [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false], // F4
+                    [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false], // D4
+                    [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false], // C4
+                    [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false] // A3
+                ],
                 type: 'square',
                 sustain: false,
                 sustainedOscillator: null,
@@ -17,17 +24,31 @@ class NESSequencer {
                 currentNote: null
             },
             pulse2: {
-                notes: [1046.5, 659.25, 523.25, 392],
-                sequence: Array(4).fill().map(() => Array(16).fill(false)),
+                notes: [1046.5, 659.25, 523.25, 392, 329.63, 293.66],
+                sequence: [
+                    [true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false], // C6 - arpeggio start
+                    [false, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false], // E5
+                    [false, false, true, false, false, false, false, false, false, false, false, false, false, false, false, false], // C5
+                    [false, false, false, true, false, false, false, false, false, false, false, false, false, false, false, false], // G4
+                    [false, false, false, false, true, false, false, false, false, false, false, false, false, false, false, false], // E4
+                    [false, false, false, false, false, true, false, false, false, false, false, false, false, false, false, false] // D4 - arpeggio end
+                ],
                 type: 'sawtooth',
-                sustain: false,
+                sustain: true,
                 sustainedOscillator: null,
                 sustainedGain: null,
                 currentNote: null
             },
             triangle: {
                 notes: [130.81, 98, 73.42, 65.41, 49, 36.71],
-                sequence: Array(6).fill().map(() => Array(16).fill(false)),
+                sequence: [
+                    [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false], // C3
+                    [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false], // G2
+                    [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false], // D2
+                    [true, false, false, false, false, false, false, false, true, false, false, false, false, false, false, false], // C2 - bass
+                    [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false], // G1
+                    [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false] // D1
+                ],
                 type: 'triangle',
                 sustain: false,
                 sustainedOscillator: null,
@@ -35,8 +56,15 @@ class NESSequencer {
                 currentNote: null
             },
             noise: {
-                notes: [0, 1],
-                sequence: Array(2).fill().map(() => Array(16).fill(false)),
+                notes: [0, 1, 2, 3, 4, 5],
+                sequence: [
+                    [false, false, true, false, false, false, true, false, false, false, true, false, false, false, true, false], // HI - snare
+                    [true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false], // LO - hat
+                    [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false], // MID1
+                    [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false], // MID2
+                    [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false], // CRASH
+                    [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false] // KICK
+                ],
                 type: 'noise',
                 sustain: false,
                 sustainedSource: null,
@@ -74,6 +102,7 @@ class NESSequencer {
         this.initAudio();
         this.initUI();
         this.bindEvents();
+        this.updateUIFromSequence();
     }
     
     async initAudio() {
@@ -149,6 +178,7 @@ class NESSequencer {
     initUI() {
         this.playBtn = document.getElementById('playBtn');
         this.stopBtn = document.getElementById('stopBtn');
+        this.clearBtn = document.getElementById('clearBtn');
         this.tempoSlider = document.getElementById('tempoSlider');
         this.tempoValue = document.getElementById('tempoValue');
         this.steps = document.querySelectorAll('.step');
@@ -173,11 +203,17 @@ class NESSequencer {
         this.pulse2Sustain = document.getElementById('pulse2Sustain');
         this.triangleSustain = document.getElementById('triangleSustain');
         this.noiseSustain = document.getElementById('noiseSustain');
+        
+        this.exportLoops = document.getElementById('exportLoops');
+        this.exportLoopsLabel = document.getElementById('exportLoopsLabel');
+        this.exportBtn = document.getElementById('exportBtn');
+        this.exportStatus = document.getElementById('exportStatus');
     }
     
     bindEvents() {
         this.playBtn.addEventListener('click', () => this.togglePlay());
         this.stopBtn.addEventListener('click', () => this.stop());
+        this.clearBtn.addEventListener('click', () => this.clearAll());
         
         this.tempoSlider.addEventListener('input', (e) => {
             this.tempo = parseInt(e.target.value);
@@ -213,11 +249,31 @@ class NESSequencer {
         this.triangleSustain.addEventListener('click', () => this.toggleSustain('triangle'));
         this.noiseSustain.addEventListener('click', () => this.toggleSustain('noise'));
         
+        this.exportLoops.addEventListener('input', (e) => this.updateExportLoops(parseInt(e.target.value)));
+        this.exportBtn.addEventListener('click', () => this.exportWAV());
+        
         document.addEventListener('keydown', (e) => {
             if (e.code === 'Space') {
                 e.preventDefault();
                 this.togglePlay();
             }
+        });
+    }
+    
+    clearAll() {
+        this.stop();
+        
+        Object.keys(this.channels).forEach(channelName => {
+            const channel = this.channels[channelName];
+            for (let noteIndex = 0; noteIndex < channel.sequence.length; noteIndex++) {
+                for (let stepIndex = 0; stepIndex < 16; stepIndex++) {
+                    channel.sequence[noteIndex][stepIndex] = false;
+                }
+            }
+        });
+        
+        document.querySelectorAll('.step').forEach(step => {
+            step.classList.remove('active');
         });
     }
     
@@ -458,19 +514,51 @@ class NESSequencer {
         const bufferSize = this.audioContext.sampleRate * 10;
         const buffer = this.audioContext.createBuffer(1, bufferSize, this.audioContext.sampleRate);
         const data = buffer.getChannelData(0);
+        let lastValue = 0;
         
-        if (type === 0) {
-            for (let i = 0; i < bufferSize; i++) {
-                data[i] = (Math.random() * 2 - 1) * 0.2;
-            }
-        } else {
-            let lastValue = 0;
-            for (let i = 0; i < bufferSize; i++) {
-                if (i % 93 === 0) {
-                    lastValue = Math.random() * 2 - 1;
+        switch(type) {
+            case 0: // HI - white noise
+                for (let i = 0; i < bufferSize; i++) {
+                    data[i] = (Math.random() * 2 - 1) * 0.2;
                 }
-                data[i] = lastValue * 0.15;
-            }
+                break;
+            case 1: // LO - periodic noise
+                for (let i = 0; i < bufferSize; i++) {
+                    if (i % 93 === 0) {
+                        lastValue = Math.random() * 2 - 1;
+                    }
+                    data[i] = lastValue * 0.15;
+                }
+                break;
+            case 2: // MID1 - medium freq noise
+                for (let i = 0; i < bufferSize; i++) {
+                    if (i % 47 === 0) {
+                        lastValue = Math.random() * 2 - 1;
+                    }
+                    data[i] = lastValue * 0.18;
+                }
+                break;
+            case 3: // MID2 - different medium freq
+                for (let i = 0; i < bufferSize; i++) {
+                    if (i % 31 === 0) {
+                        lastValue = Math.random() * 2 - 1;
+                    }
+                    data[i] = lastValue * 0.18;
+                }
+                break;
+            case 4: // CRASH - harsh noise
+                for (let i = 0; i < bufferSize; i++) {
+                    data[i] = (Math.random() * 2 - 1) * 0.25;
+                }
+                break;
+            case 5: // KICK - low freq thump
+                for (let i = 0; i < bufferSize; i++) {
+                    if (i % 186 === 0) {
+                        lastValue = Math.random() * 2 - 1;
+                    }
+                    data[i] = lastValue * 0.22;
+                }
+                break;
         }
         
         const source = this.audioContext.createBufferSource();
@@ -517,19 +605,51 @@ class NESSequencer {
         const bufferSize = this.audioContext.sampleRate * duration;
         const buffer = this.audioContext.createBuffer(1, bufferSize, this.audioContext.sampleRate);
         const data = buffer.getChannelData(0);
+        let lastValue = 0;
         
-        if (type === 0) {
-            for (let i = 0; i < bufferSize; i++) {
-                data[i] = (Math.random() * 2 - 1) * 0.3;
-            }
-        } else {
-            let lastValue = 0;
-            for (let i = 0; i < bufferSize; i++) {
-                if (i % 93 === 0) {
-                    lastValue = Math.random() * 2 - 1;
+        switch(type) {
+            case 0: // HI - white noise
+                for (let i = 0; i < bufferSize; i++) {
+                    data[i] = (Math.random() * 2 - 1) * 0.3;
                 }
-                data[i] = lastValue * 0.2;
-            }
+                break;
+            case 1: // LO - periodic noise
+                for (let i = 0; i < bufferSize; i++) {
+                    if (i % 93 === 0) {
+                        lastValue = Math.random() * 2 - 1;
+                    }
+                    data[i] = lastValue * 0.2;
+                }
+                break;
+            case 2: // MID1 - medium freq noise
+                for (let i = 0; i < bufferSize; i++) {
+                    if (i % 47 === 0) {
+                        lastValue = Math.random() * 2 - 1;
+                    }
+                    data[i] = lastValue * 0.25;
+                }
+                break;
+            case 3: // MID2 - different medium freq
+                for (let i = 0; i < bufferSize; i++) {
+                    if (i % 31 === 0) {
+                        lastValue = Math.random() * 2 - 1;
+                    }
+                    data[i] = lastValue * 0.25;
+                }
+                break;
+            case 4: // CRASH - harsh noise
+                for (let i = 0; i < bufferSize; i++) {
+                    data[i] = (Math.random() * 2 - 1) * 0.4;
+                }
+                break;
+            case 5: // KICK - low freq thump
+                for (let i = 0; i < bufferSize; i++) {
+                    if (i % 186 === 0) {
+                        lastValue = Math.random() * 2 - 1;
+                    }
+                    data[i] = lastValue * 0.35;
+                }
+                break;
         }
         
         const source = this.audioContext.createBufferSource();
@@ -599,6 +719,203 @@ class NESSequencer {
             stepNumber.style.background = '#003300';
             stepNumber.style.color = '#00ff00';
         });
+    }
+    
+    updateUIFromSequence() {
+        Object.keys(this.channels).forEach(channelName => {
+            const channel = this.channels[channelName];
+            for (let noteIndex = 0; noteIndex < channel.sequence.length; noteIndex++) {
+                for (let stepIndex = 0; stepIndex < 16; stepIndex++) {
+                    if (channel.sequence[noteIndex][stepIndex]) {
+                        const step = document.querySelector(`[data-step="${stepIndex}"][data-note="${noteIndex}"][data-channel="${channelName}"]`);
+                        if (step) {
+                            step.classList.add('active');
+                        }
+                    }
+                }
+            }
+        });
+    }
+    
+    updateExportLoops(value) {
+        this.exportLoopsLabel.textContent = `x${value}`;
+    }
+    
+    async exportWAV() {
+        if (!this.audioContext) {
+            await this.initAudio();
+        }
+        
+        this.exportBtn.disabled = true;
+        this.exportStatus.textContent = 'Rendering...';
+        
+        const loops = parseInt(this.exportLoops.value);
+        const stepDuration = (60 / this.tempo / 4);
+        const totalDuration = stepDuration * 16 * loops;
+        const sampleRate = this.audioContext.sampleRate;
+        const totalSamples = Math.floor(totalDuration * sampleRate);
+        
+        // Create offline context for rendering
+        const offlineContext = new OfflineAudioContext(2, totalSamples, sampleRate);
+        
+        // Set up effects chain in offline context
+        const offlineMasterGain = offlineContext.createGain();
+        offlineMasterGain.connect(offlineContext.destination);
+        
+        // Render the sequence
+        let currentTime = 0;
+        const stepDurationSec = stepDuration;
+        
+        for (let loop = 0; loop < loops; loop++) {
+            for (let step = 0; step < 16; step++) {
+                this.renderStep(offlineContext, offlineMasterGain, step, currentTime);
+                currentTime += stepDurationSec;
+            }
+        }
+        
+        try {
+            const renderedBuffer = await offlineContext.startRendering();
+            this.downloadWAV(renderedBuffer);
+            this.exportStatus.textContent = 'Export complete!';
+            setTimeout(() => {
+                this.exportStatus.textContent = '';
+            }, 3000);
+        } catch (error) {
+            this.exportStatus.textContent = 'Export failed!';
+            console.error('Export error:', error);
+        }
+        
+        this.exportBtn.disabled = false;
+    }
+    
+    renderStep(offlineContext, masterGain, stepIndex, startTime) {
+        Object.keys(this.channels).forEach(channelName => {
+            const channel = this.channels[channelName];
+            let noteToPlay = null;
+            
+            for (let noteIndex = 0; noteIndex < channel.sequence.length; noteIndex++) {
+                if (channel.sequence[noteIndex][stepIndex]) {
+                    noteToPlay = noteIndex;
+                    break;
+                }
+            }
+            
+            if (noteToPlay !== null) {
+                if (channelName === 'noise') {
+                    this.renderNoise(offlineContext, masterGain, noteToPlay, startTime, 0.1);
+                } else {
+                    this.renderNote(offlineContext, masterGain, channel.notes[noteToPlay], startTime, 0.1, channel.type);
+                }
+            }
+        });
+    }
+    
+    renderNote(offlineContext, masterGain, frequency, startTime, duration, waveType) {
+        const oscillator = offlineContext.createOscillator();
+        const gainNode = offlineContext.createGain();
+        
+        oscillator.type = waveType;
+        oscillator.frequency.setValueAtTime(frequency, startTime);
+        
+        let volume = 0.3;
+        if (waveType === 'triangle') volume = 0.5;
+        if (waveType === 'sawtooth') volume = 0.25;
+        
+        gainNode.gain.setValueAtTime(volume, startTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + duration);
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(masterGain);
+        
+        oscillator.start(startTime);
+        oscillator.stop(startTime + duration);
+    }
+    
+    renderNoise(offlineContext, masterGain, type, startTime, duration) {
+        const bufferSize = Math.floor(offlineContext.sampleRate * duration);
+        const buffer = offlineContext.createBuffer(1, bufferSize, offlineContext.sampleRate);
+        const data = buffer.getChannelData(0);
+        
+        if (type === 0) {
+            for (let i = 0; i < bufferSize; i++) {
+                data[i] = (Math.random() * 2 - 1) * 0.3;
+            }
+        } else {
+            let lastValue = 0;
+            for (let i = 0; i < bufferSize; i++) {
+                if (i % 93 === 0) {
+                    lastValue = Math.random() * 2 - 1;
+                }
+                data[i] = lastValue * 0.2;
+            }
+        }
+        
+        const source = offlineContext.createBufferSource();
+        const gainNode = offlineContext.createGain();
+        
+        source.buffer = buffer;
+        gainNode.gain.setValueAtTime(0.8, startTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + duration);
+        
+        source.connect(gainNode);
+        gainNode.connect(masterGain);
+        
+        source.start(startTime);
+    }
+    
+    downloadWAV(audioBuffer) {
+        const wav = this.audioBufferToWav(audioBuffer);
+        const blob = new Blob([wav], { type: 'audio/wav' });
+        const url = URL.createObjectURL(blob);
+        
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `gradius-sequence-${Date.now()}.wav`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+    
+    audioBufferToWav(buffer) {
+        const length = buffer.length;
+        const numberOfChannels = buffer.numberOfChannels;
+        const sampleRate = buffer.sampleRate;
+        const arrayBuffer = new ArrayBuffer(44 + length * numberOfChannels * 2);
+        const view = new DataView(arrayBuffer);
+        
+        // WAV header
+        const writeString = (offset, string) => {
+            for (let i = 0; i < string.length; i++) {
+                view.setUint8(offset + i, string.charCodeAt(i));
+            }
+        };
+        
+        writeString(0, 'RIFF');
+        view.setUint32(4, 36 + length * numberOfChannels * 2, true);
+        writeString(8, 'WAVE');
+        writeString(12, 'fmt ');
+        view.setUint32(16, 16, true);
+        view.setUint16(20, 1, true);
+        view.setUint16(22, numberOfChannels, true);
+        view.setUint32(24, sampleRate, true);
+        view.setUint32(28, sampleRate * numberOfChannels * 2, true);
+        view.setUint16(32, numberOfChannels * 2, true);
+        view.setUint16(34, 16, true);
+        writeString(36, 'data');
+        view.setUint32(40, length * numberOfChannels * 2, true);
+        
+        // Convert audio data
+        let offset = 44;
+        for (let i = 0; i < length; i++) {
+            for (let channel = 0; channel < numberOfChannels; channel++) {
+                const sample = Math.max(-1, Math.min(1, buffer.getChannelData(channel)[i]));
+                view.setInt16(offset, sample * 0x7FFF, true);
+                offset += 2;
+            }
+        }
+        
+        return arrayBuffer;
     }
 }
 
