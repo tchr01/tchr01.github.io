@@ -417,7 +417,6 @@ class NESSequencer {
     
     play() {
         this.isPlaying = true;
-        this.playBtn.textContent = 'STOP';
         this.playBtn.classList.add('playing');
         
         const stepDuration = (60 / this.tempo / 4) * 1000;
@@ -431,7 +430,6 @@ class NESSequencer {
     
     stop() {
         this.isPlaying = false;
-        this.playBtn.textContent = 'PLAY';
         this.playBtn.classList.remove('playing');
         
         if (this.stepInterval) {

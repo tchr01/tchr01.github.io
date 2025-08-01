@@ -527,9 +527,11 @@
             <h1>GRADIUS</h1>
             
             <div class="controls">
-                <button id="playBtn" class="control-btn">PLAY</button>
-                <button id="stopBtn" class="control-btn">STOP</button>
-                <button id="clearBtn" class="control-btn">CLEAR ALL</button>
+                <div class="button-row">
+                    <button id="playBtn" class="icon-btn" title="Play">▶</button>
+                    <button id="stopBtn" class="icon-btn" title="Stop">⏹</button>
+                    <button id="clearBtn" class="icon-btn" title="Clear All">✕</button>
+                </div>
                 <div class="tempo-control">
                     <label for="tempoSlider">TEMPO:</label>
                     <input type="range" id="tempoSlider" min="60" max="180" value="80">
