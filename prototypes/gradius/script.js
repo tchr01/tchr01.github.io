@@ -34,7 +34,7 @@ class NESSequencer {
                     [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false] // D4
                 ],
                 type: 'sawtooth',
-                sustain: true,
+                sustain: false, // Will be overridden by HTML state in initializeSustainToggles()
                 sustainedOscillator: null,
                 sustainedGain: null,
                 currentNote: null
@@ -77,8 +77,8 @@ class NESSequencer {
             delay: {
                 enabled: true,
                 time: 0.3,
-                feedback: 0.3,
-                mix: 0.2,
+                feedback: 0.15,
+                mix: 0.15,
                 delayNode: null,
                 feedbackNode: null,
                 mixNode: null,
@@ -125,13 +125,15 @@ class NESSequencer {
     }
     
     initializeSustainToggles() {
-        // Ensure sustain toggle buttons match internal state
+        // Sync internal state with HTML button state (HTML is the source of truth)
         Object.keys(this.channels).forEach(channelName => {
             const channel = this.channels[channelName];
             const button = document.getElementById(`${channelName}Sustain`);
             if (button) {
-                button.textContent = `SUSTAIN: ${channel.sustain ? 'ON' : 'OFF'}`;
-                button.classList.toggle('active', channel.sustain);
+                // Read the current HTML state and sync JavaScript to match
+                const isActive = button.classList.contains('active');
+                channel.sustain = isActive;
+                button.textContent = `SUSTAIN: ${isActive ? 'ON' : 'OFF'}`;
             }
         });
     }
@@ -166,13 +168,18 @@ class NESSequencer {
         delay.dryGain = this.audioContext.createGain();
         delay.mixNode = this.audioContext.createGain();
         
+        // Add limiter to prevent feedback distortion
+        delay.limiterNode = this.audioContext.createGain();
+        
         delay.delayNode.delayTime.setValueAtTime(delay.time, this.audioContext.currentTime);
         delay.feedbackNode.gain.setValueAtTime(delay.feedback, this.audioContext.currentTime);
         delay.wetGain.gain.setValueAtTime(delay.mix, this.audioContext.currentTime);
         delay.dryGain.gain.setValueAtTime(1 - delay.mix, this.audioContext.currentTime);
+        delay.limiterNode.gain.setValueAtTime(0.7, this.audioContext.currentTime); // Limit feedback signal
         
         delay.delayNode.connect(delay.feedbackNode);
-        delay.feedbackNode.connect(delay.delayNode);
+        delay.feedbackNode.connect(delay.limiterNode);
+        delay.limiterNode.connect(delay.delayNode);
         delay.delayNode.connect(delay.wetGain);
         
         delay.wetGain.connect(delay.mixNode);
@@ -646,7 +653,7 @@ class NESSequencer {
         switch(type) {
             case 0: // HI - white noise
                 for (let i = 0; i < bufferSize; i++) {
-                    data[i] = (Math.random() * 2 - 1) * 0.2;
+                    data[i] = (Math.random() * 2 - 1) * 0.4;
                 }
                 break;
             case 1: // LO - periodic noise
@@ -654,7 +661,7 @@ class NESSequencer {
                     if (i % 93 === 0) {
                         lastValue = Math.random() * 2 - 1;
                     }
-                    data[i] = lastValue * 0.15;
+                    data[i] = lastValue * 0.3;
                 }
                 break;
             case 2: // MID1 - medium freq noise
@@ -662,7 +669,7 @@ class NESSequencer {
                     if (i % 47 === 0) {
                         lastValue = Math.random() * 2 - 1;
                     }
-                    data[i] = lastValue * 0.18;
+                    data[i] = lastValue * 0.36;
                 }
                 break;
             case 3: // MID2 - different medium freq
@@ -670,12 +677,12 @@ class NESSequencer {
                     if (i % 31 === 0) {
                         lastValue = Math.random() * 2 - 1;
                     }
-                    data[i] = lastValue * 0.18;
+                    data[i] = lastValue * 0.36;
                 }
                 break;
             case 4: // CRASH - harsh noise
                 for (let i = 0; i < bufferSize; i++) {
-                    data[i] = (Math.random() * 2 - 1) * 0.25;
+                    data[i] = (Math.random() * 2 - 1) * 0.5;
                 }
                 break;
             case 5: // KICK - low freq thump
@@ -683,7 +690,7 @@ class NESSequencer {
                     if (i % 186 === 0) {
                         lastValue = Math.random() * 2 - 1;
                     }
-                    data[i] = lastValue * 0.22;
+                    data[i] = lastValue * 0.44;
                 }
                 break;
         }
@@ -693,7 +700,7 @@ class NESSequencer {
         
         source.buffer = buffer;
         source.loop = true;
-        gainNode.gain.setValueAtTime(0.6, this.audioContext.currentTime);
+        gainNode.gain.setValueAtTime(0.8, this.audioContext.currentTime);
         
         source.connect(gainNode);
         this.connectToEffects(gainNode);
@@ -737,7 +744,7 @@ class NESSequencer {
         switch(type) {
             case 0: // HI - white noise
                 for (let i = 0; i < bufferSize; i++) {
-                    data[i] = (Math.random() * 2 - 1) * 0.3;
+                    data[i] = (Math.random() * 2 - 1) * 0.6;
                 }
                 break;
             case 1: // LO - periodic noise
@@ -745,7 +752,7 @@ class NESSequencer {
                     if (i % 93 === 0) {
                         lastValue = Math.random() * 2 - 1;
                     }
-                    data[i] = lastValue * 0.2;
+                    data[i] = lastValue * 0.4;
                 }
                 break;
             case 2: // MID1 - medium freq noise
@@ -753,7 +760,7 @@ class NESSequencer {
                     if (i % 47 === 0) {
                         lastValue = Math.random() * 2 - 1;
                     }
-                    data[i] = lastValue * 0.25;
+                    data[i] = lastValue * 0.5;
                 }
                 break;
             case 3: // MID2 - different medium freq
@@ -761,12 +768,12 @@ class NESSequencer {
                     if (i % 31 === 0) {
                         lastValue = Math.random() * 2 - 1;
                     }
-                    data[i] = lastValue * 0.25;
+                    data[i] = lastValue * 0.5;
                 }
                 break;
             case 4: // CRASH - harsh noise
                 for (let i = 0; i < bufferSize; i++) {
-                    data[i] = (Math.random() * 2 - 1) * 0.4;
+                    data[i] = (Math.random() * 2 - 1) * 0.8;
                 }
                 break;
             case 5: // KICK - low freq thump
@@ -774,7 +781,7 @@ class NESSequencer {
                     if (i % 186 === 0) {
                         lastValue = Math.random() * 2 - 1;
                     }
-                    data[i] = lastValue * 0.35;
+                    data[i] = lastValue * 0.7;
                 }
                 break;
         }
