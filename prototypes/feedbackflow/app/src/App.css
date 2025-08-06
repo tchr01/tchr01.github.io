@@ -1,0 +1,48 @@
+/* Custom styles for FeedbackFlow components */
+
+/* Enhanced hover effects for cards */
+.session-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.session-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.1), 0 2px 4px 0 rgba(0, 0, 0, 0.06);
+}
+
+/* File upload styles */
+.upload-zone {
+  transition: all 0.2s ease;
+}
+
+.upload-zone:hover {
+  border-color: var(--primary);
+  background-color: var(--gray-50);
+}
+
+/* Theme expansion animations */
+.theme-content {
+  animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Mobile responsive helpers */
+@media (max-width: 768px) {
+  .three-column-layout {
+    grid-template-columns: 1fr !important;
+  }
+  
+  .dashboard-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
