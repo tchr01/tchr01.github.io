@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='utf-8'?>
+<widget id="com.keno.viewer" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+    <name>MA Keno Viewer</name>
+    <description>Massachusetts Keno Live Results Viewer</description>
+    <author email="contact@example.com" href="https://example.com">
+        Keno Development Team
+    </author>
+    <content src="index.html" />
+
+    <!-- Allow access to external resources -->
+    <access origin="*" />
+    <allow-intent href="http://*/*" />
+    <allow-intent href="https://*/*" />
+    <allow-navigation href="*" />
+
+    <!-- Android specific settings -->
+    <platform name="android">
+        <preference name="AndroidLaunchMode" value="singleTop" />
+        <preference name="Orientation" value="landscape" />
+        <preference name="Fullscreen" value="true" />
+        <preference name="KeepRunning" value="true" />
+        <preference name="LoadUrlTimeoutValue" value="60000" />
+        <preference name="android-minSdkVersion" value="21" />
+        <preference name="android-targetSdkVersion" value="33" />
+
+        <!-- Android TV support -->
+        <config-file target="AndroidManifest.xml" parent="/manifest/application">
+            <meta-data android:name="android.app.lib_name" android:value="" />
+        </config-file>
+
+        <config-file target="AndroidManifest.xml" parent="/manifest/application/activity">
+            <intent-filter>
+                <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
+            </intent-filter>
+        </config-file>
+    </platform>
+
+    <!-- General preferences -->
+    <preference name="DisallowOverscroll" value="true" />
+    <preference name="BackgroundColor" value="0xff000000" />
+    <preference name="HideKeyboardFormAccessoryBar" value="true" />
+    <preference name="StatusBarOverlaysWebView" value="false" />
+    <preference name="StatusBarBackgroundColor" value="#000000" />
+</widget>

@@ -1,0 +1,429 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(135deg, #0f0f1e 0%, #1a1a2e 100%);
+    color: #fff;
+    min-height: 100vh;
+    padding: 0;
+    margin: 0;
+    overflow-x: hidden;
+}
+
+.container {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.header {
+    background: linear-gradient(180deg, #d32f2f 0%, #b71c1c 100%);
+    padding: 8px 20px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+}
+
+.lottery-logo {
+    height: 40px;
+    width: auto;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
+    position: relative;
+    z-index: 1;
+}
+
+.header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%);
+    animation: shine 3s infinite;
+}
+
+@keyframes shine {
+    0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+    100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+}
+
+.header h1 {
+    font-size: 1.8em;
+    font-weight: bold;
+    letter-spacing: 3px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    position: relative;
+    z-index: 1;
+    margin: 0;
+}
+
+.subtitle {
+    font-size: 1em;
+    font-weight: bold;
+    color: #ffeb3b;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    letter-spacing: 2px;
+    position: relative;
+    z-index: 1;
+    margin: 0;
+}
+
+/* Rotating Banner - Hidden */
+.banner-container {
+    display: none;
+}
+
+.main-content {
+    background: linear-gradient(180deg, rgba(44, 62, 80, 0.7) 0%, rgba(26, 37, 47, 0.7) 100%),
+                url('images/retro-80s-sci-fi-futuristic-style-background-retro-futuristic-synth-wave-illustration-in-1980s-posters-style-retro-nostalgic-vaporwave-cyberpunk-artwork-with-vibrant-neon-colors-free-vector.jpg') center/cover no-repeat;
+    padding: 15px 30px;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: auto;
+    transition: background 1s ease-in-out;
+}
+
+.main-content.final-state {
+    background: linear-gradient(180deg, rgba(44, 62, 80, 0.8) 0%, rgba(26, 37, 47, 0.8) 100%),
+                url('images/abstract-1780386_1280.png') center/cover no-repeat;
+}
+
+/* Footer */
+.footer {
+    background: linear-gradient(180deg, #1a252f 0%, #0d1418 100%);
+    padding: 15px 30px;
+    flex-shrink: 0;
+    border-top: 3px solid #4a5f7f;
+}
+
+.footer .draw-info {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-bottom: 12px;
+}
+
+.footer .info-item {
+    background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%);
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: 2px solid #4a5f7f;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.footer .info-item .label {
+    font-size: 0.9em;
+    color: #ffa726;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.footer .info-item .value {
+    font-size: 1.4em;
+    font-weight: bold;
+    color: #fff;
+    font-family: 'Courier New', monospace;
+}
+
+.countdown {
+    color: #4caf50;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+}
+
+/* Board Section */
+.board-section {
+    display: flex;
+    flex-direction: column;
+    max-width: 1100px;
+    width: 100%;
+    max-height: 100%;
+}
+
+.keno-board {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    gap: 6px;
+    width: 100%;
+    height: fit-content;
+}
+
+.keno-number {
+    aspect-ratio: 1;
+    background: linear-gradient(145deg, #1a1a1a 0%, #0d0d0d 100%);
+    border: 2px solid #333;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4em;
+    font-weight: bold;
+    color: #444;
+    transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 1s ease, transform 1s ease;
+    user-select: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.keno-number.drawn {
+    background: radial-gradient(circle at 30% 30%, #e74c3c, #c0392b);
+    border: 3px solid #fff;
+    color: #fff;
+    box-shadow:
+        0 0 40px rgba(231, 76, 60, 0.8),
+        0 0 80px rgba(231, 76, 60, 0.4),
+        inset 0 3px 15px rgba(255, 255, 255, 0.3),
+        inset 0 -3px 15px rgba(0, 0, 0, 0.4);
+    transform: scale(1.1) rotate(5deg);
+    text-shadow:
+        3px 3px 6px rgba(0, 0, 0, 0.8),
+        0 0 10px rgba(255, 255, 255, 0.5);
+    font-size: 1.7em;
+    animation: dramaticReveal 1.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+    z-index: 10;
+}
+
+.keno-number.drawn::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    animation: shine 3s infinite;
+}
+
+.keno-number.drawn.final-display::before {
+    animation: none;
+    display: none;
+}
+
+.keno-number.drawn::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(255, 215, 0, 0.8) 0%, rgba(255, 165, 0, 0.6) 20%, rgba(255, 69, 0, 0.4) 40%, transparent 70%);
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    animation: explosion 0.8s ease-out, laserBeam 0.3s ease-out;
+    pointer-events: none;
+    z-index: 20;
+    box-shadow:
+        0 0 100px 20px rgba(255, 255, 255, 0.9),
+        0 0 200px 40px rgba(255, 215, 0, 0.7),
+        0 0 300px 60px rgba(255, 165, 0, 0.5);
+}
+
+@keyframes explosion {
+    0% {
+        transform: translate(-50%, -50%) scale(0);
+        opacity: 1;
+    }
+    50% {
+        transform: translate(-50%, -50%) scale(2.5);
+        opacity: 0.8;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(4);
+        opacity: 0;
+    }
+}
+
+@keyframes laserBeam {
+    0% {
+        box-shadow:
+            0 0 150px 30px rgba(255, 255, 255, 1),
+            0 0 300px 60px rgba(255, 215, 0, 0.9),
+            0 0 450px 90px rgba(255, 165, 0, 0.7);
+    }
+    100% {
+        box-shadow:
+            0 0 100px 20px rgba(255, 255, 255, 0),
+            0 0 200px 40px rgba(255, 215, 0, 0),
+            0 0 300px 60px rgba(255, 165, 0, 0);
+    }
+}
+
+@keyframes dramaticReveal {
+    0% {
+        transform: scale(0) rotate(-360deg);
+        opacity: 0;
+        filter: blur(20px);
+    }
+    35% {
+        transform: scale(1.8) rotate(20deg);
+        filter: blur(0px);
+    }
+    55% {
+        transform: scale(0.95) rotate(-10deg);
+    }
+    70% {
+        transform: scale(1.5) rotate(12deg);
+    }
+    85% {
+        transform: scale(1.0) rotate(-5deg);
+    }
+    100% {
+        transform: scale(1.1) rotate(5deg);
+        opacity: 1;
+    }
+}
+
+@keyframes shine {
+    0% {
+        transform: translateX(-100%) translateY(-100%) rotate(45deg);
+    }
+    100% {
+        transform: translateX(100%) translateY(100%) rotate(45deg);
+    }
+}
+
+/* Results Section - Hidden */
+.results-section {
+    display: none;
+}
+
+/* Status Bar */
+.footer .status-bar {
+    display: none;
+}
+
+.status-indicator {
+    font-size: 1.5em;
+    animation: blink 2s infinite;
+}
+
+.footer .status-bar.connected .status-indicator {
+    color: #4caf50;
+}
+
+.footer .status-bar.error .status-indicator {
+    color: #f44336;
+}
+
+.footer .status-bar.loading .status-indicator {
+    color: #ff9800;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}
+
+/* Loading State */
+.loading-message {
+    text-align: center;
+    padding: 40px;
+    font-size: 1.3em;
+    color: #7f8c8d;
+}
+
+/* Loading State */
+.loading-message {
+    text-align: center;
+    padding: 60px;
+    font-size: 2em;
+    color: #7f8c8d;
+}
+
+/* Game Closed Overlay */
+.game-closed-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.95) 0%, rgba(26, 26, 46, 0.95) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    animation: fadeIn 0.5s ease-in;
+    transition: opacity 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.game-closed-message {
+    text-align: center;
+    animation: pulseGlow 2s infinite;
+}
+
+.game-closed-title {
+    font-size: 6em;
+    font-weight: bold;
+    color: #d32f2f;
+    text-shadow:
+        0 0 20px rgba(211, 47, 47, 0.8),
+        0 0 40px rgba(211, 47, 47, 0.6),
+        0 0 60px rgba(211, 47, 47, 0.4),
+        4px 4px 8px rgba(0, 0, 0, 0.8);
+    letter-spacing: 8px;
+    margin-bottom: 20px;
+    word-spacing: 100px;
+}
+
+.game-closed-subtitle {
+    font-size: 2.5em;
+    color: #ffeb3b;
+    text-shadow:
+        0 0 15px rgba(255, 235, 59, 0.6),
+        2px 2px 4px rgba(0, 0, 0, 0.8);
+    letter-spacing: 4px;
+}
+
+@keyframes pulseGlow {
+    0%, 100% {
+        transform: scale(1);
+        filter: brightness(1);
+    }
+    50% {
+        transform: scale(1.02);
+        filter: brightness(1.2);
+    }
+}
+
+/* Takeover Screen */
+.takeover-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-size: cover;
+    background-position: top center;
+    background-repeat: no-repeat;
+    z-index: 1000;
+}

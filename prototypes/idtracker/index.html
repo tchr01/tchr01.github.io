@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ID Content Tracker</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1>ID Content Tracker</h1>
+                <div class="user-info">
+                    <span class="user-name">Sarah Designer</span>
+                    <div class="user-avatar">SD</div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="nav-tabs">
+            <button class="tab-btn active" data-view="dashboard">Dashboard</button>
+            <button class="tab-btn" data-view="board">Board</button>
+            <button class="tab-btn" data-view="timeline">Timeline</button>
+            <button class="tab-btn" data-view="list">List</button>
+            <button class="tab-btn" data-view="sales">Sales Library</button>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+
+            <!-- Dashboard View -->
+            <div id="dashboard-view" class="view active">
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-value">12</div>
+                        <div class="metric-label">Active Projects</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">3</div>
+                        <div class="metric-label">Shipping This Month</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">5</div>
+                        <div class="metric-label">In Build Stage</div>
+                    </div>
+                    <div class="metric-card urgent">
+                        <div class="metric-value">2</div>
+                        <div class="metric-label">At Risk</div>
+                    </div>
+                </div>
+
+                <div class="dashboard-sections">
+                    <section class="recent-completions">
+                        <h2>Recent Completions</h2>
+                        <div class="completions-list" id="recent-completions"></div>
+                    </section>
+
+                    <section class="pipeline-preview">
+                        <h2>Upcoming Deliveries</h2>
+                        <div class="pipeline-list" id="pipeline-preview"></div>
+                    </section>
+                </div>
+            </div>
+
+            <!-- Board View -->
+            <div id="board-view" class="view">
+                <div class="board-container">
+                    <div class="board-column" data-stage="planning">
+                        <h3 class="column-header">Planning <span class="count">0</span></h3>
+                        <div class="cards-container" data-stage="planning"></div>
+                    </div>
+                    <div class="board-column" data-stage="drafting">
+                        <h3 class="column-header">Drafting <span class="count">0</span></h3>
+                        <div class="cards-container" data-stage="drafting"></div>
+                    </div>
+                    <div class="board-column" data-stage="building">
+                        <h3 class="column-header">Building <span class="count">0</span></h3>
+                        <div class="cards-container" data-stage="building"></div>
+                    </div>
+                    <div class="board-column" data-stage="finalizing">
+                        <h3 class="column-header">Finalizing <span class="count">0</span></h3>
+                        <div class="cards-container" data-stage="finalizing"></div>
+                    </div>
+                    <div class="board-column" data-stage="ready">
+                        <h3 class="column-header">Ready to Ship <span class="count">0</span></h3>
+                        <div class="cards-container" data-stage="ready"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Timeline View -->
+            <div id="timeline-view" class="view">
+                <div class="timeline-header">
+                    <h2>Content Delivery Timeline</h2>
+                    <div class="timeline-filters">
+                        <select id="timeline-filter">
+                            <option value="all">All Projects</option>
+                            <option value="building">In Production</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="timeline-container" id="timeline-container"></div>
+            </div>
+
+            <!-- List View -->
+            <div id="list-view" class="view">
+                <div class="list-header">
+                    <h2>All Projects</h2>
+                    <input type="text" class="search-input" placeholder="Search projects..." id="search-input">
+                </div>
+                <div class="table-container">
+                    <table class="projects-table">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Type</th>
+                                <th>Stage</th>
+                                <th>Designer</th>
+                                <th>Business Lead</th>
+                                <th>Ship Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="projects-table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Sales Library View -->
+            <div id="sales-view" class="view">
+                <div class="sales-header">
+                    <h2>Sales Content Library</h2>
+                    <div class="sales-filters">
+                        <input type="text" class="search-input" placeholder="Search release notes..." id="sales-search">
+                        <select id="content-type-filter">
+                            <option value="all">All Types</option>
+                            <option value="course">Courses</option>
+                            <option value="program">Training Programs</option>
+                            <option value="update">Content Updates</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="sales-grid" id="sales-grid"></div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Modal for Stream Details -->
+    <div id="stream-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-title"></h2>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-tabs">
+                    <button class="modal-tab active" data-tab="overview">Overview</button>
+                    <button class="modal-tab" data-tab="release-notes">Release Notes</button>
+                    <button class="modal-tab" data-tab="updates">Updates</button>
+                </div>
+                <div id="modal-content-area"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
