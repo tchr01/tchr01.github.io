@@ -28,8 +28,12 @@
         }
 
         header {
-            text-align: center;
             margin-bottom: 60px;
+        }
+
+        header > h1,
+        header > .subtitle {
+            text-align: center;
         }
 
         h1 {
@@ -58,10 +62,12 @@
 
         .intro-section h2 {
             color: #1e40af;
-            font-size: 2em;
-            margin-bottom: 20px;
+            font-size: 1.6em;
+            margin-bottom: 16px;
             font-weight: 600;
             letter-spacing: -0.01em;
+            border-bottom: 3px solid #2563eb;
+            padding-bottom: 12px;
         }
 
         .intro-section h3 {
@@ -188,6 +194,13 @@
             font-weight: 500;
         }
 
+        .about-grid {
+            display: grid;
+            grid-template-columns: 60% 40%;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
         @media (max-width: 768px) {
             body {
                 padding: 40px 15px;
@@ -203,6 +216,11 @@
 
             .intro-section {
                 padding: 30px 25px;
+            }
+
+            .about-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
             }
 
             .card {
@@ -225,13 +243,40 @@
         <header>
             <h1>STEM Interactive Learning Modalities</h1>
             <p class="subtitle">Prototypes for science and engineering education</p>
-             <div class="intro-section" style="margin-top:20px;"> 
-            <h2>About This Project</h2>
-            <p>This project demonstrates how Learning Designers can rapidly prototype interactive learning experiences using AI-assisted development. All four prototypes showcased here were planned, designed, and built entirely using <strong>Claude Code in the terminal</strong>, leveraging Planning Mode to think through pedagogical approaches before implementation.</p>
+             <div class="about-grid">
+                <div class="intro-section">
+                    <h2>About This Project</h2>
+                    <p>This project demonstrates how Learning Designers can rapidly prototype interactive learning experiences using AI-assisted development. All four prototypes showcased here were planned, designed, and built entirely using <strong>Claude Code in the terminal</strong>, leveraging Planning Mode to think through pedagogical approaches before implementation.</p>
 
-            <p>The UI and UX design was also crafted collaboratively with Claude—the creator, an <strong>18+ year veteran UX designer and Learning Experience Designer (LXD)</strong>, provided design examples (like the Simmons University website aesthetic) and instructional design requirements. Claude then translated these into a clean, academic interface optimized for educational content. This demonstrates how experienced designers can leverage AI as a collaborative tool to accelerate their design-to-prototype workflow while maintaining full creative control and applying their deep expertise.</p>
-        </div>
+                    <p>The UI and UX design was also crafted collaboratively with Claude. Design examples and instructional design requirements were provided, which Claude translated into a clean, academic interface optimized for educational content. This demonstrates how experienced LXDs and UX designers can leverage AI as a collaborative tool to work together, accelerating the design-to-prototype workflow while maintaining full creative control.</p>
+
+                    <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #e2e8f0;">
+                        <h3 style="color: #1e40af; font-size: 1.2em; margin-bottom: 12px; font-weight: 600;">Quick Navigation</h3>
+                        <ul style="list-style: none; margin-left: 0;">
+                            <li style="margin-bottom: 8px;"><a href="#prototypes" style="color: #2563eb; text-decoration: none; font-weight: 500;">→ Prototypes</a></li>
+                            <li style="margin-bottom: 8px;"><a href="#workflow" style="color: #2563eb; text-decoration: none; font-weight: 500;">→ Applying AI to Your Workflow</a></li>
+                            <li style="margin-bottom: 8px;"><a href="#leverage" style="color: #2563eb; text-decoration: none; font-weight: 500;">→ How to Leverage Claude Code</a></li>
+                            <li style="margin-bottom: 8px;"><a href="#prd" style="color: #2563eb; text-decoration: none; font-weight: 500;">→ Integrating Learning into Product Requirements</a></li>
+                            <li style="margin-bottom: 8px;"><a href="#stakeholders" style="color: #2563eb; text-decoration: none; font-weight: 500;">→ Gaining Stakeholder Buy-In</a></li>
+                            <li style="margin-bottom: 8px;"><a href="#testing" style="color: #2563eb; text-decoration: none; font-weight: 500;">→ Testing & Validation</a></li>
+                            <li style="margin-bottom: 8px;"><a href="#downloads" style="color: #2563eb; text-decoration: none; font-weight: 500;">→ Reference Downloads</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="intro-section">
+                    <h2>About the Author</h2>
+                    <img src="matt.jpeg" alt="Matthew White" style="width: 150px; float: left; margin-right: 20px; margin-bottom: 10px;">
+                    <p><strong>Matthew White</strong> is a Product Designer & AI UX Strategist with <strong>18+ years of experience</strong> in technical training and educational technology. He specializes in translating complex technical concepts into scalable learning experiences for Fortune 500 companies, regulated industries, and educational institutions.</p>
+
+                    <p>Matthew has designed solutions serving 100k+ users, reduced training development cycles from months to weeks, and created AI-driven learning experiences that accelerate user adoption and drive measurable business outcomes.</p>
+
+                    <p>Read More: <a href="https://tchr01.github.io/blog/ux-learning-design-collaboration.html" target="_blank" style="color: #2563eb; text-decoration: none; font-weight: 500;">UX & Learning Design Collaboration →</a></p>
+                </div>
+            </div>
         </header>
+
+        <h2 id="prototypes" style="color: #1e40af; font-size: 2em; font-weight: 600; margin-bottom: 30px; text-align: center;">Prototypes</h2>
 
         <div class="grid">
             <a href="circuit-teaching.html" class="card">
@@ -279,8 +324,10 @@
             </a>
         </div>
 
-        <div class="intro-section">            
-            <h3>How Learning Designers Can Leverage Claude Code</h3>
+        <h2 id="workflow" style="color: #1e40af; font-size: 2em; font-weight: 600; margin-bottom: 30px; margin-top: 60px; text-align: center;">Applying AI to your Instructional / Learning Design Workflow</h2>
+
+        <div class="intro-section">
+            <h3 id="leverage">How Learning Designers Can Leverage Claude Code</h3>
             <p>Claude Code's Planning Mode provides a powerful workflow for instructional design:</p>
             <ul>
                 <li><strong>Ideation & Design:</strong> Brainstorm learning modalities, discuss pedagogical approaches, and refine learning objectives through conversational planning</li>
@@ -294,7 +341,11 @@
                 <strong>Planning Mode Advantage:</strong> By using Planning Mode, learning designers can explore pedagogical concepts, validate approaches, and align on learning objectives before any code is written. This ensures prototypes are grounded in sound instructional design principles.
             </div>
 
-            <h3>Integrating Learning into Product Requirements</h3>
+            <p style="margin-top: 15px; padding: 15px; background: #f1f5f9; border-left: 3px solid #64748b; border-radius: 4px;"><strong>Example Application:</strong> An LXD designing compliance training could use Planning Mode to discuss branching scenario approaches, then rapidly prototype three different interaction models (decision trees, consequence-based narratives, or role-play simulations) to test with stakeholders—all within a single afternoon instead of waiting weeks for developers.</p>
+        </div>
+
+        <div class="intro-section">
+            <h3 id="prd">Integrating Learning into Product Requirements</h3>
             <p>Learning Experience Designers can use Claude Code to bridge the gap between instructional design and product development:</p>
             <ul>
                 <li><strong>Learning-Centered PRDs:</strong> Translate pedagogical goals into technical product requirements that developers and product managers can act on</li>
@@ -307,7 +358,11 @@
                 <strong>Learning as Product Foundation:</strong> When learning objectives are embedded into product requirements from the start, products naturally align with learner needs. Claude Code helps LXDs ensure that every feature, interaction, and metric serves the ultimate goal of effective learning and skill development.
             </div>
 
-            <h3>Gaining Stakeholder Buy-In</h3>
+            <p style="margin-top: 15px; padding: 15px; background: #f1f5f9; border-left: 3px solid #64748b; border-radius: 4px;"><strong>Example Application:</strong> When proposing an onboarding platform redesign, an LXD could collaborate with Claude Code to draft PRD sections that translate "reduce time-to-proficiency" into specific features like adaptive scaffolding, spaced repetition algorithms, and competency-based progression gates—creating alignment between business goals and learning science from day one.</p>
+        </div>
+
+        <div class="intro-section">
+            <h3 id="stakeholders">Gaining Stakeholder Buy-In</h3>
             <p>Interactive prototypes are powerful tools for securing support from key stakeholders:</p>
             <ul>
                 <li><strong>Executives & Product Teams:</strong> Demonstrate concrete learning experiences rather than abstract concepts in documents</li>
@@ -316,7 +371,11 @@
                 <li><strong>Learners:</strong> Test real interactions to validate engagement and learning effectiveness early</li>
             </ul>
 
-            <h3>Testing & Validation</h3>
+            <p style="margin-top: 15px; padding: 15px; background: #f1f5f9; border-left: 3px solid #64748b; border-radius: 4px;"><strong>Example Application:</strong> Instead of presenting a 40-slide deck proposing a new microlearning approach, an LXD could share a working prototype where executives experience a 3-minute interactive lesson themselves. Stakeholders immediately understand the value proposition, retention mechanics, and mobile-first design—leading to faster approval and budget allocation.</p>
+        </div>
+
+        <div class="intro-section">
+            <h3 id="testing">Testing & Validation</h3>
             <p>These prototypes can be tested through multiple approaches:</p>
             <ul>
                 <li><strong>Asynchronous Testing:</strong> Share links for remote user testing, collect feedback via surveys or analytics</li>
@@ -326,11 +385,28 @@
                 <li><strong>Think-Aloud Protocols:</strong> Understand learner thought processes as they engage with activities</li>
             </ul>
 
+            <p style="margin-top: 15px; padding: 15px; background: #f1f5f9; border-left: 3px solid #64748b; border-radius: 4px;"><strong>Example Application:</strong> An LXD designing technical certification prep could deploy two prototype quiz formats to 50 beta learners via shareable links—one with immediate feedback and one with delayed explanations. Analytics from asynchronous testing reveal which approach yields better retention scores, informing the final design before investing in full development.</p>
+
             <div class="highlight-box">
                 <strong>Built with Claude Code:</strong> This entire project—from initial concept exploration to four fully functional prototypes—was created through terminal-based conversations with Claude Code. No traditional IDE or extensive coding knowledge required.
             </div>
 
         </div>
+
+        <h2 id="downloads" style="color: #1e40af; font-size: 2em; font-weight: 600; margin-bottom: 30px; margin-top: 60px; text-align: center;">Reference Downloads</h2>
+
+        <div class="intro-section">
+            <p style="margin-bottom: 15px;">Explore the behind-the-scenes process of creating these prototypes:</p>
+            <ul style="margin-left: 20px;">
+                <li style="margin-bottom: 10px;">
+                    <a href="learning-modalities-planning.pdf" target="_blank" style="color: #2563eb; text-decoration: none; font-weight: 500;">Planning Session with Claude (PDF)</a> — Initial Planning Mode session exploring pedagogical approaches.
+                </li>
+                <li style="margin-bottom: 10px;">
+                    <a href="claude_conversation.txt" target="_blank" style="color: #2563eb; text-decoration: none; font-weight: 500;">Raw Conversation Transcript (TXT)</a> — Complete conversation incorporating Learning Design and UX principles.
+                </li>
+            </ul>
+        </div>
+
     </div>
 </body>
 </html>
