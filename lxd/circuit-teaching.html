@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Peer Teaching Simulation - Circuit Design</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.7;
+            color: #1e293b;
+            background: #f8f9fa;
+        }
+
+        .header {
+            background: #ffffff;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 30px 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .back-link {
+            color: #2563eb;
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 10px;
+            transition: color 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: #1e40af;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            color: #1e40af;
+            font-weight: 700;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .info-section {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 35px;
+            margin-bottom: 30px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .info-section h2 {
+            color: #1e40af;
+            margin-bottom: 15px;
+            font-size: 1.8em;
+            font-weight: 600;
+        }
+
+        .info-section h3 {
+            color: #475569;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+            font-weight: 600;
+        }
+
+        .info-section ul {
+            margin-left: 20px;
+            margin-top: 10px;
+        }
+
+        .info-section li {
+            margin-bottom: 10px;
+            color: #475569;
+        }
+
+        .prototype {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 35px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .prototype h2 {
+            color: #1e40af;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            font-weight: 600;
+        }
+
+        .teaching-area {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .circuit-display {
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .circuit-svg {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .chat-container {
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            height: 450px;
+            overflow-y: auto;
+            padding: 20px;
+            background: #ffffff;
+        }
+
+        @media (max-width: 968px) {
+            .teaching-area {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .message {
+            margin-bottom: 15px;
+            padding: 14px 18px;
+            border-radius: 8px;
+            max-width: 80%;
+        }
+
+        .message.ai {
+            background: #e0f2fe;
+            border: 1px solid #bae6fd;
+            margin-right: auto;
+            color: #1e293b;
+        }
+
+        .message.user {
+            background: #1e40af;
+            border: 1px solid #1e3a8a;
+            color: white;
+            margin-left: auto;
+        }
+
+        .message-label {
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-bottom: 5px;
+            opacity: 0.9;
+        }
+
+        .question-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .question-btn {
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            color: #1e293b;
+            padding: 16px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1em;
+            text-align: left;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .question-btn:hover {
+            background: #f1f5f9;
+            border-color: #2563eb;
+            transform: translateX(2px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .progress-panel {
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 24px;
+            margin-top: 30px;
+        }
+
+        .progress-panel h3 {
+            color: #1e40af;
+            margin-bottom: 18px;
+            font-weight: 600;
+        }
+
+        .progress-bar {
+            background: #e2e8f0;
+            height: 32px;
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 10px;
+            border: 1px solid #cbd5e1;
+        }
+
+        .progress-fill {
+            background: #2563eb;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            transition: width 0.5s ease;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 18px;
+        }
+
+        .stat-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            padding: 18px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .stat-value {
+            font-size: 2em;
+            font-weight: 700;
+            color: #1e40af;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            color: #64748b;
+            margin-top: 4px;
+        }
+
+        .instruction-box {
+            background: #e0f2fe;
+            border: 1px solid #bae6fd;
+            border-left: 4px solid #2563eb;
+            padding: 18px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            color: #1e293b;
+        }
+
+        .celebration-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .celebration-modal.show {
+            display: flex;
+        }
+
+        .celebration-content {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 50px;
+            text-align: center;
+            max-width: 600px;
+            animation: celebrationPop 0.5s ease-out;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+
+        @keyframes celebrationPop {
+            0% { transform: scale(0.9); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .celebration-content h2 {
+            color: #059669;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .celebration-content .score {
+            font-size: 4em;
+            font-weight: 700;
+            color: #1e40af;
+            margin: 20px 0;
+        }
+
+        .celebration-content p {
+            color: #475569;
+            font-size: 1.1em;
+        }
+
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: #2563eb;
+            position: absolute;
+            animation: confetti-fall 3s linear;
+        }
+
+        @keyframes confetti-fall {
+            to {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .ai-helper {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 999;
+        }
+
+        .ai-helper-button {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #2563eb;
+            border: none;
+            color: white;
+            font-size: 28px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .ai-helper-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4);
+            background: #1e40af;
+        }
+
+        .ai-helper-panel {
+            position: absolute;
+            bottom: 75px;
+            right: 0;
+            width: 350px;
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+            display: none;
+            flex-direction: column;
+            max-height: 500px;
+        }
+
+        .ai-helper-panel.show {
+            display: flex;
+        }
+
+        .ai-helper-header {
+            background: #1e40af;
+            color: white;
+            padding: 16px;
+            border-radius: 12px 12px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .ai-helper-header h4 {
+            margin: 0;
+            font-size: 1.1em;
+            font-weight: 600;
+        }
+
+        .ai-helper-close {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            transition: all 0.3s ease;
+        }
+
+        .ai-helper-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .ai-helper-content {
+            padding: 18px;
+            overflow-y: auto;
+            flex-grow: 1;
+            color: #1e293b;
+        }
+
+        .ai-message {
+            background: #e0f2fe;
+            border: 1px solid #bae6fd;
+            padding: 14px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .ai-message strong {
+            color: #1e40af;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .ai-helper-panel {
+                width: calc(100vw - 40px);
+                right: -10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <a href="index.html" class="back-link">← Back to All Prototypes</a>
+            <h1>Peer Teaching Simulation: Circuit Design</h1>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="info-section">
+            <h2>Overview</h2>
+            <p>In this learning modality, you become the teacher. You'll explain circuit design concepts to an AI student who asks probing questions. This reversal helps you identify gaps in your own understanding and build deeper comprehension.</p>
+
+            <h3>Learning Objectives</h3>
+            <ul>
+                <li>Articulate design rationale for component selection (resistors, capacitors, transistors, ICs)</li>
+                <li>Explain trade-offs between cost, performance, power consumption, and reliability</li>
+                <li>Identify and correct common misconceptions about circuit behavior</li>
+                <li>Communicate technical concepts at appropriate levels (beginner to advanced)</li>
+            </ul>
+
+            <h3>How You Progress</h3>
+            <p>As you teach, the system tracks your explanation quality, accuracy, and ability to handle questions. You'll progress through increasingly complex circuits and more challenging student questions. Your progress is measured through:</p>
+            <ul>
+                <li><strong>Explanation Completeness:</strong> Coverage of critical aspects like voltage/current requirements and failure modes</li>
+                <li><strong>Accuracy Score:</strong> Correctness of technical statements</li>
+                <li><strong>Question Handling:</strong> Successfully addressing student inquiries</li>
+                <li><strong>Misconception Detection:</strong> Identifying when the AI student misunderstands concepts</li>
+            </ul>
+
+            <h3>What You'll Achieve</h3>
+            <p>By the end of this module, you'll be able to defend your design choices under questioning, demonstrate deep understanding of why circuits work (not just how to build them), and confidently explain technical decisions to both experts and novices.</p>
+        </div>
+
+        <div class="prototype">
+            <h2>Interactive Prototype</h2>
+
+            <div class="instruction-box">
+                <strong>How to Use:</strong> You are the teacher! An AI student will ask you questions about the LED circuit shown below. <strong>Click on one of the response options below the student's questions to answer.</strong> Read each question carefully, then select the response that best explains the concept. Your goal is to provide accurate, complete explanations. The system tracks your teaching quality, accuracy, and ability to handle probing questions.
+            </div>
+
+            <div class="teaching-area">
+                <div class="circuit-display">
+                    <svg class="circuit-svg" viewBox="0 0 400 200" width="400" height="200">
+                        <!-- Battery -->
+                        <line x1="20" y1="100" x2="50" y2="100" stroke="#333" stroke-width="2"/>
+                        <line x1="50" y1="80" x2="50" y2="120" stroke="#333" stroke-width="3"/>
+                        <line x1="60" y1="85" x2="60" y2="115" stroke="#333" stroke-width="3"/>
+                        <text x="35" y="75" font-size="12" text-anchor="middle">9V</text>
+
+                        <!-- Wire to resistor -->
+                        <line x1="60" y1="100" x2="100" y2="100" stroke="#333" stroke-width="2"/>
+
+                        <!-- Resistor -->
+                        <rect x="100" y="90" width="60" height="20" fill="none" stroke="#333" stroke-width="2"/>
+                        <line x="105" y="95" x2="155" y2="105" stroke="#333" stroke-width="1"/>
+                        <line x="105" y="105" x2="155" y2="95" stroke="#333" stroke-width="1"/>
+                        <text x="130" y="85" font-size="12" text-anchor="middle">470Ω</text>
+
+                        <!-- Wire to LED -->
+                        <line x1="160" y1="100" x2="200" y2="100" stroke="#333" stroke-width="2"/>
+
+                        <!-- LED -->
+                        <polygon points="200,90 220,100 200,110" fill="none" stroke="#333" stroke-width="2"/>
+                        <line x1="220" y1="90" x2="220" y2="110" stroke="#333" stroke-width="2"/>
+                        <text x="210" y="75" font-size="12" text-anchor="middle">LED</text>
+
+                        <!-- Return wire -->
+                        <line x1="220" y1="100" x2="380" y2="100" stroke="#333" stroke-width="2"/>
+                        <line x1="380" y1="100" x2="380" y2="140" stroke="#333" stroke-width="2"/>
+                        <line x1="380" y1="140" x2="20" y2="140" stroke="#333" stroke-width="2"/>
+                        <line x1="20" y1="140" x2="20" y2="100" stroke="#333" stroke-width="2"/>
+
+                        <!-- Ground symbol -->
+                        <line x1="200" y1="140" x2="200" y2="150" stroke="#333" stroke-width="2"/>
+                        <line x1="190" y1="150" x2="210" y2="150" stroke="#333" stroke-width="2"/>
+                        <line x1="195" y1="155" x2="205" y2="155" stroke="#333" stroke-width="2"/>
+                    </svg>
+                    <p style="margin-top: 15px; color: #666;"><strong>Simple LED Circuit</strong> - Your teaching topic</p>
+                </div>
+
+                <div class="chat-container" id="chatContainer">
+                    <div class="message ai">
+                        <div class="message-label">AI Student:</div>
+                        <div>Hi! I'm trying to understand this LED circuit you designed. Can you explain why you chose a 470Ω resistor? Why not just connect the LED directly to the battery?</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-options">
+                <button class="question-btn" onclick="respond(1)">
+                    The resistor limits current to protect the LED. Without it, too much current would flow and damage the LED.
+                </button>
+                <button class="question-btn" onclick="respond(2)">
+                    LEDs need exactly 470Ω resistors to work properly. It's a standard value for all LED circuits.
+                </button>
+                <button class="question-btn" onclick="respond(3)">
+                    The 470Ω resistor creates a voltage drop. The LED has a forward voltage of ~2V, so we need to drop 7V across the resistor. Using Ohm's law (V=IR) and targeting 15mA for the LED, R = 7V/0.015A ≈ 467Ω, so we use the closest standard value of 470Ω.
+                </button>
+            </div>
+
+            <div class="progress-panel">
+                <h3>Your Teaching Progress</h3>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressBar" style="width: 0%">0%</div>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="accuracy">0%</div>
+                        <div class="stat-label">Accuracy</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="completeness">0%</div>
+                        <div class="stat-label">Completeness</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="questionsHandled">0/5</div>
+                        <div class="stat-label">Questions Handled</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="ai-helper">
+        <button class="ai-helper-button" onclick="toggleHelper()">🤖</button>
+        <div class="ai-helper-panel show" id="helperPanel">
+            <div class="ai-helper-header">
+                <h4>💡 AI Teaching Assistant</h4>
+                <button class="ai-helper-close" onclick="toggleHelper()">×</button>
+            </div>
+            <div class="ai-helper-content" id="helperContent">
+                <div class="ai-message">
+                    <strong>Welcome!</strong> I'm here to help you succeed as a teacher. I'll review your progress and provide contextual guidance as you go.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="celebration-modal" id="celebrationModal">
+        <div class="celebration-content">
+            <h2>🎉 Congratulations!</h2>
+            <p style="font-size: 1.2em; color: #666;">You've completed the Peer Teaching Simulation!</p>
+            <div class="score" id="finalScore">0%</div>
+            <p id="celebrationMessage" style="font-size: 1.1em; color: #333; margin: 20px 0;"></p>
+            <button onclick="closeModal()" style="background: #2c5282; color: white; border: none; padding: 15px 40px; border-radius: 8px; font-size: 1.1em; cursor: pointer; margin-top: 20px;">Continue Learning</button>
+        </div>
+    </div>
+
+    <script>
+        let questionCount = 0;
+        let accuracyScore = 0;
+        let completenessScore = 0;
+
+        const conversations = [
+            {
+                responses: [
+                    {
+                        next: "That's correct! But can you explain more specifically how you calculated that the current would be too high? What would happen to the LED?",
+                        accuracy: 70,
+                        completeness: 50
+                    },
+                    {
+                        next: "Actually, that's not quite right. The 470Ω value isn't universal for all LEDs. It depends on the supply voltage and the LED's characteristics. Can you think about why the resistor value might change for different circuits?",
+                        accuracy: 30,
+                        completeness: 30
+                    },
+                    {
+                        next: "Excellent explanation! You covered the voltage drop, current limiting, and even showed the calculation with Ohm's law. Now, what would happen if we used a 1kΩ resistor instead?",
+                        accuracy: 100,
+                        completeness: 95
+                    }
+                ]
+            },
+            {
+                responses: [
+                    {
+                        next: "Good! So with 1kΩ, the current would be about 7mA. How would this affect the LED's brightness compared to 15mA?",
+                        accuracy: 80,
+                        completeness: 70
+                    },
+                    {
+                        next: "Not quite. With a higher resistance, less current flows. Can you recalculate the current using Ohm's law with 1kΩ?",
+                        accuracy: 20,
+                        completeness: 30
+                    },
+                    {
+                        next: "Perfect calculation! You correctly determined that the current would drop to 7mA. How does this relate to LED brightness and efficiency?",
+                        accuracy: 100,
+                        completeness: 90
+                    }
+                ]
+            },
+            {
+                responses: [
+                    {
+                        next: "Great insight! Lower current means dimmer light but longer LED life and less power consumption. Now, what safety considerations should we think about when choosing resistor power ratings?",
+                        accuracy: 90,
+                        completeness: 85
+                    },
+                    {
+                        next: "That's partially correct. While efficiency is important, think about the visible effect - how would the brightness change with half the current?",
+                        accuracy: 50,
+                        completeness: 45
+                    },
+                    {
+                        next: "Excellent! You've connected current to brightness and identified the trade-offs between brightness, efficiency, and component life. What about power dissipation in the resistor?",
+                        accuracy: 100,
+                        completeness: 100
+                    }
+                ]
+            },
+            {
+                responses: [
+                    {
+                        next: "Good thinking! For our 470Ω resistor at 15mA, power is I²R = (0.015)² × 470 ≈ 0.1W. A standard 1/4W resistor would work fine. You're demonstrating strong understanding of circuit design principles!",
+                        accuracy: 95,
+                        completeness: 95
+                    },
+                    {
+                        next: "Not quite - we need to consider power dissipation. Remember P = I²R. Can you calculate the power dissipated by the 470Ω resistor with 15mA flowing through it?",
+                        accuracy: 40,
+                        completeness: 50
+                    },
+                    {
+                        next: "Perfect! You correctly calculated P = I²R = 0.1W and selected an appropriate 1/4W resistor with safety margin. This shows comprehensive understanding of circuit design, component selection, and safety considerations!",
+                        accuracy: 100,
+                        completeness: 100
+                    }
+                ]
+            },
+            {
+                responses: [
+                    {
+                        next: "Excellent work! You've successfully taught me the fundamentals of LED circuit design, including current limiting, Ohm's law application, brightness trade-offs, and power ratings. You're ready for more complex circuits!",
+                        accuracy: 100,
+                        completeness: 100
+                    },
+                    {
+                        next: "You've made good progress, but review the relationship between voltage, current, and power. Understanding these fundamentals is crucial for more advanced circuit design.",
+                        accuracy: 60,
+                        completeness: 65
+                    },
+                    {
+                        next: "Outstanding teaching! You've demonstrated mastery of circuit design principles and the ability to explain complex concepts clearly. Your explanations covered theory, calculations, practical considerations, and safety - everything a good engineer needs to communicate!",
+                        accuracy: 100,
+                        completeness: 100
+                    }
+                ]
+            }
+        ];
+
+        function respond(choice) {
+            if (questionCount >= conversations.length) return;
+
+            const response = conversations[questionCount].responses[choice - 1];
+
+            // Update scores with weighted average
+            accuracyScore = Math.round((accuracyScore * questionCount + response.accuracy) / (questionCount + 1));
+            completenessScore = Math.round((completenessScore * questionCount + response.completeness) / (questionCount + 1));
+            questionCount++;
+
+            // Add user response to chat
+            const chatContainer = document.getElementById('chatContainer');
+            const userMsg = document.createElement('div');
+            userMsg.className = 'message user';
+            userMsg.innerHTML = `<div class="message-label">You:</div><div>${event.target.textContent}</div>`;
+            chatContainer.appendChild(userMsg);
+
+            // Add AI response
+            setTimeout(() => {
+                const aiMsg = document.createElement('div');
+                aiMsg.className = 'message ai';
+                aiMsg.innerHTML = `<div class="message-label">AI Student:</div><div>${response.next}</div>`;
+                chatContainer.appendChild(aiMsg);
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+
+                // Update progress
+                updateProgress();
+
+                // Remove question buttons if done
+                if (questionCount >= 4) {
+                    document.querySelector('.question-options').style.display = 'none';
+                    setTimeout(showCelebration, 1000);
+                }
+            }, 500);
+
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function showCelebration() {
+            const overallScore = Math.round((accuracyScore + completenessScore) / 2);
+            document.getElementById('finalScore').textContent = overallScore + '%';
+
+            let message = '';
+            if (overallScore >= 90) {
+                message = 'Outstanding! You demonstrated exceptional teaching ability and deep understanding of circuit design principles.';
+            } else if (overallScore >= 75) {
+                message = 'Great work! You effectively explained key concepts and handled student questions well.';
+            } else if (overallScore >= 60) {
+                message = 'Good effort! Continue practicing to strengthen your explanations and build deeper understanding.';
+            } else {
+                message = 'Keep learning! Teaching helps identify gaps in knowledge. Review the concepts and try again.';
+            }
+
+            document.getElementById('celebrationMessage').textContent = message;
+            document.getElementById('celebrationModal').classList.add('show');
+            createConfetti();
+        }
+
+        function createConfetti() {
+            const colors = ['#2c5282', '#28a745', '#ffc107', '#17a2b8', '#dc3545'];
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + '%';
+                    confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.animationDelay = Math.random() * 0.5 + 's';
+                    document.body.appendChild(confetti);
+                    setTimeout(() => confetti.remove(), 3000);
+                }, i * 30);
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('celebrationModal').classList.remove('show');
+        }
+
+        function toggleHelper() {
+            document.getElementById('helperPanel').classList.toggle('show');
+        }
+
+        function updateHelperContent() {
+            const helperContent = document.getElementById('helperContent');
+            let message = '';
+
+            if (questionCount === 0) {
+                message = `<div class="ai-message">
+                    <strong>Getting Started</strong><br>
+                    I see you're about to begin teaching! Remember: good teachers explain not just <em>what</em> happens, but <em>why</em> it happens. Focus on the underlying principles, not just the steps.
+                </div>`;
+            } else if (questionCount === 1) {
+                message = `<div class="ai-message">
+                    <strong>Progress Review</strong><br>
+                    You've answered your first question with ${accuracyScore}% accuracy. ${accuracyScore >= 80 ? 'Great start! Keep providing detailed, complete explanations.' : 'Try to include more technical detail in your explanations. Think about Ohm\'s law and component ratings.'}
+                </div>`;
+            } else if (questionCount === 2) {
+                message = `<div class="ai-message">
+                    <strong>Teaching Tip</strong><br>
+                    Current accuracy: ${accuracyScore}%. When explaining circuits, always connect theory to practice. Show how formulas like V=IR apply to real component selection.
+                </div>`;
+            } else if (questionCount === 3) {
+                message = `<div class="ai-message">
+                    <strong>You're Making Progress!</strong><br>
+                    ${completenessScore >= 75 ? 'Your explanations are becoming more complete. Keep connecting concepts together!' : 'Try to address multiple aspects: electrical theory, practical considerations, and safety.'}
+                </div>`;
+            } else if (questionCount >= 4) {
+                message = `<div class="ai-message">
+                    <strong>Final Reflection</strong><br>
+                    You've completed the teaching session with ${accuracyScore}% accuracy and ${completenessScore}% completeness. ${accuracyScore >= 90 ? 'Excellent teaching! You explained concepts clearly and thoroughly.' : 'Good effort! Review how to connect theory with practical circuit design.'}
+                </div>`;
+            }
+
+            helperContent.innerHTML = message;
+        }
+
+        function updateProgress() {
+            const overallProgress = Math.round((questionCount / 4) * 100);
+            document.getElementById('progressBar').style.width = overallProgress + '%';
+            document.getElementById('progressBar').textContent = overallProgress + '%';
+            document.getElementById('accuracy').textContent = accuracyScore + '%';
+            document.getElementById('completeness').textContent = completenessScore + '%';
+            document.getElementById('questionsHandled').textContent = questionCount + '/5';
+            updateHelperContent();
+        }
+    </script>
+</body>
+</html>

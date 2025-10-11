@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Concept Mapping - Thermodynamics</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #e4e4e7;
+            background: #0a0e1a;
+            background-image:
+                radial-gradient(at 0% 0%, rgba(30, 58, 95, 0.3) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(44, 82, 130, 0.2) 0px, transparent 50%);
+        }
+
+        .header {
+            background: linear-gradient(135deg, rgba(96, 165, 250, 0.1) 0%, rgba(167, 139, 250, 0.1) 100%);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            color: white;
+            padding: 30px 20px;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .back-link {
+            color: #60a5fa;
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 10px;
+            transition: color 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: #a78bfa;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .info-section {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+
+        .info-section h2 {
+            color: #e4e4e7;
+            margin-bottom: 15px;
+            font-size: 1.8em;
+            font-weight: 600;
+        }
+
+        .info-section h3 {
+            color: #cbd5e1;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+            font-weight: 600;
+        }
+
+        .info-section ul, .info-section ol {
+            margin-left: 20px;
+            margin-top: 10px;
+        }
+
+        .info-section li {
+            margin-bottom: 8px;
+            color: #94a3b8;
+        }
+
+        .prototype {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+
+        .prototype h2 {
+            color: #e4e4e7;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            font-weight: 600;
+        }
+
+        .visual-map {
+            margin-bottom: 30px;
+            border: 1px solid rgba(96, 165, 250, 0.2);
+            border-radius: 12px;
+            overflow: hidden;
+            background: rgba(15, 23, 42, 0.3);
+        }
+
+        .quiz-section {
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid rgba(96, 165, 250, 0.2);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+
+        .quiz-card h3 {
+            color: #e4e4e7;
+            font-size: 1.4em;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .relationship-options {
+            display: grid;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .relationship-option {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(96, 165, 250, 0.3);
+            border-radius: 10px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-align: left;
+            backdrop-filter: blur(10px);
+        }
+
+        .relationship-option:hover {
+            border-color: rgba(96, 165, 250, 0.5);
+            transform: translateX(5px);
+            background: linear-gradient(135deg, rgba(96, 165, 250, 0.1), rgba(167, 139, 250, 0.1));
+            box-shadow: 0 4px 16px rgba(96, 165, 250, 0.2);
+        }
+
+        .relationship-option strong {
+            display: block;
+            color: #60a5fa;
+            font-size: 1.1em;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .relationship-option span {
+            color: #94a3b8;
+            font-size: 0.95em;
+        }
+
+        .quiz-feedback {
+            margin-top: 20px;
+            padding: 16px;
+            border-radius: 10px;
+            display: none;
+            backdrop-filter: blur(10px);
+        }
+
+        .quiz-feedback.show {
+            display: block;
+        }
+
+        .quiz-feedback.correct {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #10b981;
+        }
+
+        .quiz-feedback.incorrect {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+        }
+
+        .progress-panel {
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid rgba(96, 165, 250, 0.2);
+            border-radius: 12px;
+            padding: 24px;
+            margin-top: 20px;
+        }
+
+        .progress-panel h3 {
+            color: #e4e4e7;
+            margin-bottom: 18px;
+            font-weight: 600;
+        }
+
+        .progress-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 18px;
+        }
+
+        .progress-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 18px;
+            border-radius: 10px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .progress-value {
+            font-size: 2em;
+            font-weight: 700;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .progress-label {
+            font-size: 0.9em;
+            color: #94a3b8;
+            margin-top: 8px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            color: white;
+            box-shadow: 0 4px 12px rgba(96, 165, 250, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(96, 165, 250, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.03);
+            color: #60a5fa;
+            border: 1px solid rgba(96, 165, 250, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(96, 165, 250, 0.1);
+            border-color: rgba(96, 165, 250, 0.5);
+        }
+
+        .instruction-box {
+            background: rgba(96, 165, 250, 0.1);
+            border: 1px solid rgba(96, 165, 250, 0.3);
+            border-left: 3px solid #60a5fa;
+            padding: 18px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            backdrop-filter: blur(10px);
+            color: #e4e4e7;
+        }
+
+        .celebration-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .celebration-modal.show {
+            display: flex;
+        }
+
+        .celebration-content {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(40px);
+            border: 1px solid rgba(96, 165, 250, 0.3);
+            border-radius: 24px;
+            padding: 60px;
+            text-align: center;
+            max-width: 600px;
+            animation: celebrationPop 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 20px 80px rgba(96, 165, 250, 0.3);
+        }
+
+        @keyframes celebrationPop {
+            0% { transform: scale(0.5); opacity: 0; }
+            60% { transform: scale(1.05); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .celebration-content h2 {
+            background: linear-gradient(135deg, #10b981, #60a5fa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .celebration-content p {
+            color: #cbd5e1 !important;
+            font-size: 1.1em;
+        }
+
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: #60a5fa;
+            position: absolute;
+            animation: confetti-fall 3s linear;
+        }
+
+        @keyframes confetti-fall {
+            to {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        @media (max-width: 968px) {
+            .mapping-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <a href="index.html" class="back-link">← Back to All Prototypes</a>
+            <h1>Interactive Concept Mapping: Thermodynamics</h1>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="info-section">
+            <h2>Overview</h2>
+            <p>Build visual connections between thermodynamic properties to develop a holistic mental model. This modality helps you see thermodynamics as an interconnected system rather than isolated equations, making problem-solving more intuitive.</p>
+
+            <h3>Learning Objectives</h3>
+            <ul>
+                <li>Identify relationships between thermodynamic properties (P, V, T, U, H, S, G)</li>
+                <li>Distinguish between different relationship types (definitions, derivations, process paths, equilibrium conditions)</li>
+                <li>Build mental model of how state functions interconnect</li>
+                <li>Apply relationship understanding to solve multi-step problems</li>
+            </ul>
+
+            <h3>How You Progress</h3>
+            <p>Your progress is measured across multiple dimensions:</p>
+            <ul>
+                <li><strong>Map Completeness:</strong> Percentage of core concepts and connections identified</li>
+                <li><strong>Relationship Accuracy:</strong> Correctly identified vs. incorrect connections</li>
+                <li><strong>Relationship Type Classification:</strong> Properly labeled as definition/derivation/constraint/process</li>
+                <li><strong>Depth Score:</strong> Surface-level understanding vs. deep physical meaning</li>
+            </ul>
+
+            <h3>What You'll Achieve</h3>
+            <p>You'll develop a holistic understanding of thermodynamics as an interconnected system, gain the ability to navigate between different property relationships efficiently, and build a visual mental model you can reference when solving novel problems.</p>
+        </div>
+
+        <div class="prototype">
+            <h2>Interactive Prototype</h2>
+
+            <div class="instruction-box">
+                <strong>How to Use:</strong> Build your understanding of thermodynamic relationships step-by-step. For each question, identify how two concepts are related and select the correct relationship type. Watch as your concept map grows with each correct answer!
+            </div>
+
+            <div class="visual-map" id="visualMap">
+                <svg id="mapSvg" width="100%" height="450" viewBox="0 0 700 450" style="background: #fafbfc; border-radius: 8px;">
+                    <!-- Nodes with better spacing -->
+                    <circle cx="350" cy="80" r="55" fill="#2c5282" opacity="0.15" stroke="#2c5282" stroke-width="2"/>
+                    <text x="350" y="88" text-anchor="middle" fill="#1e3a5f" font-size="16" font-weight="700">P, V, T</text>
+
+                    <circle cx="150" cy="220" r="50" fill="#2c5282" opacity="0.15" stroke="#2c5282" stroke-width="2"/>
+                    <text x="150" y="228" text-anchor="middle" fill="#1e3a5f" font-size="16" font-weight="700">U</text>
+
+                    <circle cx="550" cy="220" r="50" fill="#2c5282" opacity="0.15" stroke="#2c5282" stroke-width="2"/>
+                    <text x="550" y="228" text-anchor="middle" fill="#1e3a5f" font-size="16" font-weight="700">H</text>
+
+                    <circle cx="350" cy="360" r="50" fill="#2c5282" opacity="0.15" stroke="#2c5282" stroke-width="2"/>
+                    <text x="350" y="368" text-anchor="middle" fill="#1e3a5f" font-size="16" font-weight="700">G</text>
+
+                    <circle cx="80" cy="380" r="45" fill="#2c5282" opacity="0.15" stroke="#2c5282" stroke-width="2"/>
+                    <text x="80" y="388" text-anchor="middle" fill="#1e3a5f" font-size="16" font-weight="700">Q</text>
+
+                    <circle cx="620" cy="380" r="45" fill="#2c5282" opacity="0.15" stroke="#2c5282" stroke-width="2"/>
+                    <text x="620" y="388" text-anchor="middle" fill="#1e3a5f" font-size="16" font-weight="700">S</text>
+
+                    <circle cx="240" cy="380" r="45" fill="#2c5282" opacity="0.15" stroke="#2c5282" stroke-width="2"/>
+                    <text x="240" y="388" text-anchor="middle" fill="#1e3a5f" font-size="16" font-weight="700">W</text>
+                </svg>
+            </div>
+
+            <div class="quiz-section" id="quizSection">
+                <div class="quiz-card">
+                    <h3 id="questionText">How are Pressure (P), Volume (V), and Temperature (T) related?</h3>
+                    <div class="relationship-options">
+                        <button class="relationship-option" onclick="answerQuestion('definition', 'PV=nRT')">
+                            <strong>Definition/Equation</strong>
+                            <span>They are connected by a fundamental equation</span>
+                        </button>
+                        <button class="relationship-option" onclick="answerQuestion('derivation', 'PV=nRT')">
+                            <strong>Derivation</strong>
+                            <span>One can be derived from the others</span>
+                        </button>
+                        <button class="relationship-option" onclick="answerQuestion('process', 'PV=nRT')">
+                            <strong>Process Path</strong>
+                            <span>They change together during a thermodynamic process</span>
+                        </button>
+                    </div>
+                    <div id="feedback" class="quiz-feedback"></div>
+                </div>
+            </div>
+
+            <div class="action-buttons" style="margin-top: 20px;">
+                <button class="btn btn-secondary" onclick="showHint()" id="hintBtn">Show Hint</button>
+                <button class="btn btn-secondary" onclick="skipQuestion()" id="skipBtn">Skip Question</button>
+            </div>
+
+            <div class="progress-panel">
+                <h3>Your Progress</h3>
+                <div class="progress-grid">
+                    <div class="progress-card">
+                        <div class="progress-value" id="completeness">0%</div>
+                        <div class="progress-label">Map Completeness</div>
+                    </div>
+                    <div class="progress-card">
+                        <div class="progress-value" id="accuracy">0%</div>
+                        <div class="progress-label">Relationship Accuracy</div>
+                    </div>
+                    <div class="progress-card">
+                        <div class="progress-value" id="connections">0</div>
+                        <div class="progress-label">Connections Made</div>
+                    </div>
+                    <div class="progress-card">
+                        <div class="progress-value" id="depth">Beginner</div>
+                        <div class="progress-label">Understanding Depth</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="celebration-modal" id="celebrationModal">
+        <div class="celebration-content">
+            <h2>🎉 Map Completed!</h2>
+            <p style="font-size: 1.2em; color: #666;">You've built your thermodynamics concept map!</p>
+            <div style="margin: 30px 0;">
+                <div style="font-size: 2.5em; color: #2c5282; font-weight: 700;" id="finalAccuracy">0%</div>
+                <div style="color: #666; margin-top: 10px;">Relationship Accuracy</div>
+            </div>
+            <p id="celebrationMessage" style="font-size: 1.1em; color: #333; margin: 20px 0;"></p>
+            <button onclick="closeModal()" style="background: #2c5282; color: white; border: none; padding: 15px 40px; border-radius: 8px; font-size: 1.1em; cursor: pointer; margin-top: 20px;">Continue Learning</button>
+        </div>
+    </div>
+
+    <script>
+        let currentQuestion = 0;
+        let correctAnswers = 0;
+        let totalQuestions = 6;
+
+        const questions = [
+            {
+                question: "How are Pressure (P), Volume (V), and Temperature (T) related?",
+                correct: "definition",
+                explanation: "Correct! PV = nRT (Ideal Gas Law) is a fundamental equation relating these properties.",
+                hint: "Think about the Ideal Gas Law...",
+                connection: { from: [350, 80], to: [350, 80], label: "PV=nRT", labelPos: [350, 50] }
+            },
+            {
+                question: "What is the relationship between Enthalpy (H) and Internal Energy (U)?",
+                correct: "definition",
+                explanation: "Correct! H = U + PV is the defining equation for enthalpy.",
+                hint: "Enthalpy is defined using internal energy plus a pressure-volume term.",
+                connection: { from: [150, 220], to: [550, 220], label: "H = U + PV", labelPos: [350, 200] }
+            },
+            {
+                question: "How does Gibbs Free Energy (G) relate to Enthalpy (H)?",
+                correct: "definition",
+                explanation: "Correct! G = H - TS is the fundamental definition of Gibbs energy.",
+                hint: "Gibbs energy combines enthalpy with an entropy term.",
+                connection: { from: [550, 220], to: [350, 360], label: "G = H - TS", labelPos: [470, 300] }
+            },
+            {
+                question: "How do Heat (Q) and Work (W) affect Internal Energy (U)?",
+                correct: "process",
+                explanation: "Correct! The First Law states dU = Q - W, showing how energy changes during a process.",
+                hint: "This is the First Law of Thermodynamics...",
+                connection: { from: [80, 380], to: [150, 220], label: "dU = Q - W", labelPos: [90, 300] }
+            },
+            {
+                question: "How is Entropy (S) related to Heat (Q)?",
+                correct: "derivation",
+                explanation: "Correct! dS = dQ/T can be derived from the definition of entropy.",
+                hint: "Think about the statistical definition of entropy and heat transfer.",
+                connection: { from: [80, 380], to: [620, 380], label: "dS = dQ/T", labelPos: [350, 410] }
+            },
+            {
+                question: "In a thermodynamic process, how do pressure, volume, and temperature change together?",
+                correct: "process",
+                explanation: "Correct! During processes like isothermal or adiabatic changes, P, V, and T follow specific paths.",
+                hint: "Consider processes like isothermal (constant T) or adiabatic (no heat transfer).",
+                connection: { from: [350, 80], to: [150, 220], label: "Process paths", labelPos: [220, 140] }
+            }
+        ];
+
+        function answerQuestion(answer, connectionId) {
+            const feedback = document.getElementById('feedback');
+            const question = questions[currentQuestion];
+
+            if (answer === question.correct) {
+                feedback.className = 'quiz-feedback show correct';
+                feedback.innerHTML = `✓ ${question.explanation}`;
+                correctAnswers++;
+
+                // Draw connection on map
+                drawConnection(question.connection);
+
+                // Move to next question after delay
+                setTimeout(() => {
+                    currentQuestion++;
+                    if (currentQuestion < totalQuestions) {
+                        loadQuestion();
+                    } else {
+                        completeQuiz();
+                    }
+                }, 2000);
+            } else {
+                feedback.className = 'quiz-feedback show incorrect';
+                feedback.innerHTML = `✗ Not quite. ${question.hint}`;
+
+                setTimeout(() => {
+                    feedback.className = 'quiz-feedback';
+                }, 3000);
+            }
+
+            updateProgress();
+        }
+
+        function drawConnection(connection) {
+            const svg = document.getElementById('mapSvg');
+
+            // Only draw line if connecting different points
+            if (connection.from[0] !== connection.to[0] || connection.from[1] !== connection.to[1]) {
+                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                line.setAttribute('x1', connection.from[0]);
+                line.setAttribute('y1', connection.from[1]);
+                line.setAttribute('x2', connection.to[0]);
+                line.setAttribute('y2', connection.to[1]);
+                line.setAttribute('stroke', '#28a745');
+                line.setAttribute('stroke-width', '4');
+                line.setAttribute('opacity', '0');
+                line.setAttribute('stroke-dasharray', '5,5');
+
+                svg.appendChild(line);
+
+                // Animate line appearing
+                setTimeout(() => {
+                    line.setAttribute('opacity', '0.7');
+                }, 100);
+            }
+
+            // Add label background for better readability
+            const labelX = connection.labelPos ? connection.labelPos[0] : (connection.from[0] + connection.to[0]) / 2;
+            const labelY = connection.labelPos ? connection.labelPos[1] : (connection.from[1] + connection.to[1]) / 2;
+
+            const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+            rect.setAttribute('x', labelX - 60);
+            rect.setAttribute('y', labelY - 15);
+            rect.setAttribute('width', '120');
+            rect.setAttribute('height', '28');
+            rect.setAttribute('fill', 'white');
+            rect.setAttribute('stroke', '#28a745');
+            rect.setAttribute('stroke-width', '2');
+            rect.setAttribute('rx', '4');
+            rect.setAttribute('opacity', '0');
+            svg.appendChild(rect);
+
+            // Add label text
+            const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            text.setAttribute('x', labelX);
+            text.setAttribute('y', labelY + 5);
+            text.setAttribute('text-anchor', 'middle');
+            text.setAttribute('fill', '#155724');
+            text.setAttribute('font-size', '14');
+            text.setAttribute('font-weight', '700');
+            text.setAttribute('opacity', '0');
+            text.textContent = connection.label;
+            svg.appendChild(text);
+
+            // Animate label appearing
+            setTimeout(() => {
+                rect.setAttribute('opacity', '0.95');
+                text.setAttribute('opacity', '1');
+            }, 200);
+        }
+
+        function loadQuestion() {
+            const question = questions[currentQuestion];
+            document.getElementById('questionText').textContent = question.question;
+            document.getElementById('feedback').className = 'quiz-feedback';
+        }
+
+        function showHint() {
+            const question = questions[currentQuestion];
+            const feedback = document.getElementById('feedback');
+            feedback.className = 'quiz-feedback show';
+            feedback.style.background = '#fff3cd';
+            feedback.style.border = '2px solid #ffc107';
+            feedback.style.color = '#856404';
+            feedback.innerHTML = `💡 Hint: ${question.hint}`;
+        }
+
+        function skipQuestion() {
+            currentQuestion++;
+            if (currentQuestion < totalQuestions) {
+                loadQuestion();
+            } else {
+                completeQuiz();
+            }
+        }
+
+        function completeQuiz() {
+            document.getElementById('quizSection').innerHTML = `
+                <div class="quiz-card" style="text-align: center;">
+                    <h3>🎉 Quiz Complete!</h3>
+                    <p style="font-size: 1.2em; margin: 20px 0;">You've explored the relationships between thermodynamic properties!</p>
+                    <div style="font-size: 3em; color: #28a745; margin: 20px 0;">${correctAnswers}/${totalQuestions}</div>
+                    <p>Correct Answers</p>
+                </div>
+            `;
+
+            setTimeout(showCelebration, 500);
+        }
+
+        function updateProgress() {
+            const progress = Math.round((currentQuestion / totalQuestions) * 100);
+            const accuracy = currentQuestion > 0 ? Math.round((correctAnswers / currentQuestion) * 100) : 0;
+
+            document.getElementById('completeness').textContent = progress + '%';
+            document.getElementById('accuracy').textContent = accuracy + '%';
+            document.getElementById('connections').textContent = correctAnswers;
+
+            // Determine depth
+            let depth = 'Beginner';
+            if (correctAnswers >= 2 && accuracy >= 60) depth = 'Intermediate';
+            if (correctAnswers >= 4 && accuracy >= 75) depth = 'Advanced';
+            if (correctAnswers >= 5 && accuracy >= 90) depth = 'Expert';
+            document.getElementById('depth').textContent = depth;
+        }
+
+        function showCelebration() {
+            const accuracy = Math.round((correctAnswers / totalQuestions) * 100);
+            document.getElementById('finalAccuracy').textContent = accuracy + '%';
+
+            let message = '';
+            if (accuracy >= 90) {
+                message = 'Excellent! You\'ve mastered the relationships between thermodynamic properties and built a comprehensive mental model.';
+            } else if (accuracy >= 75) {
+                message = 'Great work! You\'ve identified most key relationships. Your understanding of thermodynamics is growing strong.';
+            } else if (accuracy >= 60) {
+                message = 'Good progress! You\'re building connections. Keep practicing to strengthen your understanding.';
+            } else {
+                message = 'You\'re learning! Review the concepts and try again to deepen your understanding.';
+            }
+
+            document.getElementById('celebrationMessage').textContent = message;
+            document.getElementById('celebrationModal').classList.add('show');
+            createConfetti();
+        }
+
+        function createConfetti() {
+            const colors = ['#2c5282', '#28a745', '#ffc107', '#17a2b8'];
+            for (let i = 0; i < 40; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + '%';
+                    confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.animationDelay = Math.random() * 0.5 + 's';
+                    document.body.appendChild(confetti);
+                    setTimeout(() => confetti.remove(), 3000);
+                }, i * 30);
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('celebrationModal').classList.remove('show');
+        }
+    </script>
+</body>
+</html>
