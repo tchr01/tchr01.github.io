@@ -717,7 +717,8 @@ createApp({
                     this.currentPersona = data.currentPersona || this.demoPersonas[0];
                     this.selectedPersonaIndex = data.selectedPersonaIndex || 0;
                     this.courseName = data.courseName || this.courseName;
-                    this.pathway = data.pathway || [];
+                    // Load pathway from storage, or use demo topics if empty
+                    this.pathway = (data.pathway && data.pathway.length > 0) ? data.pathway : [...this.demoTopics];
                     // Always start with empty recommendations for dramatic reveal
                     this.recommendations = [];
                 } catch (e) {
