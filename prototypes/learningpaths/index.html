@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learning Pathway Builder</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@3.4.21/dist/vue.global.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-gray-50">
+    <div id="app">
+        <!-- Header -->
+        <header class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg">
+            <div class="container mx-auto px-6 py-6">
+                <h1 class="text-3xl font-bold">Learning Pathway Builder</h1>
+                <p class="text-indigo-100 mt-2">Build personalized learning pathways powered by AI</p>
+            </div>
+        </header>
+
+        <div class="container mx-auto px-6 py-8">
+            <!-- Persona & Course Input Section -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <!-- Persona Input -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                        <svg class="w-6 h-6 mr-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                        </svg>
+                        Learner Persona
+                    </h2>
+
+                    <!-- Persona Selector -->
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Select Demo Persona</label>
+                        <select v-model="selectedPersonaIndex" @change="loadPersona" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <option v-for="(persona, index) in demoPersonas" :key="index" :value="index">
+                                {{ persona.name }} - {{ persona.role }}
+                            </option>
+                        </select>
+                    </div>
+
+                    <!-- Editable Persona Fields -->
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                            <input v-model="currentPersona.name" type="text" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Role</label>
+                            <select v-model="currentPersona.role" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                <option value="Executive">Executive</option>
+                                <option value="Technical">Technical</option>
+                                <option value="Academic">Academic</option>
+                                <option value="Administrator">Administrator</option>
+                                <option value="Manager">Manager</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Years of Experience</label>
+                            <input v-model.number="currentPersona.yearsExperience" type="number" min="0" max="50" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Key Skills (comma separated)</label>
+                            <input v-model="currentPersona.skills" type="text" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Learning Goals</label>
+                            <textarea v-model="currentPersona.goals" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Course Outline Input -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                        <svg class="w-6 h-6 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                        </svg>
+                        Course Outline
+                    </h2>
+
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Course Name</label>
+                        <input v-model="courseName" type="text" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
+                    </div>
+
+                    <div class="mb-4">
+                        <div class="flex items-center justify-between mb-2">
+                            <label class="block text-sm font-medium text-gray-700">Topics in Pathway ({{ pathway.length }})</label>
+                            <button @click="triggerImport" class="text-sm text-purple-600 hover:text-purple-700 font-medium flex items-center gap-1">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                                </svg>
+                                Import Outline
+                            </button>
+                            <input type="file" ref="csvFileInput" @change="handleCSVImport" accept=".csv,.txt" style="display: none;">
+                        </div>
+                        <div class="space-y-2 max-h-96 overflow-y-auto">
+                            <div v-for="(topic, index) in pathway" :key="topic.id" class="flex items-center justify-between p-3 bg-gray-50 rounded-md border border-gray-200">
+                                <div class="flex-1">
+                                    <div class="font-medium text-gray-800">{{ topic.title }}</div>
+                                    <div class="text-xs text-gray-500 mt-1">{{ topic.modality }}</div>
+                                </div>
+                                <button @click="removeFromPathway(index)" class="ml-2 text-red-500 hover:text-red-700">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- View Toggle -->
+            <div class="bg-white rounded-lg shadow-md p-4 mb-6">
+                <div class="flex items-center justify-between flex-wrap gap-4">
+                    <div class="flex gap-2">
+                        <button @click="currentView = 'list'" :class="currentView === 'list' ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-700'" class="px-6 py-2 rounded-md font-medium transition-all">
+                            <svg class="w-5 h-5 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path>
+                            </svg>
+                            List View
+                        </button>
+                        <button @click="currentView = 'cards'" :class="currentView === 'cards' ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-700'" class="px-6 py-2 rounded-md font-medium transition-all">
+                            <svg class="w-5 h-5 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM14 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1v-4zM14 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z"></path>
+                            </svg>
+                            Card View
+                        </button>
+                    </div>
+
+                    <!-- Search and Filters -->
+                    <div class="flex gap-2 flex-1 max-w-md">
+                        <input v-model="searchQuery" type="text" placeholder="Search topics..." class="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <button @click="showFilters = !showFilters" class="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Filter Pills -->
+                <div v-if="showFilters" class="mt-4 pt-4 border-t border-gray-200">
+                    <div class="flex flex-wrap gap-2">
+                        <button v-for="modality in modalityTypes" :key="modality" @click="toggleModalityFilter(modality)" :class="activeFilters.includes(modality) ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'" class="px-4 py-2 rounded-full text-sm font-medium transition-all">
+                            {{ modality }}
+                        </button>
+                        <button v-if="activeFilters.length > 0" @click="activeFilters = []" class="px-4 py-2 rounded-full text-sm font-medium bg-red-100 text-red-700 hover:bg-red-200">
+                            Clear Filters
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- List View -->
+            <div v-if="currentView === 'list'" class="bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Learning Pathway</h2>
+
+                <!-- Learning Objectives -->
+                <div v-if="pathway.length > 0" class="mb-6 p-4 bg-gradient-to-r from-indigo-50 to-purple-50 border-l-4 border-indigo-600 rounded-r-lg">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-3 flex items-center">
+                        <svg class="w-5 h-5 mr-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        Learning Objectives
+                    </h3>
+                    <ul class="space-y-2">
+                        <li v-for="(objective, index) in pathwayObjectives" :key="index" class="flex items-start text-gray-700">
+                            <svg class="w-5 h-5 mr-2 text-indigo-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                            </svg>
+                            <span>{{ objective }}</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div v-if="filteredPathway.length === 0" class="text-center py-12 text-gray-500">
+                    <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <p>No topics match the search or filters</p>
+                </div>
+                <div v-else class="space-y-4">
+                    <div v-for="topic in filteredPathway" :key="topic.id" class="border border-gray-200 rounded-lg p-4 hover:shadow-lg transition-all">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <div class="flex items-center gap-3 mb-2">
+                                    <h3 class="text-lg font-semibold text-gray-800">
+                                        {{ topic.title }}
+                                    </h3>
+                                    <span :class="modalityColorClass(topic.modality)" class="px-3 py-1 rounded-full text-xs font-medium">
+                                        {{ topic.modality }}
+                                    </span>
+                                </div>
+                                <p class="text-gray-600 text-sm">{{ topic.description }}</p>
+                                <div class="flex items-center gap-4 mt-3 text-xs text-gray-500">
+                                    <span>
+                                        <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                        {{ topic.duration }}
+                                    </span>
+                                    <span v-if="topic.difficulty">
+                                        <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                                        </svg>
+                                        {{ topic.difficulty }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card View -->
+            <div v-if="currentView === 'cards'">
+                <!-- Current Pathway Cards -->
+                <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">Learning Pathway</h2>
+
+                    <!-- Learning Objectives -->
+                    <div v-if="pathway.length > 0" class="mb-6 p-4 bg-gradient-to-r from-indigo-50 to-purple-50 border-l-4 border-indigo-600 rounded-r-lg">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-3 flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            Learning Objectives
+                        </h3>
+                        <ul class="space-y-2">
+                            <li v-for="(objective, index) in pathwayObjectives" :key="index" class="flex items-start text-gray-700">
+                                <svg class="w-5 h-5 mr-2 text-indigo-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                                </svg>
+                                <span>{{ objective }}</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div v-if="filteredPathway.length === 0" class="text-center py-12 text-gray-500">
+                        <p>No topics in the pathway yet</p>
+                    </div>
+                    <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div v-for="topic in filteredPathway" :key="topic.id" class="pathway-card">
+                            <div class="card-header" :style="{background: modalityGradient(topic.modality)}">
+                                <span class="modality-badge">{{ topic.modality }}</span>
+                            </div>
+                            <div class="card-body">
+                                <h3 class="card-title">{{ topic.title }}</h3>
+                                <p class="card-description">{{ topic.description }}</p>
+
+                                <!-- Why This Matters -->
+                                <div class="why-matters">
+                                    <div class="why-label">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                        </svg>
+                                        Why This Matters:
+                                    </div>
+                                    <p class="why-text">{{ getTopicWhy(topic) }}</p>
+                                </div>
+
+                                <!-- Mapped Learning Objective -->
+                                <div class="mapped-objective">
+                                    <div class="objective-label">
+                                        <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                                        </svg>
+                                        Maps to:
+                                    </div>
+                                    <p class="objective-text">{{ getTopicObjective(topic) }}</p>
+                                </div>
+
+                                <div class="card-meta">
+                                    <span class="meta-item">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                        {{ topic.duration }}
+                                    </span>
+                                    <span v-if="topic.difficulty" class="meta-item">{{ topic.difficulty }}</span>
+                                </div>
+                                <button @click="expandCard(topic)" class="expand-button">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                    View Details
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recommended Topics -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-2xl font-bold text-gray-800">AI-Recommended Topics</h2>
+                        <button @click="generateRecommendations" class="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-6 py-2.5 rounded-md hover:from-purple-700 hover:to-indigo-700 transition-all font-medium shadow-md flex items-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                            </svg>
+                            Generate Recommendations
+                        </button>
+                    </div>
+                    <div v-if="filteredRecommendations.length === 0" class="text-center py-8">
+                        <p class="text-sm text-gray-400 italic">Click "Generate Recommendations" above to see personalized topic suggestions</p>
+                    </div>
+                    <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                        <div v-for="rec in filteredRecommendations" :key="rec.id" class="recommendation-card">
+                            <div class="rec-header" :style="{background: modalityGradient(rec.modality)}">
+                                <span class="modality-badge-small">{{ rec.modality }}</span>
+                            </div>
+                            <div class="rec-body">
+                                <h3 class="rec-title">{{ rec.title }}</h3>
+                                <p class="rec-description">{{ rec.description }}</p>
+                                <div class="rec-rationale">
+                                    <div class="rationale-label">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                                        </svg>
+                                        Why this topic?
+                                    </div>
+                                    <p class="rationale-text">{{ rec.rationale }}</p>
+                                </div>
+                                <button @click="addToPathway(rec)" class="add-button">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                    </svg>
+                                    Add to Pathway
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Expanded Card Modal -->
+        <div v-if="expandedCard" @click="expandedCard = null" class="modal-overlay">
+            <div @click.stop class="modal-content">
+                <button @click="expandedCard = null" class="modal-close">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+                <div class="modal-header" :style="{background: modalityGradient(expandedCard.modality)}">
+                    <span class="modality-badge">{{ expandedCard.modality }}</span>
+                </div>
+                <div class="modal-body">
+                    <h2 class="modal-title">{{ expandedCard.title }}</h2>
+                    <p class="modal-description">{{ expandedCard.description }}</p>
+
+                    <div class="modal-section">
+                        <h3 class="section-title">Learning Outcomes</h3>
+                        <ul class="outcome-list">
+                            <li v-for="(outcome, index) in expandedCard.outcomes" :key="index">{{ outcome }}</li>
+                        </ul>
+                    </div>
+
+                    <div class="modal-meta-grid">
+                        <div class="meta-card">
+                            <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <div>
+                                <div class="meta-label">Duration</div>
+                                <div class="meta-value">{{ expandedCard.duration }}</div>
+                            </div>
+                        </div>
+                        <div class="meta-card">
+                            <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                            </svg>
+                            <div>
+                                <div class="meta-label">Difficulty</div>
+                                <div class="meta-value">{{ expandedCard.difficulty }}</div>
+                            </div>
+                        </div>
+                        <div class="meta-card">
+                            <svg class="w-5 h-5 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10 0h4M4 20h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v14a1 1 0 001 1z"></path>
+                            </svg>
+                            <div>
+                                <div class="meta-label">Modality</div>
+                                <div class="meta-value">{{ expandedCard.modality }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

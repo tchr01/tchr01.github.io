@@ -1,0 +1,11 @@
+Title,Description,Modality,Duration,Difficulty
+Introduction to Cloud Computing,"Overview of cloud computing concepts, services, and deployment models",Video,45 minutes,Beginner
+Cloud Infrastructure Fundamentals,"Learn about virtual machines, storage, and networking in the cloud",Interactive,2 hours,Beginner
+AWS Console Hands-on Lab,"Practical experience navigating the AWS Management Console",Hands-on Lab,1.5 hours,Beginner
+Cloud Security Best Practices,"Understanding security principles and compliance in cloud environments",Reading,1 hour,Intermediate
+Multi-Cloud Strategy Workshop,"Interactive session on designing multi-cloud architectures",Interactive,3 hours,Advanced
+Containerization with Docker,"Introduction to containers and Docker fundamentals",Video,1.5 hours,Intermediate
+Kubernetes Deployment Simulation,"Simulated experience deploying applications on Kubernetes",AI Simulation,2 hours,Advanced
+Cost Optimization Case Study,"Real-world examples of cloud cost management strategies",Case Study,1 hour,Intermediate
+Cloud Migration Assessment,"Evaluate your cloud migration readiness and planning",Assessment,45 minutes,Intermediate
+DevOps in the Cloud,"Learn CI/CD pipelines and automation in cloud environments",Video,2 hours,Intermediate
