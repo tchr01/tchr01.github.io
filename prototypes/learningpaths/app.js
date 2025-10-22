@@ -1051,6 +1051,119 @@ createApp({
             // Default: cycle through objectives based on topic index in pathway
             const topicIndex = this.pathway.findIndex(t => t.id === topic.id);
             return objectives[topicIndex % objectives.length];
+        },
+
+        exportAsXAPI() {
+            if (this.pathway.length === 0) {
+                this.showNotification('No pathway to export. Please add topics first.');
+                return;
+            }
+
+            // Generate xAPI structure
+            const xAPIData = {
+                "@context": "https://w3id.org/xapi/profiles/activity",
+                "type": "Profile",
+                "id": `https://learningpathway.example.com/profiles/${Date.now()}`,
+                "conformsTo": "https://w3id.org/xapi/profiles#1.0",
+                "prefLabel": {
+                    "en": this.courseName || "Learning Pathway"
+                },
+                "definition": {
+                    "en": `A personalized learning pathway for ${this.currentPersona.name} (${this.currentPersona.role})`
+                },
+                "author": {
+                    "type": "Organization",
+                    "name": "Learning Pathway Builder"
+                },
+                "versions": [
+                    {
+                        "id": `https://learningpathway.example.com/profiles/${Date.now()}/v1`,
+                        "generatedAtTime": new Date().toISOString()
+                    }
+                ],
+                "concepts": this.pathway.map((topic, index) => ({
+                    "id": `https://learningpathway.example.com/activities/${topic.id}`,
+                    "type": "Activity",
+                    "prefLabel": {
+                        "en": topic.title
+                    },
+                    "definition": {
+                        "en": topic.description
+                    },
+                    "activityDefinition": {
+                        "type": `http://adlnet.gov/expapi/activities/${this.getXAPIActivityType(topic.modality)}`,
+                        "name": {
+                            "en": topic.title
+                        },
+                        "description": {
+                            "en": topic.description
+                        },
+                        "extensions": {
+                            "https://learningpathway.example.com/extensions/modality": topic.modality,
+                            "https://learningpathway.example.com/extensions/duration": topic.duration,
+                            "https://learningpathway.example.com/extensions/difficulty": topic.difficulty,
+                            "https://learningpathway.example.com/extensions/sequence": index + 1,
+                            "https://learningpathway.example.com/extensions/learningObjective": this.getTopicObjective(topic),
+                            "https://learningpathway.example.com/extensions/realWorldOutcome": this.getTopicWhy(topic)
+                        }
+                    },
+                    "inScheme": `https://learningpathway.example.com/profiles/${Date.now()}`,
+                    "broader": index > 0 ? [`https://learningpathway.example.com/activities/${this.pathway[index - 1].id}`] : []
+                })),
+                "templates": [
+                    {
+                        "id": "https://learningpathway.example.com/templates/pathway-progress",
+                        "type": "StatementTemplate",
+                        "prefLabel": {
+                            "en": "Learning Pathway Progress"
+                        },
+                        "verb": "http://adlnet.gov/expapi/verbs/progressed",
+                        "objectActivityType": "http://adlnet.gov/expapi/activities/course"
+                    }
+                ],
+                "patterns": [
+                    {
+                        "id": "https://learningpathway.example.com/patterns/sequential",
+                        "type": "Pattern",
+                        "primary": true,
+                        "prefLabel": {
+                            "en": "Sequential Learning Pathway"
+                        },
+                        "definition": {
+                            "en": "Learners progress through topics in sequence"
+                        },
+                        "sequence": this.pathway.map(topic => `https://learningpathway.example.com/activities/${topic.id}`)
+                    }
+                ]
+            };
+
+            // Create downloadable JSON file
+            const jsonString = JSON.stringify(xAPIData, null, 2);
+            const blob = new Blob([jsonString], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `learning-pathway-xapi-${Date.now()}.json`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+
+            this.showNotification('Learning pathway exported as xAPI successfully!');
+        },
+
+        getXAPIActivityType(modality) {
+            const typeMap = {
+                'Video': 'media',
+                'Interactive': 'simulation',
+                'AI Simulation': 'simulation',
+                'Case Study': 'lesson',
+                'Assessment': 'assessment',
+                'Reading': 'module',
+                'Hands-on Lab': 'simulation',
+                'Discussion': 'interaction'
+            };
+            return typeMap[modality] || 'lesson';
         }
     },
 
