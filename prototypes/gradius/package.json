@@ -1,0 +1,22 @@
+{
+  "name": "gradius-nes-sequencer",
+  "version": "1.0.0",
+  "description": "GRADIUS NES Chiptune Sequencer",
+  "main": "index.html",
+  "scripts": {
+    "build": "echo 'No build step needed for static app'"
+  },
+  "keywords": [
+    "nes",
+    "chiptune",
+    "sequencer",
+    "music"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@capacitor/android": "^7.4.4",
+    "@capacitor/cli": "^7.4.4",
+    "@capacitor/core": "^7.4.4"
+  }
+}
