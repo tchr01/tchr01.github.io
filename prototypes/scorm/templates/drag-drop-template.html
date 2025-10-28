@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drag and Drop Activity</title>
+
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        /* Custom styles for drag-and-drop */
+        .drag-item {
+            cursor: move;
+            touch-action: none;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .drag-item:hover {
+            transform: scale(1.05);
+        }
+
+        .drag-item.dragging {
+            opacity: 0.5;
+            transform: rotate(5deg);
+        }
+
+        .drop-zone {
+            min-height: 120px;
+            transition: all 0.3s;
+        }
+
+        .drop-zone.drag-over {
+            background-color: #dbeafe !important;
+            border-color: #3b82f6 !important;
+            border-width: 3px;
+            transform: scale(1.02);
+        }
+
+        .drop-zone.correct {
+            background-color: #dcfce7 !important;
+            border-color: #22c55e !important;
+        }
+
+        .drop-zone.incorrect {
+            background-color: #fee2e2 !important;
+            border-color: #ef4444 !important;
+        }
+
+        .pulse-animation {
+            animation: pulse 0.5s ease-in-out;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        /* Accessibility: keyboard focus indicators */
+        .drag-item:focus {
+            outline: 3px solid #3b82f6;
+            outline-offset: 2px;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 p-4 md:p-8">
+
+    <!-- Main Container -->
+    <div class="max-w-6xl mx-auto bg-white rounded-lg shadow-lg p-6 md:p-8">
+
+        <!-- Header -->
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">Cell Organelles Classification</h1>
+            <p class="text-gray-600 text-lg">Drag each organelle to the correct category: Plant Cell or Animal Cell.</p>
+        </div>
+
+        <!-- Instructions -->
+        <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6" role="alert">
+            <p class="font-semibold text-blue-800">Instructions:</p>
+            <ul class="list-disc list-inside text-blue-700 mt-2 space-y-1">
+                <li>Drag items from the bank below into the correct category</li>
+                <li>Items can be moved between categories</li>
+                <li>Click "Check Answer" when you're done</li>
+                <li>Keyboard users: Tab to items, Space to pick up/drop, Arrow keys to move</li>
+            </ul>
+        </div>
+
+        <!-- Drop Zones (Categories) -->
+        <div class="grid md:grid-cols-2 gap-6 mb-8">
+            <!-- Plant Cell Category -->
+            <div>
+                <h2 class="text-xl font-semibold text-green-700 mb-3 flex items-center">
+                    <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    Plant Cell Only
+                </h2>
+                <div
+                    id="plant-cell"
+                    class="drop-zone bg-green-50 border-2 border-green-300 border-dashed rounded-lg p-4"
+                    data-category="plant"
+                    role="region"
+                    aria-label="Plant Cell category drop zone"
+                >
+                    <!-- Items will be dropped here -->
+                </div>
+            </div>
+
+            <!-- Animal Cell Category -->
+            <div>
+                <h2 class="text-xl font-semibold text-purple-700 mb-3 flex items-center">
+                    <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    Animal Cell Only
+                </h2>
+                <div
+                    id="animal-cell"
+                    class="drop-zone bg-purple-50 border-2 border-purple-300 border-dashed rounded-lg p-4"
+                    data-category="animal"
+                    role="region"
+                    aria-label="Animal Cell category drop zone"
+                >
+                    <!-- Items will be dropped here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Item Bank -->
+        <div class="mb-6">
+            <h2 class="text-xl font-semibold text-gray-700 mb-3 flex items-center">
+                <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                </svg>
+                Organelle Bank
+            </h2>
+            <div
+                id="item-bank"
+                class="drop-zone bg-gray-100 border-2 border-gray-300 border-dashed rounded-lg p-4 grid grid-cols-2 md:grid-cols-4 gap-3"
+                data-category="bank"
+                role="region"
+                aria-label="Item bank - drag items from here"
+            >
+                <!-- CUSTOMIZE: Add or remove items here -->
+                <!-- data-correct-category: "plant", "animal", or "both" -->
+
+                <div class="drag-item bg-white border-2 border-gray-300 rounded-lg p-3 text-center shadow-sm"
+                     draggable="true"
+                     tabindex="0"
+                     data-item-id="chloroplast"
+                     data-correct-category="plant"
+                     role="button"
+                     aria-label="Chloroplast, draggable item">
+                    <div class="text-2xl mb-1">🌿</div>
+                    <div class="font-semibold text-sm">Chloroplast</div>
+                </div>
+
+                <div class="drag-item bg-white border-2 border-gray-300 rounded-lg p-3 text-center shadow-sm"
+                     draggable="true"
+                     tabindex="0"
+                     data-item-id="cell-wall"
+                     data-correct-category="plant"
+                     role="button"
+                     aria-label="Cell Wall, draggable item">
+                    <div class="text-2xl mb-1">🧱</div>
+                    <div class="font-semibold text-sm">Cell Wall</div>
+                </div>
+
+                <div class="drag-item bg-white border-2 border-gray-300 rounded-lg p-3 text-center shadow-sm"
+                     draggable="true"
+                     tabindex="0"
+                     data-item-id="centriole"
+                     data-correct-category="animal"
+                     role="button"
+                     aria-label="Centriole, draggable item">
+                    <div class="text-2xl mb-1">⚙️</div>
+                    <div class="font-semibold text-sm">Centriole</div>
+                </div>
+
+                <div class="drag-item bg-white border-2 border-gray-300 rounded-lg p-3 text-center shadow-sm"
+                     draggable="true"
+                     tabindex="0"
+                     data-item-id="lysosome"
+                     data-correct-category="animal"
+                     role="button"
+                     aria-label="Lysosome, draggable item">
+                    <div class="text-2xl mb-1">🔵</div>
+                    <div class="font-semibold text-sm">Lysosome</div>
+                </div>
+
+                <div class="drag-item bg-white border-2 border-gray-300 rounded-lg p-3 text-center shadow-sm"
+                     draggable="true"
+                     tabindex="0"
+                     data-item-id="vacuole"
+                     data-correct-category="plant"
+                     role="button"
+                     aria-label="Large Central Vacuole, draggable item">
+                    <div class="text-2xl mb-1">💧</div>
+                    <div class="font-semibold text-sm">Large Vacuole</div>
+                </div>
+
+                <div class="drag-item bg-white border-2 border-gray-300 rounded-lg p-3 text-center shadow-sm"
+                     draggable="true"
+                     tabindex="0"
+                     data-item-id="flagellum"
+                     data-correct-category="animal"
+                     role="button"
+                     aria-label="Flagellum, draggable item">
+                    <div class="text-2xl mb-1">🏴</div>
+                    <div class="font-semibold text-sm">Flagellum</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex flex-col sm:flex-row gap-3 mb-6">
+            <button
+                id="check-btn"
+                class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition-colors flex items-center justify-center"
+                onclick="checkAnswers()"
+            >
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                Check Answers
+            </button>
+
+            <button
+                id="reset-btn"
+                class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition-colors flex items-center justify-center"
+                onclick="resetActivity()"
+            >
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                </svg>
+                Reset
+            </button>
+
+            <button
+                id="hint-btn"
+                class="bg-amber-600 hover:bg-amber-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition-colors flex items-center justify-center"
+                onclick="showHint()"
+            >
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                </svg>
+                Hint
+            </button>
+        </div>
+
+        <!-- Feedback Area -->
+        <div id="feedback" class="hidden rounded-lg p-4 mb-4" role="alert" aria-live="polite">
+            <!-- Feedback will be inserted here -->
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="mt-6">
+            <div class="flex justify-between text-sm text-gray-600 mb-2">
+                <span>Progress</span>
+                <span id="progress-text">0 / 6 correct</span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-3">
+                <div id="progress-bar" class="bg-blue-600 h-3 rounded-full transition-all duration-500" style="width: 0%"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- SCORM Wrapper -->
+    <script src="scorm-wrapper.js"></script>
+
+    <!-- Drag and Drop Logic -->
+    <script>
+        // ==================== STATE MANAGEMENT ====================
+
+        let attemptCount = 0;
+        let isChecked = false;
+        let hintsUsed = 0;
+
+        // ==================== DRAG AND DROP FUNCTIONALITY ====================
+
+        let draggedItem = null;
+
+        // Get all draggable items and drop zones
+        const draggableItems = document.querySelectorAll('.drag-item');
+        const dropZones = document.querySelectorAll('.drop-zone');
+
+        // Add event listeners to draggable items
+        draggableItems.forEach(item => {
+            // Mouse drag events
+            item.addEventListener('dragstart', handleDragStart);
+            item.addEventListener('dragend', handleDragEnd);
+
+            // Touch events for mobile
+            item.addEventListener('touchstart', handleTouchStart, {passive: false});
+            item.addEventListener('touchmove', handleTouchMove, {passive: false});
+            item.addEventListener('touchend', handleTouchEnd);
+
+            // Keyboard accessibility
+            item.addEventListener('keydown', handleKeyDown);
+        });
+
+        // Add event listeners to drop zones
+        dropZones.forEach(zone => {
+            zone.addEventListener('dragover', handleDragOver);
+            zone.addEventListener('drop', handleDrop);
+            zone.addEventListener('dragleave', handleDragLeave);
+        });
+
+        // ==================== DRAG EVENT HANDLERS ====================
+
+        function handleDragStart(e) {
+            draggedItem = this;
+            this.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/html', this.innerHTML);
+        }
+
+        function handleDragEnd(e) {
+            this.classList.remove('dragging');
+            // Remove drag-over class from all drop zones
+            dropZones.forEach(zone => zone.classList.remove('drag-over'));
+        }
+
+        function handleDragOver(e) {
+            if (e.preventDefault) {
+                e.preventDefault();
+            }
+            e.dataTransfer.dropEffect = 'move';
+            this.classList.add('drag-over');
+            return false;
+        }
+
+        function handleDragLeave(e) {
+            this.classList.remove('drag-over');
+        }
+
+        function handleDrop(e) {
+            if (e.stopPropagation) {
+                e.stopPropagation();
+            }
+            e.preventDefault();
+
+            this.classList.remove('drag-over');
+
+            if (draggedItem) {
+                // Reset any previous feedback styling
+                draggedItem.classList.remove('border-green-500', 'border-red-500');
+                draggedItem.classList.add('border-gray-300');
+
+                // Append to new drop zone
+                this.appendChild(draggedItem);
+
+                // Reset checked state when items are moved
+                isChecked = false;
+                hideFeedback();
+            }
+
+            return false;
+        }
+
+        // ==================== TOUCH EVENT HANDLERS (MOBILE) ====================
+
+        let touchStartX, touchStartY;
+
+        function handleTouchStart(e) {
+            draggedItem = this;
+            const touch = e.touches[0];
+            touchStartX = touch.clientX;
+            touchStartY = touch.clientY;
+
+            this.style.position = 'absolute';
+            this.style.zIndex = '1000';
+            this.style.opacity = '0.8';
+        }
+
+        function handleTouchMove(e) {
+            e.preventDefault();
+            const touch = e.touches[0];
+
+            draggedItem.style.left = touch.clientX - 50 + 'px';
+            draggedItem.style.top = touch.clientY - 50 + 'px';
+        }
+
+        function handleTouchEnd(e) {
+            const touch = e.changedTouches[0];
+            const dropTarget = document.elementFromPoint(touch.clientX, touch.clientY);
+
+            // Find the drop zone
+            let dropZone = dropTarget;
+            while (dropZone && !dropZone.classList.contains('drop-zone')) {
+                dropZone = dropZone.parentElement;
+            }
+
+            if (dropZone) {
+                draggedItem.style.position = 'static';
+                draggedItem.style.opacity = '1';
+                dropZone.appendChild(draggedItem);
+                isChecked = false;
+                hideFeedback();
+            } else {
+                // Return to original position
+                draggedItem.style.position = 'static';
+                draggedItem.style.opacity = '1';
+            }
+        }
+
+        // ==================== KEYBOARD ACCESSIBILITY ====================
+
+        function handleKeyDown(e) {
+            // Space bar to pick up / drop
+            if (e.key === ' ') {
+                e.preventDefault();
+                // Toggle selection
+                if (this.classList.contains('selected')) {
+                    this.classList.remove('selected');
+                } else {
+                    // Remove selection from others
+                    document.querySelectorAll('.drag-item.selected').forEach(item => {
+                        item.classList.remove('selected');
+                    });
+                    this.classList.add('selected');
+                }
+            }
+
+            // Arrow keys to move between zones
+            if (e.key.startsWith('Arrow') && this.classList.contains('selected')) {
+                e.preventDefault();
+                const currentZone = this.parentElement;
+                let targetZone;
+
+                if (e.key === 'ArrowLeft') {
+                    targetZone = currentZone.previousElementSibling?.querySelector('.drop-zone') || currentZone;
+                } else if (e.key === 'ArrowRight') {
+                    targetZone = currentZone.nextElementSibling?.querySelector('.drop-zone') || currentZone;
+                }
+
+                if (targetZone && targetZone !== currentZone) {
+                    targetZone.appendChild(this);
+                    this.focus();
+                    isChecked = false;
+                    hideFeedback();
+                }
+            }
+        }
+
+        // ==================== CHECKING AND FEEDBACK ====================
+
+        function checkAnswers() {
+            attemptCount++;
+            isChecked = true;
+
+            let correctCount = 0;
+            const totalItems = draggableItems.length;
+
+            // Check each item
+            draggableItems.forEach(item => {
+                const correctCategory = item.dataset.correctCategory;
+                const currentZone = item.parentElement;
+                const currentCategory = currentZone.dataset.category;
+
+                // Reset styling
+                item.classList.remove('border-gray-300', 'border-green-500', 'border-red-500');
+                currentZone.classList.remove('correct', 'incorrect');
+
+                // Check if correct
+                if (correctCategory === currentCategory) {
+                    item.classList.add('border-green-500');
+                    currentZone.classList.add('correct');
+                    correctCount++;
+                } else {
+                    item.classList.add('border-red-500');
+                    if (currentCategory !== 'bank') {
+                        currentZone.classList.add('incorrect');
+                    }
+                }
+            });
+
+            // Update progress
+            updateProgress(correctCount, totalItems);
+
+            // Show feedback
+            showFeedback(correctCount, totalItems);
+
+            // Save to SCORM
+            saveToSCORM(correctCount, totalItems);
+        }
+
+        function showFeedback(correct, total) {
+            const feedback = document.getElementById('feedback');
+            const percentage = Math.round((correct / total) * 100);
+
+            feedback.classList.remove('hidden', 'bg-green-100', 'border-green-500', 'text-green-800',
+                                      'bg-yellow-100', 'border-yellow-500', 'text-yellow-800',
+                                      'bg-red-100', 'border-red-500', 'text-red-800');
+
+            let message, colorClass;
+
+            if (percentage === 100) {
+                colorClass = ['bg-green-100', 'border-l-4', 'border-green-500', 'text-green-800'];
+                message = `
+                    <div class="flex items-start">
+                        <svg class="w-6 h-6 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                        </svg>
+                        <div>
+                            <p class="font-bold">Perfect! All correct!</p>
+                            <p class="mt-1">You've successfully categorized all organelles. Great work!</p>
+                        </div>
+                    </div>
+                `;
+            } else if (percentage >= 70) {
+                colorClass = ['bg-yellow-100', 'border-l-4', 'border-yellow-500', 'text-yellow-800'];
+                message = `
+                    <div class="flex items-start">
+                        <svg class="w-6 h-6 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                        </svg>
+                        <div>
+                            <p class="font-bold">Good effort!</p>
+                            <p class="mt-1">You got ${correct} out of ${total} correct. Review the items marked in red and try again.</p>
+                        </div>
+                    </div>
+                `;
+            } else {
+                colorClass = ['bg-red-100', 'border-l-4', 'border-red-500', 'text-red-800'];
+                message = `
+                    <div class="flex items-start">
+                        <svg class="w-6 h-6 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+                        </svg>
+                        <div>
+                            <p class="font-bold">Keep trying!</p>
+                            <p class="mt-1">You got ${correct} out of ${total} correct. Need help? Try the hint button.</p>
+                        </div>
+                    </div>
+                `;
+            }
+
+            feedback.className = 'rounded-lg p-4 mb-4 ' + colorClass.join(' ');
+            feedback.innerHTML = message;
+        }
+
+        function hideFeedback() {
+            const feedback = document.getElementById('feedback');
+            feedback.classList.add('hidden');
+
+            // Reset drop zone styling
+            dropZones.forEach(zone => {
+                zone.classList.remove('correct', 'incorrect');
+            });
+        }
+
+        function updateProgress(correct, total) {
+            const percentage = (correct / total) * 100;
+            document.getElementById('progress-bar').style.width = percentage + '%';
+            document.getElementById('progress-text').textContent = `${correct} / ${total} correct`;
+        }
+
+        function showHint() {
+            hintsUsed++;
+
+            // Find first incorrect item
+            let hintGiven = false;
+
+            draggableItems.forEach(item => {
+                if (hintGiven) return;
+
+                const correctCategory = item.dataset.correctCategory;
+                const currentZone = item.parentElement;
+                const currentCategory = currentZone.dataset.category;
+
+                if (correctCategory !== currentCategory) {
+                    // Highlight the item
+                    item.classList.add('pulse-animation');
+                    setTimeout(() => item.classList.remove('pulse-animation'), 500);
+
+                    // Show hint message
+                    const feedback = document.getElementById('feedback');
+                    feedback.className = 'rounded-lg p-4 mb-4 bg-blue-100 border-l-4 border-blue-500 text-blue-800';
+                    feedback.classList.remove('hidden');
+
+                    const itemName = item.querySelector('.font-semibold').textContent;
+                    const correctZone = correctCategory === 'plant' ? 'Plant Cell' : 'Animal Cell';
+
+                    feedback.innerHTML = `
+                        <div class="flex items-start">
+                            <svg class="w-6 h-6 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                            </svg>
+                            <div>
+                                <p class="font-bold">Hint ${hintsUsed}:</p>
+                                <p class="mt-1"><strong>${itemName}</strong> belongs in the <strong>${correctZone}</strong> category.</p>
+                            </div>
+                        </div>
+                    `;
+
+                    hintGiven = true;
+                }
+            });
+
+            if (!hintGiven) {
+                const feedback = document.getElementById('feedback');
+                feedback.className = 'rounded-lg p-4 mb-4 bg-green-100 border-l-4 border-green-500 text-green-800';
+                feedback.classList.remove('hidden');
+                feedback.innerHTML = `
+                    <div class="flex items-center">
+                        <svg class="w-6 h-6 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                        </svg>
+                        <p class="font-bold">All items are in the correct categories!</p>
+                    </div>
+                `;
+            }
+        }
+
+        function resetActivity() {
+            // Move all items back to bank
+            const bank = document.getElementById('item-bank');
+            draggableItems.forEach(item => {
+                item.classList.remove('border-green-500', 'border-red-500', 'selected');
+                item.classList.add('border-gray-300');
+                bank.appendChild(item);
+            });
+
+            // Reset state
+            isChecked = false;
+            hideFeedback();
+            updateProgress(0, draggableItems.length);
+
+            // Clear drop zone styling
+            dropZones.forEach(zone => {
+                zone.classList.remove('correct', 'incorrect');
+            });
+        }
+
+        // ==================== SCORM INTEGRATION ====================
+
+        function saveToSCORM(correct, total) {
+            if (!SCORM.isConnected()) {
+                console.log('Not connected to LMS - running in preview mode');
+                return;
+            }
+
+            // Calculate score
+            const score = Math.round((correct / total) * 100);
+            SCORM.setScore(score);
+
+            // Set completion status
+            if (score === 100) {
+                SCORM.setComplete();
+            } else {
+                SCORM.setIncomplete();
+            }
+
+            // Save custom data (for resuming)
+            const state = {
+                attemptCount: attemptCount,
+                hintsUsed: hintsUsed,
+                lastScore: score,
+                itemPositions: {}
+            };
+
+            // Save where each item is located
+            draggableItems.forEach(item => {
+                const itemId = item.dataset.itemId;
+                const zoneId = item.parentElement.id;
+                state.itemPositions[itemId] = zoneId;
+            });
+
+            SCORM.saveSuspendData(state);
+
+            console.log('Saved to SCORM:', state);
+        }
+
+        function loadFromSCORM() {
+            if (!SCORM.isConnected()) {
+                console.log('Not connected to LMS - starting fresh');
+                return;
+            }
+
+            const savedState = SCORM.loadSuspendData(true);
+
+            if (savedState && savedState.itemPositions) {
+                console.log('Loading saved state:', savedState);
+
+                attemptCount = savedState.attemptCount || 0;
+                hintsUsed = savedState.hintsUsed || 0;
+
+                // Restore item positions
+                Object.keys(savedState.itemPositions).forEach(itemId => {
+                    const item = document.querySelector(`[data-item-id="${itemId}"]`);
+                    const zoneId = savedState.itemPositions[itemId];
+                    const zone = document.getElementById(zoneId);
+
+                    if (item && zone) {
+                        zone.appendChild(item);
+                    }
+                });
+            }
+        }
+
+        // ==================== INITIALIZATION ====================
+
+        window.addEventListener('load', function() {
+            // Load saved state from SCORM
+            loadFromSCORM();
+
+            console.log('Drag and Drop activity loaded');
+            console.log('SCORM connection:', SCORM.isConnected() ? 'Connected' : 'Not connected (preview mode)');
+        });
+    </script>
+
+</body>
+</html>

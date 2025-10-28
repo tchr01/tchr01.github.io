@@ -1,0 +1,35 @@
+{
+  "name": "scorm-learning-objects",
+  "version": "1.0.0",
+  "description": "Framework for creating custom SCORM 1.2 learning objects for higher education",
+  "main": "index.js",
+  "scripts": {
+    "build": "node scripts/build-scorm.js",
+    "validate": "node scripts/validate-package.js",
+    "test": "echo 'Open testing/scorm-validator.html in browser'",
+    "clean": "rm -rf dist/*.zip"
+  },
+  "keywords": [
+    "scorm",
+    "elearning",
+    "lms",
+    "education",
+    "interactive",
+    "higher-ed"
+  ],
+  "author": "Learning Technology Team",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {
+    "archiver": "^6.0.1",
+    "chalk": "^4.1.2",
+    "fs-extra": "^11.1.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "your-repo-url"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}

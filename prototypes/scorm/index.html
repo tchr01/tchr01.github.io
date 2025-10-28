@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SCORM AI Learning Object Framework and Strategy Guide - Higher Education</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .card-hover {
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+
+    <!-- Hero Section -->
+    <header class="gradient-bg text-white">
+        <div class="max-w-7xl mx-auto px-4 py-16 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <h1 class="text-4xl md:text-6xl font-bold mb-4">
+                    SCORM AI Learning Object Framework
+                </h1>
+                <p class="text-xl md:text-2xl mb-8 text-purple-100">
+                    AI-Powered Interactive Learning • Strategy Guide for Higher Ed • Build at Scale
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <a href="#get-started" class="bg-white text-purple-700 px-8 py-3 rounded-lg font-semibold hover:bg-purple-50 transition">
+                        Get Started →
+                    </a>
+                    <a href="QUICK-START.md" class="bg-purple-800 text-white px-8 py-3 rounded-lg font-semibold hover:bg-purple-900 transition border-2 border-white">
+                        Quick Start Guide
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Why This Exists -->
+    <section class="max-w-7xl mx-auto px-4 py-16 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Why This Project Exists</h2>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                Higher education needs a better way to create engaging, interactive online learning experiences that stand out from competitors and can be deployed at scale.
+            </p>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-8 mb-12">
+            <!-- The Problem -->
+            <div class="bg-red-50 border-l-4 border-red-500 rounded-lg p-6">
+                <h3 class="text-2xl font-bold text-red-900 mb-4 flex items-center">
+                    <svg class="w-8 h-8 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                    </svg>
+                    The Problem
+                </h3>
+                <ul class="space-y-3 text-gray-700">
+                    <li class="flex items-start">
+                        <span class="text-red-600 mr-2">✗</span>
+                        <span><strong>Video fatigue:</strong> Students are overwhelmed with passive content that doesn't engage</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-red-600 mr-2">✗</span>
+                        <span><strong>Slow development cycles:</strong> Faculty want to see prototypes but LXDs can't demo until weeks later - ideas go stale</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-red-600 mr-2">✗</span>
+                        <span><strong>Expensive authoring tools:</strong> $1,000-$3,000/year per designer, steep learning curves</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-red-600 mr-2">✗</span>
+                        <span><strong>Generic templates:</strong> Cookie-cutter content that doesn't differentiate your institution</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-red-600 mr-2">✗</span>
+                        <span><strong>Scale vs. quality trade-off:</strong> Fast development sacrifices uniqueness and engagement</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-red-600 mr-2">✗</span>
+                        <span><strong>Competitive pressure:</strong> OPMs and other institutions investing heavily in learning tech</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- The Solution -->
+            <div class="bg-green-50 border-l-4 border-green-500 rounded-lg p-6">
+                <h3 class="text-2xl font-bold text-green-900 mb-4 flex items-center">
+                    <svg class="w-8 h-8 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    Our Solution
+                </h3>
+                <ul class="space-y-3 text-gray-700">
+                    <li class="flex items-start">
+                        <span class="text-green-600 mr-2">✓</span>
+                        <span><strong>Interactive > Passive:</strong> Build engaging hands-on activities that students actually complete</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-green-600 mr-2">✓</span>
+                        <span><strong>Rapid prototyping:</strong> LXDs go from idea to working demo in the LMS in minutes - show faculty real prototypes, iterate on the fly</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-green-600 mr-2">✓</span>
+                        <span><strong>AI-powered development:</strong> Use Claude Code to build and customize - zero licensing costs, no coding required</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-green-600 mr-2">✓</span>
+                        <span><strong>Full creative control:</strong> Unique, branded experiences that differentiate your institution</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-green-600 mr-2">✓</span>
+                        <span><strong>Build once, customize rapidly:</strong> 2-3 hours first build, then 30 min per customization</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-green-600 mr-2">✓</span>
+                        <span><strong>Scalable across institution:</strong> Deploy to unlimited courses, campuses, and programs</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- LXD Workflow Highlight -->
+        <div class="bg-gradient-to-r from-cyan-50 to-blue-50 border-2 border-cyan-400 rounded-lg p-8 mb-12">
+            <div class="flex items-start">
+                <div class="flex-shrink-0">
+                    <svg class="w-12 h-12 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                    </svg>
+                </div>
+                <div class="ml-4">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-3">🚀 Game Changer for Learning Experience Designers</h3>
+                    <p class="text-lg text-gray-700 mb-4">
+                        <strong>From idea to working demo in the LMS in under an hour.</strong> No more waiting weeks for development cycles.
+                    </p>
+                    <div class="bg-white rounded-lg p-4 mb-4">
+                        <h4 class="font-semibold text-gray-900 mb-2">The New LXD Workflow:</h4>
+                        <ol class="space-y-2 text-gray-700">
+                            <li class="flex items-start">
+                                <span class="text-cyan-600 font-bold mr-3">1.</span>
+                                <span><strong>Morning:</strong> Faculty meeting - "We need an interactive activity for mitosis"</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-cyan-600 font-bold mr-3">2.</span>
+                                <span><strong>10 minutes later:</strong> LXD customizes drag-drop template with Claude Code</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-cyan-600 font-bold mr-3">3.</span>
+                                <span><strong>15 minutes later:</strong> Build SCORM package, upload to LMS staging</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-cyan-600 font-bold mr-3">4.</span>
+                                <span><strong>Lunch time:</strong> Show working prototype to faculty in actual LMS</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-cyan-600 font-bold mr-3">5.</span>
+                                <span><strong>Afternoon:</strong> Faculty gives feedback, LXD tweaks and re-uploads</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-cyan-600 font-bold mr-3">6.</span>
+                                <span><strong>Same day:</strong> Final version deployed to production course</span>
+                            </li>
+                        </ol>
+                    </div>
+                    <div class="flex items-center text-cyan-700">
+                        <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                        </svg>
+                        <strong>No more "We'll have it ready in 2-3 weeks" - demo working prototypes while clients wait</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <div class="bg-white rounded-lg shadow-md p-6 text-center">
+                <div class="stat-number text-cyan-600">&lt;1 hr</div>
+                <div class="text-gray-600 mt-2">Idea to LMS Demo</div>
+            </div>
+            <div class="bg-white rounded-lg shadow-md p-6 text-center">
+                <div class="stat-number text-purple-600">10-30x</div>
+                <div class="text-gray-600 mt-2">Faster Development</div>
+            </div>
+            <div class="bg-white rounded-lg shadow-md p-6 text-center">
+                <div class="stat-number text-green-600">$75K+</div>
+                <div class="text-gray-600 mt-2">5-Year Savings</div>
+            </div>
+            <div class="bg-white rounded-lg shadow-md p-6 text-center">
+                <div class="stat-number text-blue-600">Same Day</div>
+                <div class="text-gray-600 mt-2">Client Iteration</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Overview -->
+    <section class="bg-white py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">How It Works</h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                    A complete framework for designing, building, and deploying custom SCORM 1.2 learning objects
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8 mb-12">
+                <div class="text-center">
+                    <div class="bg-purple-100 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4">
+                        <span class="text-3xl font-bold text-purple-600">1</span>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Choose Template</h3>
+                    <p class="text-gray-600">Select from ready-made interactive components: drag-and-drop, matching, hotspots, and more.</p>
+                </div>
+                <div class="text-center">
+                    <div class="bg-purple-100 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4">
+                        <span class="text-3xl font-bold text-purple-600">2</span>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">AI Customization (10 min)</h3>
+                    <p class="text-gray-600">Tell Claude Code what you need. AI modifies content, design, interactions instantly. No coding required.</p>
+                </div>
+                <div class="text-center">
+                    <div class="bg-purple-100 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4">
+                        <span class="text-3xl font-bold text-purple-600">3</span>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Deploy to LMS (15 min)</h3>
+                    <p class="text-gray-600">One-click build creates SCORM ZIP. Upload to LMS. Show faculty working prototype same day.</p>
+                </div>
+            </div>
+
+            <!-- Features Grid -->
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="border border-gray-200 rounded-lg p-6">
+                    <div class="text-blue-600 mb-3">
+                        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">SCORM 1.2 Compliant</h3>
+                    <p class="text-gray-600 text-sm">Works with any LMS. Battle-tested API wrapper handles all tracking automatically.</p>
+                </div>
+
+                <div class="border border-gray-200 rounded-lg p-6">
+                    <div class="text-green-600 mb-3">
+                        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">Accessible by Design</h3>
+                    <p class="text-gray-600 text-sm">WCAG 2.1 AA compliant. Screen reader tested. Keyboard navigation built-in.</p>
+                </div>
+
+                <div class="border border-gray-200 rounded-lg p-6">
+                    <div class="text-purple-600 mb-3">
+                        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">Mobile Responsive</h3>
+                    <p class="text-gray-600 text-sm">Touch-friendly interactions. Works on phones, tablets, and desktops.</p>
+                </div>
+
+                <div class="border border-gray-200 rounded-lg p-6">
+                    <div class="text-indigo-600 mb-3">
+                        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path>
+                        </svg>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">Fully Customizable</h3>
+                    <p class="text-gray-600 text-sm">Control every pixel. Colors, fonts, layout, behavior - everything is editable.</p>
+                </div>
+
+                <div class="border border-gray-200 rounded-lg p-6">
+                    <div class="text-teal-600 mb-3">
+                        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">Version Control Ready</h3>
+                    <p class="text-gray-600 text-sm">Use Git to track changes. Collaborate with team. Roll back if needed.</p>
+                </div>
+
+                <div class="border border-gray-200 rounded-lg p-6">
+                    <div class="text-amber-600 mb-3">
+                        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                        </svg>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">Analytics Built-In</h3>
+                    <p class="text-gray-600 text-sm">SCORM tracking captures completion, scores, time spent, and custom data.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Access Links by Audience -->
+    <section id="get-started" class="max-w-7xl mx-auto px-4 py-16 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Quick Access by Role</h2>
+            <p class="text-xl text-gray-600">Choose your path to get started</p>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-8">
+            <!-- Learning Designers -->
+            <div class="bg-white rounded-lg shadow-lg overflow-hidden card-hover">
+                <div class="bg-gradient-to-r from-blue-500 to-blue-600 p-6 text-white">
+                    <svg class="w-12 h-12 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                    </svg>
+                    <h3 class="text-2xl font-bold">Learning Designers</h3>
+                    <p class="text-blue-100 mt-2">Create engaging content</p>
+                </div>
+                <div class="p-6">
+                    <h4 class="font-semibold mb-3 text-gray-900">Get Started:</h4>
+                    <ul class="space-y-2 mb-6">
+                        <li>
+                            <a href="QUICK-START.md" class="text-blue-600 hover:text-blue-800 flex items-center">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                                </svg>
+                                Quick Start (15 min)
+                            </a>
+                        </li>
+                        <li>
+                            <a href="README.md" class="text-blue-600 hover:text-blue-800 flex items-center">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                                </svg>
+                                Full Documentation
+                            </a>
+                        </li>
+                        <li>
+                            <a href="docs/HIGHER-ED-STRATEGY.md" class="text-blue-600 hover:text-blue-800 flex items-center">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                                </svg>
+                                Higher Ed Strategy
+                            </a>
+                        </li>
+                    </ul>
+
+                    <h4 class="font-semibold mb-3 text-gray-900">Templates:</h4>
+                    <ul class="space-y-2 mb-6">
+                        <li>
+                            <a href="templates/drag-drop-template.html" class="text-blue-600 hover:text-blue-800 flex items-center" target="_blank">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                                </svg>
+                                Drag & Drop Example
+                            </a>
+                        </li>
+                    </ul>
+
+                    <h4 class="font-semibold mb-3 text-gray-900">Tools:</h4>
+                    <ul class="space-y-2">
+                        <li>
+                            <a href="testing/scorm-validator.html" class="text-blue-600 hover:text-blue-800 flex items-center" target="_blank">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                                </svg>
+                                SCORM Validator
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- IT Teams -->
+            <div class="bg-white rounded-lg shadow-lg overflow-hidden card-hover">
+                <div class="bg-gradient-to-r from-green-500 to-green-600 p-6 text-white">
+                    <svg class="w-12 h-12 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    </svg>
+                    <h3 class="text-2xl font-bold">IT Teams</h3>
+                    <p class="text-green-100 mt-2">Deploy & validate</p>
+                </div>
+                <div class="p-6">
+                    <h4 class="font-semibold mb-3 text-gray-900">Essential Docs:</h4>
+                    <ul class="space-y-2 mb-6">
+                        <li>
+                            <a href="docs/IT-REQUIREMENTS.md" class="text-green-600 hover:text-green-800 flex items-center">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                                </svg>
+                                IT Requirements (Start Here!)
+                            </a>
+                        </li>
+                        <li>
+                            <a href="docs/TROUBLESHOOTING.md" class="text-green-600 hover:text-green-800 flex items-center">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                                </svg>
+                                Troubleshooting Guide
+                            </a>
+                        </li>
+                        <li>
+                            <a href="testing/test-checklist.md" class="text-green-600 hover:text-green-800 flex items-center">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                                </svg>
+                                Testing Checklist
+                            </a>
+                        </li>
+                    </ul>
+
+                    <h4 class="font-semibold mb-3 text-gray-900">Testing Tools:</h4>
+                    <ul class="space-y-2 mb-6">
+                        <li>
+                            <a href="testing/scorm-validator.html" class="text-green-600 hover:text-green-800 flex items-center" target="_blank">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                                </svg>
+                                SCORM API Validator
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://cloud.scorm.com" class="text-green-600 hover:text-green-800 flex items-center" target="_blank">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                                </svg>
+                                SCORM Cloud (External)
+                            </a>
+                        </li>
+                    </ul>
+
+                    <h4 class="font-semibold mb-3 text-gray-900">Key Areas:</h4>
+                    <ul class="space-y-1 text-sm text-gray-600">
+                        <li>• LMS compatibility validation</li>
+                        <li>• Browser/device testing</li>
+                        <li>• Security & performance</li>
+                        <li>• Accessibility compliance</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Administrators -->
+            <div class="bg-white rounded-lg shadow-lg overflow-hidden card-hover">
+                <div class="bg-gradient-to-r from-purple-500 to-purple-600 p-6 text-white">
+                    <svg class="w-12 h-12 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                    </svg>
+                    <h3 class="text-2xl font-bold">Administrators</h3>
+                    <p class="text-purple-100 mt-2">Strategy & ROI</p>
+                </div>
+                <div class="p-6">
+                    <h4 class="font-semibold mb-3 text-gray-900">Business Case:</h4>
+                    <ul class="space-y-2 mb-6">
+                        <li>
+                            <a href="docs/HIGHER-ED-STRATEGY.md" class="text-purple-600 hover:text-purple-800 flex items-center">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                                </svg>
+                                Complete Strategy Doc
+                            </a>
+                        </li>
+                        <li>
+                            <a href="README.md" class="text-purple-600 hover:text-purple-800 flex items-center">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                                </svg>
+                                Project Overview
+                            </a>
+                        </li>
+                    </ul>
+
+                    <h4 class="font-semibold mb-3 text-gray-900">Key Metrics:</h4>
+                    <div class="bg-purple-50 rounded p-3 mb-6 text-sm">
+                        <div class="mb-2"><strong>3-Year ROI:</strong> $50K-$75K</div>
+                        <div class="mb-2"><strong>Engagement:</strong> 70-90% vs 30-40%</div>
+                        <div class="mb-2"><strong>Development Time:</strong> 30 min after setup</div>
+                        <div><strong>Break-even:</strong> 18-24 months</div>
+                    </div>
+
+                    <h4 class="font-semibold mb-3 text-gray-900">Investment:</h4>
+                    <ul class="space-y-1 text-sm text-gray-600">
+                        <li>• Year 1: $60K-$70K</li>
+                        <li>• Year 2+: $30K-$35K/year</li>
+                        <li>• Resources: 1 tech + 1 designer</li>
+                        <li>• Timeline: 12-month ramp up</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Examples & Templates -->
+    <section class="bg-gray-100 py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Interactive Examples</h2>
+                <p class="text-xl text-gray-600">Click to try live demos</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Drag & Drop -->
+                <a href="templates/drag-drop-template.html" target="_blank" class="bg-white rounded-lg shadow-md overflow-hidden card-hover">
+                    <div class="bg-gradient-to-br from-blue-400 to-blue-600 p-8 text-white text-center">
+                        <svg class="w-16 h-16 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path>
+                        </svg>
+                        <h3 class="text-2xl font-bold">Drag & Drop</h3>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-gray-600 mb-4">
+                            Categorization, sequencing, labeling. Touch-friendly with snap-to-grid.
+                        </p>
+                        <div class="flex items-center text-blue-600 font-semibold">
+                            Try it now
+                            <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- SCORM Validator -->
+                <a href="testing/scorm-validator.html" target="_blank" class="bg-white rounded-lg shadow-md overflow-hidden card-hover">
+                    <div class="bg-gradient-to-br from-green-400 to-green-600 p-8 text-white text-center">
+                        <svg class="w-16 h-16 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <h3 class="text-2xl font-bold">SCORM Validator</h3>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-gray-600 mb-4">
+                            Test SCORM API calls before deploying to LMS. Mock API with real-time logging.
+                        </p>
+                        <div class="flex items-center text-green-600 font-semibold">
+                            Open validator
+                            <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Coming Soon Placeholder -->
+                <div class="bg-white rounded-lg shadow-md overflow-hidden opacity-60">
+                    <div class="bg-gradient-to-br from-purple-400 to-purple-600 p-8 text-white text-center">
+                        <svg class="w-16 h-16 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                        <h3 class="text-2xl font-bold">More Templates</h3>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-gray-600 mb-4">
+                            Additional templates coming soon: Matching, Hotspots, Multiple Choice, Scenarios.
+                        </p>
+                        <div class="flex items-center text-gray-400 font-semibold">
+                            Coming soon
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Technical Specs -->
+    <section class="max-w-7xl mx-auto px-4 py-16 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Technical Overview</h2>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-8">
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-xl font-bold mb-4 flex items-center">
+                    <svg class="w-6 h-6 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+                    </svg>
+                    Technology Stack
+                </h3>
+                <ul class="space-y-2 text-gray-700">
+                    <li class="flex items-start">
+                        <span class="text-blue-600 mr-2">•</span>
+                        <span><strong>SCORM:</strong> 1.2 standard (universal compatibility)</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-blue-600 mr-2">•</span>
+                        <span><strong>Frontend:</strong> HTML5, CSS3, JavaScript (ES6+)</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-blue-600 mr-2">•</span>
+                        <span><strong>Styling:</strong> Tailwind CSS (customizable)</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-blue-600 mr-2">•</span>
+                        <span><strong>Build:</strong> Node.js, npm scripts</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-blue-600 mr-2">•</span>
+                        <span><strong>Development:</strong> Claude Code for customization</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-blue-600 mr-2">•</span>
+                        <span><strong>Version Control:</strong> Git-ready</span>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-xl font-bold mb-4 flex items-center">
+                    <svg class="w-6 h-6 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                    </svg>
+                    Compatibility & Standards
+                </h3>
+                <ul class="space-y-2 text-gray-700">
+                    <li class="flex items-start">
+                        <span class="text-green-600 mr-2">✓</span>
+                        <span><strong>LMS:</strong> Any SCORM 1.2 compliant system</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-green-600 mr-2">✓</span>
+                        <span><strong>Browsers:</strong> Chrome, Firefox, Safari, Edge</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-green-600 mr-2">✓</span>
+                        <span><strong>Mobile:</strong> iOS, Android (responsive design)</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-green-600 mr-2">✓</span>
+                        <span><strong>Accessibility:</strong> WCAG 2.1 AA compliant</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-green-600 mr-2">✓</span>
+                        <span><strong>Standards:</strong> Section 508, ADA compliant</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-green-600 mr-2">✓</span>
+                        <span><strong>Security:</strong> No server-side code, HTTPS ready</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="gradient-bg text-white py-16">
+        <div class="max-w-4xl mx-auto text-center px-4">
+            <h2 class="text-3xl md:text-4xl font-bold mb-4">Ready to Get Started?</h2>
+            <p class="text-xl mb-8 text-purple-100">
+                Transform your online learning in just 15 minutes
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center mb-8">
+                <a href="QUICK-START.md" class="bg-white text-purple-700 px-8 py-4 rounded-lg font-semibold hover:bg-purple-50 transition text-lg inline-block">
+                    Quick Start Guide →
+                </a>
+                <a href="README.md" class="bg-purple-800 text-white px-8 py-4 rounded-lg font-semibold hover:bg-purple-900 transition border-2 border-white text-lg inline-block">
+                    Read Full Docs
+                </a>
+            </div>
+            <p class="text-sm text-purple-200">
+                Questions? Review the <a href="docs/TROUBLESHOOTING.md" class="underline hover:text-white">troubleshooting guide</a> or
+                <a href="docs/IT-REQUIREMENTS.md" class="underline hover:text-white">IT requirements</a>
+            </p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-gray-300 py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-3 gap-8 mb-8">
+                <div>
+                    <h3 class="font-bold text-white mb-3">Documentation</h3>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="README.md" class="hover:text-white">Main README</a></li>
+                        <li><a href="QUICK-START.md" class="hover:text-white">Quick Start</a></li>
+                        <li><a href="docs/HIGHER-ED-STRATEGY.md" class="hover:text-white">Strategy Guide</a></li>
+                        <li><a href="docs/TROUBLESHOOTING.md" class="hover:text-white">Troubleshooting</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="font-bold text-white mb-3">For Teams</h3>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="docs/IT-REQUIREMENTS.md" class="hover:text-white">IT Requirements</a></li>
+                        <li><a href="testing/test-checklist.md" class="hover:text-white">Testing Checklist</a></li>
+                        <li><a href="templates/scorm-wrapper.js" class="hover:text-white">SCORM Wrapper Code</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="font-bold text-white mb-3">Examples</h3>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="templates/drag-drop-template.html" class="hover:text-white" target="_blank">Drag & Drop Demo</a></li>
+                        <li><a href="testing/scorm-validator.html" class="hover:text-white" target="_blank">SCORM Validator</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 pt-6 text-center text-sm">
+                <p>SCORM AI Learning Object Framework and Strategy Guide v1.0 | Built for Higher Education</p>
+                <p class="mt-2 text-gray-400">AI-powered framework for creating scalable, engaging interactive learning experiences with Claude Code</p>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

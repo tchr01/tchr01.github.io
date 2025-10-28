@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SCORM API Validator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .log-entry {
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            padding: 4px 8px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .log-init { background-color: #dbeafe; }
+        .log-get { background-color: #fef3c7; }
+        .log-set { background-color: #d1fae5; }
+        .log-error { background-color: #fee2e2; color: #991b1b; }
+        .log-success { background-color: #d1fae5; color: #065f46; }
+    </style>
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="max-w-6xl mx-auto">
+        <header class="bg-blue-600 text-white rounded-t-lg p-6">
+            <h1 class="text-3xl font-bold">SCORM 1.2 API Validator</h1>
+            <p class="mt-2">Test SCORM API communication and validate learning objects</p>
+        </header>
+
+        <div class="bg-white rounded-b-lg shadow-lg p-6">
+            <!-- API Status -->
+            <div class="mb-6">
+                <h2 class="text-xl font-semibold mb-3">SCORM API Status</h2>
+                <div id="api-status" class="p-4 rounded-lg bg-gray-100">
+                    <p class="text-gray-600">Checking...</p>
+                </div>
+            </div>
+
+            <!-- API Controls -->
+            <div class="mb-6">
+                <h2 class="text-xl font-semibold mb-3">API Controls</h2>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    <button onclick="testInitialize()" class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded">
+                        Initialize
+                    </button>
+                    <button onclick="testGetValue()" class="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded">
+                        Get Value
+                    </button>
+                    <button onclick="testSetValue()" class="bg-purple-500 hover:bg-purple-600 text-white py-2 px-4 rounded">
+                        Set Value
+                    </button>
+                    <button onclick="testFinish()" class="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded">
+                        Finish
+                    </button>
+                </div>
+            </div>
+
+            <!-- Quick Tests -->
+            <div class="mb-6">
+                <h2 class="text-xl font-semibold mb-3">Quick Tests</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <button onclick="testCompletion()" class="bg-indigo-500 hover:bg-indigo-600 text-white py-2 px-4 rounded">
+                        Test Completion
+                    </button>
+                    <button onclick="testScore()" class="bg-teal-500 hover:bg-teal-600 text-white py-2 px-4 rounded">
+                        Test Score (85)
+                    </button>
+                    <button onclick="testSuspendData()" class="bg-amber-500 hover:bg-amber-600 text-white py-2 px-4 rounded">
+                        Test Suspend Data
+                    </button>
+                </div>
+            </div>
+
+            <!-- Custom Test -->
+            <div class="mb-6">
+                <h2 class="text-xl font-semibold mb-3">Custom SCORM Call</h2>
+                <div class="flex gap-3">
+                    <select id="method-select" class="border border-gray-300 rounded px-3 py-2 flex-shrink-0">
+                        <option value="LMSGetValue">LMSGetValue</option>
+                        <option value="LMSSetValue">LMSSetValue</option>
+                        <option value="LMSCommit">LMSCommit</option>
+                    </select>
+                    <input id="param-input" type="text" placeholder="Parameter (e.g., cmi.core.lesson_status)"
+                           class="border border-gray-300 rounded px-3 py-2 flex-grow">
+                    <input id="value-input" type="text" placeholder="Value (for SetValue)"
+                           class="border border-gray-300 rounded px-3 py-2 flex-grow">
+                    <button onclick="testCustomCall()" class="bg-gray-700 hover:bg-gray-800 text-white py-2 px-4 rounded">
+                        Execute
+                    </button>
+                </div>
+            </div>
+
+            <!-- Common SCORM Values -->
+            <div class="mb-6">
+                <h2 class="text-xl font-semibold mb-3">Common SCORM Values</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="border border-gray-200 rounded p-4">
+                        <h3 class="font-semibold mb-2">Status Values</h3>
+                        <div class="space-y-1 text-sm">
+                            <button onclick="quickSet('cmi.core.lesson_status', 'completed')"
+                                    class="block w-full text-left hover:bg-gray-100 p-1 rounded">
+                                Set: completed
+                            </button>
+                            <button onclick="quickSet('cmi.core.lesson_status', 'incomplete')"
+                                    class="block w-full text-left hover:bg-gray-100 p-1 rounded">
+                                Set: incomplete
+                            </button>
+                            <button onclick="quickSet('cmi.core.lesson_status', 'passed')"
+                                    class="block w-full text-left hover:bg-gray-100 p-1 rounded">
+                                Set: passed
+                            </button>
+                            <button onclick="quickSet('cmi.core.lesson_status', 'failed')"
+                                    class="block w-full text-left hover:bg-gray-100 p-1 rounded">
+                                Set: failed
+                            </button>
+                        </div>
+                    </div>
+                    <div class="border border-gray-200 rounded p-4">
+                        <h3 class="font-semibold mb-2">Get Values</h3>
+                        <div class="space-y-1 text-sm">
+                            <button onclick="quickGet('cmi.core.lesson_status')"
+                                    class="block w-full text-left hover:bg-gray-100 p-1 rounded">
+                                Get: lesson_status
+                            </button>
+                            <button onclick="quickGet('cmi.core.score.raw')"
+                                    class="block w-full text-left hover:bg-gray-100 p-1 rounded">
+                                Get: score.raw
+                            </button>
+                            <button onclick="quickGet('cmi.core.student_name')"
+                                    class="block w-full text-left hover:bg-gray-100 p-1 rounded">
+                                Get: student_name
+                            </button>
+                            <button onclick="quickGet('cmi.suspend_data')"
+                                    class="block w-full text-left hover:bg-gray-100 p-1 rounded">
+                                Get: suspend_data
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Log Display -->
+            <div class="mb-6">
+                <div class="flex justify-between items-center mb-3">
+                    <h2 class="text-xl font-semibold">Activity Log</h2>
+                    <button onclick="clearLog()" class="bg-gray-500 hover:bg-gray-600 text-white py-1 px-3 rounded text-sm">
+                        Clear Log
+                    </button>
+                </div>
+                <div id="log-display" class="border border-gray-300 rounded bg-white max-h-96 overflow-y-auto">
+                    <div class="log-entry text-gray-500">Log messages will appear here...</div>
+                </div>
+            </div>
+
+            <!-- Help -->
+            <details class="mb-6">
+                <summary class="cursor-pointer font-semibold text-lg mb-2">Help & Instructions</summary>
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mt-2">
+                    <h3 class="font-semibold mb-2">How to Use:</h3>
+                    <ol class="list-decimal list-inside space-y-1 text-sm">
+                        <li>This tool simulates an LMS SCORM API for testing</li>
+                        <li>Click "Initialize" to start a SCORM session</li>
+                        <li>Use quick tests or custom calls to test your SCORM wrapper</li>
+                        <li>Check the log to see all API calls and responses</li>
+                        <li>Click "Finish" to end the session</li>
+                    </ol>
+                    <h3 class="font-semibold mt-4 mb-2">Common SCORM 1.2 Data Elements:</h3>
+                    <ul class="list-disc list-inside space-y-1 text-sm">
+                        <li><code>cmi.core.lesson_status</code> - completed, incomplete, passed, failed, not attempted</li>
+                        <li><code>cmi.core.score.raw</code> - Score value (0-100)</li>
+                        <li><code>cmi.core.score.min</code> - Minimum score</li>
+                        <li><code>cmi.core.score.max</code> - Maximum score</li>
+                        <li><code>cmi.core.session_time</code> - Time in HH:MM:SS format</li>
+                        <li><code>cmi.suspend_data</code> - Custom data (max 4096 chars)</li>
+                        <li><code>cmi.core.student_id</code> - Student identifier (read-only)</li>
+                        <li><code>cmi.core.student_name</code> - Student name (read-only)</li>
+                    </ul>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <!-- Mock SCORM API -->
+    <script>
+        // Create mock SCORM 1.2 API
+        window.API = {
+            data: {
+                'cmi.core.lesson_status': 'not attempted',
+                'cmi.core.score.raw': '',
+                'cmi.core.score.min': '0',
+                'cmi.core.score.max': '100',
+                'cmi.core.student_id': 'student123',
+                'cmi.core.student_name': 'Test Student',
+                'cmi.core.session_time': '00:00:00',
+                'cmi.suspend_data': '',
+                'cmi.core.lesson_location': ''
+            },
+            initialized: false,
+            finished: false,
+            errorCode: '0',
+
+            LMSInitialize: function(param) {
+                log('LMSInitialize("' + param + '")', 'init');
+                if (this.initialized) {
+                    this.errorCode = '101';  // Already initialized
+                    log('Error: Already initialized', 'error');
+                    return 'false';
+                }
+                this.initialized = true;
+                this.finished = false;
+                log('✓ Initialize successful', 'success');
+                updateStatus();
+                return 'true';
+            },
+
+            LMSGetValue: function(element) {
+                log('LMSGetValue("' + element + '")', 'get');
+                if (!this.initialized) {
+                    this.errorCode = '301';  // Not initialized
+                    log('Error: Not initialized', 'error');
+                    return '';
+                }
+                const value = this.data[element] || '';
+                log('  → Returned: "' + value + '"', 'get');
+                this.errorCode = '0';
+                return value;
+            },
+
+            LMSSetValue: function(element, value) {
+                log('LMSSetValue("' + element + '", "' + value + '")', 'set');
+                if (!this.initialized) {
+                    this.errorCode = '301';  // Not initialized
+                    log('Error: Not initialized', 'error');
+                    return 'false';
+                }
+                if (element.indexOf('student_id') !== -1 || element.indexOf('student_name') !== -1) {
+                    this.errorCode = '403';  // Read-only element
+                    log('Error: Element is read-only', 'error');
+                    return 'false';
+                }
+                this.data[element] = value;
+                log('✓ Value set successfully', 'success');
+                this.errorCode = '0';
+                updateStatus();
+                return 'true';
+            },
+
+            LMSCommit: function(param) {
+                log('LMSCommit("' + param + '")', 'set');
+                if (!this.initialized) {
+                    this.errorCode = '301';
+                    log('Error: Not initialized', 'error');
+                    return 'false';
+                }
+                log('✓ Data committed', 'success');
+                this.errorCode = '0';
+                return 'true';
+            },
+
+            LMSFinish: function(param) {
+                log('LMSFinish("' + param + '")', 'init');
+                if (!this.initialized) {
+                    this.errorCode = '301';
+                    log('Error: Not initialized', 'error');
+                    return 'false';
+                }
+                if (this.finished) {
+                    this.errorCode = '101';
+                    log('Error: Already finished', 'error');
+                    return 'false';
+                }
+                this.initialized = false;
+                this.finished = true;
+                log('✓ Session finished successfully', 'success');
+                this.errorCode = '0';
+                updateStatus();
+                return 'true';
+            },
+
+            LMSGetLastError: function() {
+                return this.errorCode;
+            },
+
+            LMSGetErrorString: function(errorCode) {
+                const errors = {
+                    '0': 'No error',
+                    '101': 'General exception',
+                    '201': 'Invalid argument',
+                    '301': 'Not initialized',
+                    '401': 'Not implemented',
+                    '403': 'Data model element value not initialized',
+                    '404': 'Data model element not found'
+                };
+                return errors[errorCode] || 'Unknown error';
+            },
+
+            LMSGetDiagnostic: function(errorCode) {
+                return 'Diagnostic info for error ' + errorCode;
+            }
+        };
+
+        // Logging function
+        function log(message, type = '') {
+            const logDisplay = document.getElementById('log-display');
+            const entry = document.createElement('div');
+            entry.className = 'log-entry log-' + type;
+            const timestamp = new Date().toLocaleTimeString();
+            entry.textContent = '[' + timestamp + '] ' + message;
+            logDisplay.appendChild(entry);
+            logDisplay.scrollTop = logDisplay.scrollHeight;
+        }
+
+        function clearLog() {
+            const logDisplay = document.getElementById('log-display');
+            logDisplay.innerHTML = '<div class="log-entry text-gray-500">Log cleared.</div>';
+        }
+
+        function updateStatus() {
+            const status = document.getElementById('api-status');
+            const initialized = window.API.initialized;
+            const finished = window.API.finished;
+
+            let html = '<div class="grid grid-cols-2 gap-4">';
+            html += '<div><span class="font-semibold">Status:</span> ';
+            if (initialized) {
+                html += '<span class="text-green-600 font-semibold">✓ Initialized</span>';
+            } else if (finished) {
+                html += '<span class="text-gray-600">Finished</span>';
+            } else {
+                html += '<span class="text-yellow-600">Not Initialized</span>';
+            }
+            html += '</div>';
+            html += '<div><span class="font-semibold">Lesson Status:</span> ' + window.API.data['cmi.core.lesson_status'] + '</div>';
+            html += '<div><span class="font-semibold">Score:</span> ' + (window.API.data['cmi.core.score.raw'] || 'Not set') + '</div>';
+            html += '<div><span class="font-semibold">Last Error:</span> ' + window.API.errorCode + '</div>';
+            html += '</div>';
+
+            status.innerHTML = html;
+        }
+
+        // Test functions
+        function testInitialize() {
+            const result = window.API.LMSInitialize('');
+            log('Result: ' + result, result === 'true' ? 'success' : 'error');
+        }
+
+        function testGetValue() {
+            const param = prompt('Enter parameter to get:', 'cmi.core.lesson_status');
+            if (param) {
+                const value = window.API.LMSGetValue(param);
+                alert('Value: ' + value);
+            }
+        }
+
+        function testSetValue() {
+            const param = prompt('Enter parameter to set:', 'cmi.core.lesson_status');
+            if (param) {
+                const value = prompt('Enter value:');
+                if (value !== null) {
+                    const result = window.API.LMSSetValue(param, value);
+                    log('Result: ' + result, result === 'true' ? 'success' : 'error');
+                }
+            }
+        }
+
+        function testFinish() {
+            const result = window.API.LMSFinish('');
+            log('Result: ' + result, result === 'true' ? 'success' : 'error');
+        }
+
+        function testCompletion() {
+            if (!window.API.initialized) {
+                window.API.LMSInitialize('');
+            }
+            window.API.LMSSetValue('cmi.core.lesson_status', 'completed');
+            window.API.LMSCommit('');
+        }
+
+        function testScore() {
+            if (!window.API.initialized) {
+                window.API.LMSInitialize('');
+            }
+            window.API.LMSSetValue('cmi.core.score.raw', '85');
+            window.API.LMSSetValue('cmi.core.score.min', '0');
+            window.API.LMSSetValue('cmi.core.score.max', '100');
+            window.API.LMSCommit('');
+        }
+
+        function testSuspendData() {
+            if (!window.API.initialized) {
+                window.API.LMSInitialize('');
+            }
+            const data = JSON.stringify({ question: 5, score: 80, timestamp: new Date().toISOString() });
+            window.API.LMSSetValue('cmi.suspend_data', data);
+            window.API.LMSCommit('');
+
+            // Retrieve it back
+            const retrieved = window.API.LMSGetValue('cmi.suspend_data');
+            log('Suspend data length: ' + retrieved.length + ' characters');
+        }
+
+        function testCustomCall() {
+            const method = document.getElementById('method-select').value;
+            const param = document.getElementById('param-input').value;
+            const value = document.getElementById('value-input').value;
+
+            if (method === 'LMSGetValue') {
+                const result = window.API.LMSGetValue(param);
+                alert('Result: ' + result);
+            } else if (method === 'LMSSetValue') {
+                const result = window.API.LMSSetValue(param, value);
+                log('Result: ' + result, result === 'true' ? 'success' : 'error');
+            } else if (method === 'LMSCommit') {
+                const result = window.API.LMSCommit('');
+                log('Result: ' + result, result === 'true' ? 'success' : 'error');
+            }
+        }
+
+        function quickSet(param, value) {
+            if (!window.API.initialized) {
+                window.API.LMSInitialize('');
+            }
+            window.API.LMSSetValue(param, value);
+            window.API.LMSCommit('');
+        }
+
+        function quickGet(param) {
+            if (!window.API.initialized) {
+                alert('Please initialize first');
+                return;
+            }
+            const value = window.API.LMSGetValue(param);
+            alert(param + ' = ' + value);
+        }
+
+        // Initialize display
+        window.addEventListener('load', function() {
+            updateStatus();
+            log('SCORM API Validator ready. Mock API created.', 'success');
+            log('Tip: Open your learning object in another tab to test against this API', '');
+        });
+    </script>
+</body>
+</html>
