@@ -6,6 +6,7 @@
   "scripts": {
     "build": "node scripts/build-scorm.js",
     "validate": "node scripts/validate-package.js",
+    "pdf": "./scripts/convert-to-pdf.sh",
     "test": "echo 'Open testing/scorm-validator.html in browser'",
     "clean": "rm -rf dist/*.zip"
   },

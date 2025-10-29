@@ -1,5 +1,9 @@
 # SCORM Learning Object Development Framework
 
+> 📕 **Non-technical users:** All documentation is available in easy-to-read PDF format! Look for PDF links throughout this site, or download individual PDFs:
+> - [README.pdf](README.pdf) | [QUICK-START.pdf](QUICK-START.pdf) | [IT-REQUIREMENTS.pdf](docs/IT-REQUIREMENTS.pdf)
+> - [HIGHER-ED-STRATEGY.pdf](docs/HIGHER-ED-STRATEGY.pdf) | [TROUBLESHOOTING.pdf](docs/TROUBLESHOOTING.pdf) | [TEST-CHECKLIST.pdf](testing/test-checklist.pdf)
+
 ## Overview
 
 This framework enables learning designers to create custom, interactive learning objects using Claude Code and deploy them as SCORM 1.2 packages to any LMS. Built specifically for **higher education** with focus on **scalability**, **engagement**, and **cost-effectiveness**.
