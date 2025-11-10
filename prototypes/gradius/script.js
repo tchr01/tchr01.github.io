@@ -818,6 +818,27 @@ class NESSequencer {
         // Connect final output to master gain
         outputNode.connect(this.masterGain);
     }
+
+    connectToOfflineEffects(sourceNode, masterGain, offlineDelay, offlineReverb) {
+        let outputNode = sourceNode;
+
+        // Apply delay if enabled
+        if (offlineDelay.enabled && offlineDelay.delayNode) {
+            outputNode.connect(offlineDelay.delayNode);
+            outputNode.connect(offlineDelay.dryGain);
+            outputNode = offlineDelay.mixNode;
+        }
+
+        // Apply reverb if enabled
+        if (offlineReverb.enabled && offlineReverb.convolver) {
+            outputNode.connect(offlineReverb.convolver);
+            outputNode.connect(offlineReverb.dryGain);
+            outputNode = offlineReverb.mixNode;
+        }
+
+        // Connect final output to master gain
+        outputNode.connect(masterGain);
+    }
     
     updateStepIndicator() {
         this.clearStepIndicators();
@@ -882,34 +903,88 @@ class NESSequencer {
         if (!this.audioContext) {
             await this.initAudio();
         }
-        
+
         this.exportBtn.disabled = true;
         this.exportStatus.textContent = 'Rendering...';
-        
+
         const loops = parseInt(this.exportLoops.value);
         const stepDuration = (60 / this.tempo / 4);
         const totalDuration = stepDuration * 16 * loops;
         const sampleRate = this.audioContext.sampleRate;
         const totalSamples = Math.floor(totalDuration * sampleRate);
-        
+
         // Create offline context for rendering
         const offlineContext = new OfflineAudioContext(2, totalSamples, sampleRate);
-        
+
         // Set up effects chain in offline context
         const offlineMasterGain = offlineContext.createGain();
         offlineMasterGain.connect(offlineContext.destination);
-        
+
+        // Set up delay effect in offline context
+        const offlineDelay = {
+            enabled: this.effects.delay.enabled,
+            delayNode: offlineContext.createDelay(1.0),
+            feedbackNode: offlineContext.createGain(),
+            wetGain: offlineContext.createGain(),
+            dryGain: offlineContext.createGain(),
+            mixNode: offlineContext.createGain(),
+            limiterNode: offlineContext.createGain()
+        };
+
+        offlineDelay.delayNode.delayTime.setValueAtTime(this.effects.delay.time, 0);
+        offlineDelay.feedbackNode.gain.setValueAtTime(this.effects.delay.feedback, 0);
+        offlineDelay.wetGain.gain.setValueAtTime(this.effects.delay.mix, 0);
+        offlineDelay.dryGain.gain.setValueAtTime(1 - this.effects.delay.mix, 0);
+        offlineDelay.limiterNode.gain.setValueAtTime(0.7, 0);
+
+        offlineDelay.delayNode.connect(offlineDelay.feedbackNode);
+        offlineDelay.feedbackNode.connect(offlineDelay.limiterNode);
+        offlineDelay.limiterNode.connect(offlineDelay.delayNode);
+        offlineDelay.delayNode.connect(offlineDelay.wetGain);
+
+        offlineDelay.wetGain.connect(offlineDelay.mixNode);
+        offlineDelay.dryGain.connect(offlineDelay.mixNode);
+
+        // Set up reverb effect in offline context
+        const offlineReverb = {
+            enabled: this.effects.reverb.enabled,
+            convolver: offlineContext.createConvolver(),
+            wetGain: offlineContext.createGain(),
+            dryGain: offlineContext.createGain(),
+            mixNode: offlineContext.createGain()
+        };
+
+        offlineReverb.wetGain.gain.setValueAtTime(this.effects.reverb.mix, 0);
+        offlineReverb.dryGain.gain.setValueAtTime(1 - this.effects.reverb.mix, 0);
+
+        // Create reverb impulse response for offline context
+        const reverbLength = Math.floor(offlineContext.sampleRate * this.effects.reverb.size);
+        const reverbImpulse = offlineContext.createBuffer(2, reverbLength, offlineContext.sampleRate);
+
+        for (let channel = 0; channel < 2; channel++) {
+            const channelData = reverbImpulse.getChannelData(channel);
+            for (let i = 0; i < reverbLength; i++) {
+                const n = reverbLength - i;
+                channelData[i] = (Math.random() * 2 - 1) * Math.pow(n / reverbLength, this.effects.reverb.decay);
+            }
+        }
+
+        offlineReverb.convolver.buffer = reverbImpulse;
+        offlineReverb.convolver.connect(offlineReverb.wetGain);
+        offlineReverb.wetGain.connect(offlineReverb.mixNode);
+        offlineReverb.dryGain.connect(offlineReverb.mixNode);
+
         // Render the sequence
         let currentTime = 0;
         const stepDurationSec = stepDuration;
-        
+
         for (let loop = 0; loop < loops; loop++) {
             for (let step = 0; step < 16; step++) {
-                this.renderStep(offlineContext, offlineMasterGain, step, currentTime);
+                this.renderStep(offlineContext, offlineMasterGain, offlineDelay, offlineReverb, step, currentTime);
                 currentTime += stepDurationSec;
             }
         }
-        
+
         try {
             const renderedBuffer = await offlineContext.startRendering();
             this.downloadWAV(renderedBuffer);
@@ -921,58 +996,58 @@ class NESSequencer {
             this.exportStatus.textContent = 'Export failed!';
             console.error('Export error:', error);
         }
-        
+
         this.exportBtn.disabled = false;
     }
     
-    renderStep(offlineContext, masterGain, stepIndex, startTime) {
+    renderStep(offlineContext, masterGain, offlineDelay, offlineReverb, stepIndex, startTime) {
         Object.keys(this.channels).forEach(channelName => {
             const channel = this.channels[channelName];
             let noteToPlay = null;
-            
+
             for (let noteIndex = 0; noteIndex < channel.sequence.length; noteIndex++) {
                 if (channel.sequence[noteIndex][stepIndex]) {
                     noteToPlay = noteIndex;
                     break;
                 }
             }
-            
+
             if (noteToPlay !== null) {
                 if (channelName === 'noise') {
-                    this.renderNoise(offlineContext, masterGain, noteToPlay, startTime, 0.1);
+                    this.renderNoise(offlineContext, masterGain, offlineDelay, offlineReverb, noteToPlay, startTime, 0.1);
                 } else {
-                    this.renderNote(offlineContext, masterGain, channel.notes[noteToPlay], startTime, 0.1, channel.type);
+                    this.renderNote(offlineContext, masterGain, offlineDelay, offlineReverb, channel.notes[noteToPlay], startTime, 0.1, channel.type);
                 }
             }
         });
     }
     
-    renderNote(offlineContext, masterGain, frequency, startTime, duration, waveType) {
+    renderNote(offlineContext, masterGain, offlineDelay, offlineReverb, frequency, startTime, duration, waveType) {
         const oscillator = offlineContext.createOscillator();
         const gainNode = offlineContext.createGain();
-        
+
         oscillator.type = waveType;
         oscillator.frequency.setValueAtTime(frequency, startTime);
-        
+
         let volume = 0.3;
         if (waveType === 'triangle') volume = 0.5;
         if (waveType === 'sawtooth') volume = 0.25;
-        
+
         gainNode.gain.setValueAtTime(volume, startTime);
         gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + duration);
-        
+
         oscillator.connect(gainNode);
-        gainNode.connect(masterGain);
-        
+        this.connectToOfflineEffects(gainNode, masterGain, offlineDelay, offlineReverb);
+
         oscillator.start(startTime);
         oscillator.stop(startTime + duration);
     }
     
-    renderNoise(offlineContext, masterGain, type, startTime, duration) {
+    renderNoise(offlineContext, masterGain, offlineDelay, offlineReverb, type, startTime, duration) {
         const bufferSize = Math.floor(offlineContext.sampleRate * duration);
         const buffer = offlineContext.createBuffer(1, bufferSize, offlineContext.sampleRate);
         const data = buffer.getChannelData(0);
-        
+
         if (type === 0) {
             for (let i = 0; i < bufferSize; i++) {
                 data[i] = (Math.random() * 2 - 1) * 0.3;
@@ -986,17 +1061,17 @@ class NESSequencer {
                 data[i] = lastValue * 0.2;
             }
         }
-        
+
         const source = offlineContext.createBufferSource();
         const gainNode = offlineContext.createGain();
-        
+
         source.buffer = buffer;
         gainNode.gain.setValueAtTime(0.8, startTime);
         gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + duration);
-        
+
         source.connect(gainNode);
-        gainNode.connect(masterGain);
-        
+        this.connectToOfflineEffects(gainNode, masterGain, offlineDelay, offlineReverb);
+
         source.start(startTime);
     }
     
