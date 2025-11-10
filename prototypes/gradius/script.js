@@ -974,16 +974,35 @@ class NESSequencer {
         offlineReverb.wetGain.connect(offlineReverb.mixNode);
         offlineReverb.dryGain.connect(offlineReverb.mixNode);
 
+        // Track sustained notes across channels
+        const sustainedNotes = {};
+        Object.keys(this.channels).forEach(channelName => {
+            sustainedNotes[channelName] = {
+                currentNote: null,
+                startTime: null
+            };
+        });
+
         // Render the sequence
         let currentTime = 0;
         const stepDurationSec = stepDuration;
 
         for (let loop = 0; loop < loops; loop++) {
             for (let step = 0; step < 16; step++) {
-                this.renderStep(offlineContext, offlineMasterGain, offlineDelay, offlineReverb, step, currentTime);
+                this.renderStep(offlineContext, offlineMasterGain, offlineDelay, offlineReverb, step, currentTime, stepDurationSec, sustainedNotes);
                 currentTime += stepDurationSec;
             }
         }
+
+        // Stop any remaining sustained notes at the end
+        Object.keys(this.channels).forEach(channelName => {
+            if (sustainedNotes[channelName].currentNote !== null) {
+                const channel = this.channels[channelName];
+                const startTime = sustainedNotes[channelName].startTime;
+                const duration = currentTime - startTime;
+                // Sustained notes are already rendered with their full duration
+            }
+        });
 
         try {
             const renderedBuffer = await offlineContext.startRendering();
@@ -1000,7 +1019,7 @@ class NESSequencer {
         this.exportBtn.disabled = false;
     }
     
-    renderStep(offlineContext, masterGain, offlineDelay, offlineReverb, stepIndex, startTime) {
+    renderStep(offlineContext, masterGain, offlineDelay, offlineReverb, stepIndex, startTime, stepDuration, sustainedNotes) {
         Object.keys(this.channels).forEach(channelName => {
             const channel = this.channels[channelName];
             let noteToPlay = null;
@@ -1012,14 +1031,60 @@ class NESSequencer {
                 }
             }
 
-            if (noteToPlay !== null) {
-                if (channelName === 'noise') {
-                    this.renderNoise(offlineContext, masterGain, offlineDelay, offlineReverb, noteToPlay, startTime, 0.1);
-                } else {
-                    this.renderNote(offlineContext, masterGain, offlineDelay, offlineReverb, channel.notes[noteToPlay], startTime, 0.1, channel.type);
+            if (channel.sustain) {
+                // Sustain mode: hold notes until a new note is triggered
+                if (noteToPlay !== null && noteToPlay !== sustainedNotes[channelName].currentNote) {
+                    // Stop previous sustained note if it exists
+                    if (sustainedNotes[channelName].currentNote !== null) {
+                        const prevStartTime = sustainedNotes[channelName].startTime;
+                        const prevDuration = startTime - prevStartTime;
+                        // Previous note was already rendered, its stop time is now
+                    }
+
+                    // Start new sustained note (calculate duration later when it changes or sequence ends)
+                    sustainedNotes[channelName].currentNote = noteToPlay;
+                    sustainedNotes[channelName].startTime = startTime;
+
+                    // For sustained notes, we need to estimate duration
+                    // Look ahead to find when the note changes or calculate max duration
+                    const noteDuration = this.calculateSustainDuration(channel, stepIndex, stepDuration);
+
+                    if (channelName === 'noise') {
+                        this.renderSustainedNoise(offlineContext, masterGain, offlineDelay, offlineReverb, noteToPlay, startTime, noteDuration);
+                    } else {
+                        this.renderSustainedNote(offlineContext, masterGain, offlineDelay, offlineReverb, channel.notes[noteToPlay], startTime, noteDuration, channel.type);
+                    }
+                }
+            } else {
+                // Normal mode: short note-off sounds
+                if (noteToPlay !== null) {
+                    if (channelName === 'noise') {
+                        this.renderNoise(offlineContext, masterGain, offlineDelay, offlineReverb, noteToPlay, startTime, 0.1);
+                    } else {
+                        this.renderNote(offlineContext, masterGain, offlineDelay, offlineReverb, channel.notes[noteToPlay], startTime, 0.1, channel.type);
+                    }
                 }
             }
         });
+    }
+
+    calculateSustainDuration(channel, currentStep, stepDuration) {
+        // Look ahead from current step to find when note changes
+        // For simplicity, check up to 16 steps ahead (one full loop)
+        let stepsUntilChange = 16; // Default to end of sequence
+
+        for (let i = 1; i < 16; i++) {
+            const nextStep = (currentStep + i) % 16;
+            for (let noteIndex = 0; noteIndex < channel.sequence.length; noteIndex++) {
+                if (channel.sequence[noteIndex][nextStep]) {
+                    stepsUntilChange = i;
+                    return stepsUntilChange * stepDuration;
+                }
+            }
+        }
+
+        // If no note found ahead, sustain until end
+        return stepsUntilChange * stepDuration;
     }
     
     renderNote(offlineContext, masterGain, offlineDelay, offlineReverb, frequency, startTime, duration, waveType) {
@@ -1034,6 +1099,30 @@ class NESSequencer {
         if (waveType === 'sawtooth') volume = 0.25;
 
         gainNode.gain.setValueAtTime(volume, startTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + duration);
+
+        oscillator.connect(gainNode);
+        this.connectToOfflineEffects(gainNode, masterGain, offlineDelay, offlineReverb);
+
+        oscillator.start(startTime);
+        oscillator.stop(startTime + duration);
+    }
+
+    renderSustainedNote(offlineContext, masterGain, offlineDelay, offlineReverb, frequency, startTime, duration, waveType) {
+        const oscillator = offlineContext.createOscillator();
+        const gainNode = offlineContext.createGain();
+
+        oscillator.type = waveType;
+        oscillator.frequency.setValueAtTime(frequency, startTime);
+
+        // Sustained notes use constant volume (matching playSustainedNote)
+        let volume = 0.25;
+        if (waveType === 'triangle') volume = 0.4;
+        if (waveType === 'sawtooth') volume = 0.2;
+
+        gainNode.gain.setValueAtTime(volume, startTime);
+        // Keep constant volume until near the end, then fade out
+        gainNode.gain.setValueAtTime(volume, startTime + duration - 0.05);
         gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + duration);
 
         oscillator.connect(gainNode);
@@ -1067,6 +1156,74 @@ class NESSequencer {
 
         source.buffer = buffer;
         gainNode.gain.setValueAtTime(0.8, startTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + duration);
+
+        source.connect(gainNode);
+        this.connectToOfflineEffects(gainNode, masterGain, offlineDelay, offlineReverb);
+
+        source.start(startTime);
+    }
+
+    renderSustainedNoise(offlineContext, masterGain, offlineDelay, offlineReverb, type, startTime, duration) {
+        const bufferSize = Math.floor(offlineContext.sampleRate * duration);
+        const buffer = offlineContext.createBuffer(1, bufferSize, offlineContext.sampleRate);
+        const data = buffer.getChannelData(0);
+        let lastValue = 0;
+
+        // Generate noise patterns matching playSustainedNoise
+        switch(type) {
+            case 0: // HI - white noise
+                for (let i = 0; i < bufferSize; i++) {
+                    data[i] = (Math.random() * 2 - 1) * 0.4;
+                }
+                break;
+            case 1: // LO - periodic noise
+                for (let i = 0; i < bufferSize; i++) {
+                    if (i % 93 === 0) {
+                        lastValue = Math.random() * 2 - 1;
+                    }
+                    data[i] = lastValue * 0.3;
+                }
+                break;
+            case 2: // MID1 - medium freq noise
+                for (let i = 0; i < bufferSize; i++) {
+                    if (i % 47 === 0) {
+                        lastValue = Math.random() * 2 - 1;
+                    }
+                    data[i] = lastValue * 0.36;
+                }
+                break;
+            case 3: // MID2 - different medium freq
+                for (let i = 0; i < bufferSize; i++) {
+                    if (i % 31 === 0) {
+                        lastValue = Math.random() * 2 - 1;
+                    }
+                    data[i] = lastValue * 0.36;
+                }
+                break;
+            case 4: // CRASH - harsh noise
+                for (let i = 0; i < bufferSize; i++) {
+                    data[i] = (Math.random() * 2 - 1) * 0.5;
+                }
+                break;
+            case 5: // KICK - low freq thump
+                for (let i = 0; i < bufferSize; i++) {
+                    if (i % 186 === 0) {
+                        lastValue = Math.random() * 2 - 1;
+                    }
+                    data[i] = lastValue * 0.44;
+                }
+                break;
+        }
+
+        const source = offlineContext.createBufferSource();
+        const gainNode = offlineContext.createGain();
+
+        source.buffer = buffer;
+        // Sustained noise keeps constant volume (matching playSustainedNoise)
+        gainNode.gain.setValueAtTime(0.8, startTime);
+        // Fade out at the end
+        gainNode.gain.setValueAtTime(0.8, startTime + duration - 0.05);
         gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + duration);
 
         source.connect(gainNode);
