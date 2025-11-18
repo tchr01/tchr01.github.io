@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SCORM API Validator</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <style>
         .log-entry {
             font-family: 'Courier New', monospace;
@@ -17,17 +18,157 @@
         .log-set { background-color: #d1fae5; }
         .log-error { background-color: #fee2e2; color: #991b1b; }
         .log-success { background-color: #d1fae5; color: #065f46; }
+        .nav-link {
+            transition: all 0.2s ease;
+        }
+        .nav-link:hover {
+            color: #667eea;
+        }
+        .nav-link.active {
+            color: #667eea;
+            border-bottom: 3px solid #667eea;
+        }
     </style>
 </head>
-<body class="bg-gray-100 p-8">
-    <div class="max-w-6xl mx-auto">
+<body class="bg-gray-100">
+    <!-- Global Navigation -->
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo/Brand -->
+                <div class="flex items-center">
+                    <a href="../index.html" class="flex items-center">
+                        <svg class="w-8 h-8 text-purple-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                        </svg>
+                        <span class="text-xl font-bold text-gray-900">SCORM Framework</span>
+                    </a>
+                </div>
+
+                <!-- Desktop Navigation -->
+                <div class="hidden md:flex space-x-8">
+                    <a href="../index.html" class="nav-link px-3 py-2 text-sm font-semibold text-gray-700">
+                        Home
+                    </a>
+                    <a href="../README.html" class="nav-link px-3 py-2 text-sm font-semibold text-gray-700">
+                        Documentation
+                    </a>
+                    <a href="scorm-validator.html" class="nav-link active px-3 py-2 text-sm font-semibold text-gray-700">
+                        SCORM Validator
+                    </a>
+                    <a href="../templates/drag-drop-template.html" target="_blank" class="nav-link px-3 py-2 text-sm font-semibold text-gray-700 flex items-center">
+                        Demo
+                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                        </svg>
+                    </a>
+                </div>
+
+                <!-- Mobile menu button -->
+                <div class="md:hidden">
+                    <button id="mobile-menu-button" type="button" class="text-gray-700 hover:text-purple-600 focus:outline-none focus:text-purple-600">
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-200">
+            <div class="px-2 pt-2 pb-3 space-y-1">
+                <a href="../index.html" class="block px-3 py-2 rounded-md text-base font-semibold text-gray-700 hover:bg-gray-50">
+                    Home
+                </a>
+                <a href="../README.html" class="block px-3 py-2 rounded-md text-base font-semibold text-gray-700 hover:bg-gray-50">
+                    Documentation
+                </a>
+                <a href="scorm-validator.html" class="block px-3 py-2 rounded-md text-base font-semibold text-purple-600 bg-purple-50">
+                    SCORM Validator
+                </a>
+                <a href="../templates/drag-drop-template.html" target="_blank" class="block px-3 py-2 rounded-md text-base font-semibold text-gray-700 hover:bg-gray-50">
+                    Demo ↗
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="p-8 max-w-6xl mx-auto">
         <header class="bg-blue-600 text-white rounded-t-lg p-6">
             <h1 class="text-3xl font-bold">SCORM 1.2 API Validator</h1>
             <p class="mt-2">Test SCORM API communication and validate learning objects</p>
         </header>
 
-        <div class="bg-white rounded-b-lg shadow-lg p-6">
-            <!-- API Status -->
+        <!-- Tab Navigation -->
+        <div class="bg-white border-b border-gray-300">
+            <nav class="flex">
+                <button onclick="switchTab('validator')" id="tab-validator"
+                        class="tab-button px-6 py-3 font-semibold border-b-4 border-purple-600 text-purple-600 bg-purple-50">
+                    Package Validator
+                </button>
+                <button onclick="switchTab('api-tester')" id="tab-api-tester"
+                        class="tab-button px-6 py-3 font-semibold border-b-4 border-transparent text-gray-600 hover:text-gray-800 hover:bg-gray-50">
+                    API Tester
+                </button>
+            </nav>
+        </div>
+
+        <div class="bg-white rounded-b-lg shadow-lg">
+            <!-- Tab Content: Package Validator -->
+            <div id="content-validator" class="tab-content p-6">
+                <!-- Package Validator -->
+                <div class="mb-6 p-6 bg-gradient-to-r from-purple-50 to-indigo-50 rounded-lg border-2 border-purple-200">
+                <h2 class="text-xl font-semibold mb-3 text-purple-900">SCORM Package Validator</h2>
+                <p class="text-sm text-gray-700 mb-4">Upload a SCORM 1.2 package (.zip) to validate its structure and compliance</p>
+
+                <div class="flex gap-3 items-center">
+                    <input type="file" id="scorm-file-input" accept=".zip"
+                           class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-white focus:outline-none p-2">
+                    <button onclick="validatePackage()"
+                            class="bg-purple-600 hover:bg-purple-700 text-white py-2 px-6 rounded whitespace-nowrap font-semibold">
+                        Validate
+                    </button>
+                </div>
+
+                <div id="validation-results" class="mt-4 hidden">
+                    <!-- Results will be inserted here -->
+                </div>
+                </div>
+
+                <!-- Help for Package Validator -->
+                <details class="mb-6">
+                    <summary class="cursor-pointer font-semibold text-lg mb-2">Help & Instructions</summary>
+                    <div class="bg-purple-50 border-l-4 border-purple-500 p-4 mt-2">
+                        <h3 class="font-semibold mb-2">How to Use Package Validator:</h3>
+                        <ol class="list-decimal list-inside space-y-1 text-sm">
+                            <li>Click "Choose File" and select a SCORM 1.2 package (.zip file)</li>
+                            <li>Click the "Validate" button to analyze the package</li>
+                            <li>Review the validation results:
+                                <ul class="list-disc list-inside ml-6 mt-1">
+                                    <li><strong>Errors</strong> - Critical issues that must be fixed</li>
+                                    <li><strong>Warnings</strong> - Best practices and recommendations</li>
+                                    <li><strong>Info</strong> - Package details and structure</li>
+                                </ul>
+                            </li>
+                            <li>Fix any errors in your package and re-validate</li>
+                        </ol>
+                        <h3 class="font-semibold mt-4 mb-2">What Gets Validated:</h3>
+                        <ul class="list-disc list-inside space-y-1 text-sm">
+                            <li>Presence and validity of <code>imsmanifest.xml</code></li>
+                            <li>Required SCORM 1.2 structure (manifest, organizations, resources)</li>
+                            <li>All referenced files exist in the package</li>
+                            <li>Launch files are accessible</li>
+                            <li>Metadata and schema version</li>
+                            <li>Resource types and organization structure</li>
+                        </ul>
+                    </div>
+                </details>
+            </div>
+
+            <!-- Tab Content: API Tester -->
+            <div id="content-api-tester" class="tab-content p-6 hidden">
+                <!-- API Status -->
             <div class="mb-6">
                 <h2 class="text-xl font-semibold mb-3">SCORM API Status</h2>
                 <div id="api-status" class="p-4 rounded-lg bg-gray-100">
@@ -155,7 +296,7 @@
             <details class="mb-6">
                 <summary class="cursor-pointer font-semibold text-lg mb-2">Help & Instructions</summary>
                 <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mt-2">
-                    <h3 class="font-semibold mb-2">How to Use:</h3>
+                    <h3 class="font-semibold mb-2">How to Use API Tester:</h3>
                     <ol class="list-decimal list-inside space-y-1 text-sm">
                         <li>This tool simulates an LMS SCORM API for testing</li>
                         <li>Click "Initialize" to start a SCORM session</li>
@@ -176,11 +317,47 @@
                     </ul>
                 </div>
             </details>
+            </div>
         </div>
     </div>
 
     <!-- Mock SCORM API -->
     <script>
+        // Mobile menu toggle
+        document.getElementById('mobile-menu-button').addEventListener('click', function() {
+            var menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        });
+
+        // Tab Switching
+        function switchTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+
+            // Remove active styles from all tab buttons
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.classList.remove('border-purple-600', 'text-purple-600', 'bg-purple-50', 'border-blue-600', 'text-blue-600', 'bg-blue-50');
+                button.classList.add('border-transparent', 'text-gray-600');
+            });
+
+            // Show selected tab content
+            const contentId = 'content-' + tabName;
+            document.getElementById(contentId).classList.remove('hidden');
+
+            // Add active styles to selected tab button
+            const buttonId = 'tab-' + tabName;
+            const activeButton = document.getElementById(buttonId);
+            activeButton.classList.remove('border-transparent', 'text-gray-600');
+
+            if (tabName === 'validator') {
+                activeButton.classList.add('border-purple-600', 'text-purple-600', 'bg-purple-50');
+            } else {
+                activeButton.classList.add('border-blue-600', 'text-blue-600', 'bg-blue-50');
+            }
+        }
+
         // Create mock SCORM 1.2 API
         window.API = {
             data: {
@@ -430,6 +607,276 @@
             }
             const value = window.API.LMSGetValue(param);
             alert(param + ' = ' + value);
+        }
+
+        // SCORM Package Validation
+        async function validatePackage() {
+            const fileInput = document.getElementById('scorm-file-input');
+            const resultsDiv = document.getElementById('validation-results');
+
+            if (!fileInput.files || fileInput.files.length === 0) {
+                alert('Please select a SCORM package (.zip) to validate');
+                return;
+            }
+
+            const file = fileInput.files[0];
+
+            // Show loading state
+            resultsDiv.classList.remove('hidden');
+            resultsDiv.innerHTML = '<div class="text-center py-4"><div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-purple-500 border-t-transparent"></div><p class="mt-2 text-gray-600">Validating package...</p></div>';
+
+            try {
+                const zip = await JSZip.loadAsync(file);
+                const validationResult = await performValidation(zip);
+                displayValidationResults(validationResult);
+            } catch (error) {
+                resultsDiv.innerHTML = `
+                    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                        <strong class="font-bold">Error:</strong>
+                        <span class="block sm:inline">${error.message}</span>
+                    </div>
+                `;
+            }
+        }
+
+        async function performValidation(zip) {
+            const errors = [];
+            const warnings = [];
+            const info = [];
+            let manifest = null;
+            let manifestContent = '';
+
+            // Check for imsmanifest.xml
+            const manifestFile = zip.file('imsmanifest.xml');
+            if (!manifestFile) {
+                errors.push('Missing imsmanifest.xml file in package root');
+                return { errors, warnings, info, manifest: null };
+            }
+
+            info.push('✓ Found imsmanifest.xml');
+
+            // Read and parse manifest
+            try {
+                manifestContent = await manifestFile.async('text');
+                const parser = new DOMParser();
+                manifest = parser.parseFromString(manifestContent, 'text/xml');
+
+                // Check for parsing errors
+                const parserError = manifest.querySelector('parsererror');
+                if (parserError) {
+                    errors.push('Invalid XML in imsmanifest.xml: ' + parserError.textContent);
+                    return { errors, warnings, info, manifest: null };
+                }
+
+                info.push('✓ XML is well-formed');
+            } catch (e) {
+                errors.push('Failed to parse imsmanifest.xml: ' + e.message);
+                return { errors, warnings, info, manifest: null };
+            }
+
+            // Validate SCORM 1.2 structure
+            const manifestRoot = manifest.documentElement;
+
+            // Check root element
+            if (manifestRoot.nodeName !== 'manifest') {
+                errors.push('Root element must be <manifest>');
+            } else {
+                info.push('✓ Valid root element');
+            }
+
+            // Check metadata
+            const metadata = manifest.querySelector('manifest > metadata');
+            if (metadata) {
+                const schemaversion = metadata.querySelector('schemaversion');
+                if (schemaversion) {
+                    const version = schemaversion.textContent.trim();
+                    if (version === '1.2') {
+                        info.push('✓ SCORM version 1.2 declared');
+                    } else {
+                        warnings.push(`Schema version is "${version}" (expected "1.2")`);
+                    }
+                } else {
+                    warnings.push('No <schemaversion> found in metadata');
+                }
+            } else {
+                warnings.push('No <metadata> section found');
+            }
+
+            // Check organizations
+            const organizations = manifest.querySelector('manifest > organizations');
+            if (!organizations) {
+                errors.push('Missing <organizations> element');
+            } else {
+                info.push('✓ Found <organizations> element');
+
+                const defaultOrg = organizations.getAttribute('default');
+                if (defaultOrg) {
+                    const orgElement = manifest.querySelector(`organization[identifier="${defaultOrg}"]`);
+                    if (orgElement) {
+                        info.push(`✓ Default organization found: ${defaultOrg}`);
+
+                        // Check for items
+                        const items = orgElement.querySelectorAll('item');
+                        if (items.length > 0) {
+                            info.push(`✓ Found ${items.length} item(s) in organization`);
+                        } else {
+                            warnings.push('No items found in default organization');
+                        }
+                    } else {
+                        errors.push(`Default organization "${defaultOrg}" not found`);
+                    }
+                } else {
+                    warnings.push('No default organization specified');
+                }
+            }
+
+            // Check resources
+            const resources = manifest.querySelector('manifest > resources');
+            if (!resources) {
+                errors.push('Missing <resources> element');
+            } else {
+                const resourceElements = resources.querySelectorAll('resource');
+                if (resourceElements.length === 0) {
+                    warnings.push('No resources defined');
+                } else {
+                    info.push(`✓ Found ${resourceElements.length} resource(s)`);
+
+                    // Validate each resource
+                    for (const resource of resourceElements) {
+                        const identifier = resource.getAttribute('identifier');
+                        const type = resource.getAttribute('type');
+                        const href = resource.getAttribute('href');
+
+                        // Check resource type
+                        if (type === 'webcontent') {
+                            info.push(`  Resource "${identifier}": webcontent`);
+                        } else {
+                            warnings.push(`  Resource "${identifier}" has type "${type}" (expected "webcontent")`);
+                        }
+
+                        // Check if href file exists
+                        if (href) {
+                            const hrefFile = zip.file(href);
+                            if (hrefFile) {
+                                info.push(`  ✓ Launch file exists: ${href}`);
+                            } else {
+                                errors.push(`  Missing launch file: ${href}`);
+                            }
+                        }
+
+                        // Check dependency files
+                        const files = resource.querySelectorAll('file');
+                        let missingFiles = 0;
+                        for (const fileElement of files) {
+                            const filePath = fileElement.getAttribute('href');
+                            if (filePath && !zip.file(filePath)) {
+                                missingFiles++;
+                            }
+                        }
+                        if (missingFiles > 0) {
+                            errors.push(`  ${missingFiles} referenced file(s) missing for resource "${identifier}"`);
+                        }
+                    }
+                }
+            }
+
+            // Check for common files
+            const packageFiles = Object.keys(zip.files);
+            info.push(`Package contains ${packageFiles.length} file(s) total`);
+
+            // Look for common SCORM files
+            if (zip.file(/\.html?$/i).length > 0) {
+                info.push(`✓ Found ${zip.file(/\.html?$/i).length} HTML file(s)`);
+            }
+            if (zip.file(/\.js$/i).length > 0) {
+                info.push(`  Found ${zip.file(/\.js$/i).length} JavaScript file(s)`);
+            }
+            if (zip.file(/\.(css)$/i).length > 0) {
+                info.push(`  Found ${zip.file(/\.css$/i).length} CSS file(s)`);
+            }
+
+            return { errors, warnings, info, manifest, manifestContent };
+        }
+
+        function displayValidationResults(result) {
+            const resultsDiv = document.getElementById('validation-results');
+            const { errors, warnings, info } = result;
+
+            let html = '';
+
+            // Summary
+            if (errors.length === 0 && warnings.length === 0) {
+                html += `
+                    <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4">
+                        <div class="flex items-center">
+                            <svg class="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                            </svg>
+                            <strong class="font-bold text-lg">Valid SCORM 1.2 Package!</strong>
+                        </div>
+                        <p class="mt-2">This package passed all validation checks.</p>
+                    </div>
+                `;
+            } else if (errors.length > 0) {
+                html += `
+                    <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4">
+                        <div class="flex items-center">
+                            <svg class="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                            </svg>
+                            <strong class="font-bold text-lg">Validation Failed</strong>
+                        </div>
+                        <p class="mt-2">This package has ${errors.length} error(s) that must be fixed.</p>
+                    </div>
+                `;
+            } else {
+                html += `
+                    <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-4">
+                        <div class="flex items-center">
+                            <svg class="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                            </svg>
+                            <strong class="font-bold text-lg">Validation Passed with Warnings</strong>
+                        </div>
+                        <p class="mt-2">The package is valid but has ${warnings.length} warning(s).</p>
+                    </div>
+                `;
+            }
+
+            // Errors
+            if (errors.length > 0) {
+                html += '<div class="mb-4"><h3 class="font-bold text-red-700 mb-2">❌ Errors:</h3><ul class="list-disc list-inside space-y-1 text-sm bg-red-50 p-3 rounded">';
+                errors.forEach(error => {
+                    html += `<li class="text-red-800">${escapeHtml(error)}</li>`;
+                });
+                html += '</ul></div>';
+            }
+
+            // Warnings
+            if (warnings.length > 0) {
+                html += '<div class="mb-4"><h3 class="font-bold text-yellow-700 mb-2">⚠️ Warnings:</h3><ul class="list-disc list-inside space-y-1 text-sm bg-yellow-50 p-3 rounded">';
+                warnings.forEach(warning => {
+                    html += `<li class="text-yellow-800">${escapeHtml(warning)}</li>`;
+                });
+                html += '</ul></div>';
+            }
+
+            // Info
+            if (info.length > 0) {
+                html += '<div class="mb-4"><h3 class="font-bold text-blue-700 mb-2">ℹ️ Package Information:</h3><ul class="space-y-1 text-sm bg-blue-50 p-3 rounded font-mono">';
+                info.forEach(item => {
+                    html += `<li class="text-blue-800">${escapeHtml(item)}</li>`;
+                });
+                html += '</ul></div>';
+            }
+
+            resultsDiv.innerHTML = html;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
         }
 
         // Initialize display
