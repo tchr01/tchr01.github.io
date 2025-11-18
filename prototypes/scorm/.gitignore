@@ -8,7 +8,6 @@ yarn-error.log*
 dist/
 .temp-build/
 .temp-html/
-README.html
 
 # OS files
 .DS_Store
