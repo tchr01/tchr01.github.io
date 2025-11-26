@@ -1,0 +1,995 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Courier New', monospace;
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+    color: #fff;
+    overflow-x: hidden;
+    min-height: 100vh;
+}
+
+.container {
+    width: 100%;
+    min-height: 100vh;
+    padding: 15px;
+}
+
+/* Header */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding: 12px 20px;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 10px;
+    border: 2px solid #00ff88;
+    box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+}
+
+.title {
+    font-size: 2rem;
+    font-weight: bold;
+    text-shadow:
+        0 0 10px #00ff88,
+        0 0 15px #00ff88;
+    color: #00ff88;
+    letter-spacing: 6px;
+}
+
+.title .next {
+    color: #ff00ff;
+    text-shadow:
+        0 0 10px #ff00ff,
+        0 0 20px #ff00ff,
+        0 0 30px #ff00ff;
+    margin-left: 10px;
+}
+
+.mode-switch {
+    display: flex;
+    gap: 10px;
+}
+
+.mode-btn {
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-weight: bold;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid #666;
+    color: #aaa;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.mode-btn.active {
+    background: #00ff88;
+    border-color: #00ff88;
+    color: #000;
+    box-shadow: 0 0 20px rgba(0, 255, 136, 0.6);
+}
+
+.mode-btn:hover {
+    transform: scale(1.05);
+}
+
+/* Main Content Layout */
+.main-content {
+    display: grid;
+    grid-template-columns: 300px 1fr 300px;
+    gap: 15px;
+}
+
+/* Panels */
+.controls-panel,
+.center-panel,
+.visual-panel {
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 10px;
+    padding: 15px;
+    border: 2px solid #444;
+}
+
+.controls-panel h2,
+.center-panel h2,
+.visual-panel h2 {
+    font-size: 1.2rem;
+    margin-bottom: 12px;
+    color: #00ccff;
+    text-shadow: 0 0 10px #00ccff;
+}
+
+/* Control Groups */
+.control-group {
+    margin-bottom: 15px;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    border: 1px solid #333;
+}
+
+.control-group.compact {
+    padding: 8px 12px;
+    margin-bottom: 10px;
+}
+
+.control-group.synth-effect {
+    border-color: #00ccff40;
+    background: rgba(0, 204, 255, 0.08);
+}
+
+.control-group.drum-effect {
+    border-color: #ff006640;
+    background: rgba(255, 0, 102, 0.08);
+}
+
+/* Voice Selector */
+.voice-buttons {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+}
+
+.voice-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    padding: 8px 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid #666;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s;
+    min-height: 50px;
+}
+
+.voice-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+}
+
+.voice-btn.active {
+    background: linear-gradient(135deg, #ff00ff, #00ccff);
+    border-color: #fff;
+    box-shadow: 0 0 20px rgba(255, 0, 255, 0.6);
+}
+
+.voice-icon {
+    font-size: 1.3rem;
+}
+
+.voice-name {
+    font-size: 0.7rem;
+    font-weight: bold;
+    color: #fff;
+}
+
+.control-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1rem;
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #fff;
+}
+
+.icon {
+    font-size: 1.2rem;
+}
+
+/* Sliders */
+.slider {
+    width: 100%;
+    height: 8px;
+    background: linear-gradient(90deg, #ff00ff, #00ccff, #00ff88);
+    border-radius: 5px;
+    outline: none;
+    opacity: 0.8;
+    transition: opacity 0.3s;
+    -webkit-appearance: none;
+}
+
+.slider:hover {
+    opacity: 1;
+}
+
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 25px;
+    height: 25px;
+    background: #fff;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
+}
+
+.slider::-moz-range-thumb {
+    width: 25px;
+    height: 25px;
+    background: #fff;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
+}
+
+.slider-label {
+    margin-top: 10px;
+    font-size: 0.9rem;
+    color: #aaa;
+    text-align: center;
+}
+
+/* Waveform Display */
+.waveform-display {
+    width: 100%;
+    height: 50px;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 6px;
+    margin-bottom: 8px;
+    border: 1px solid #00ff88;
+    position: relative;
+    overflow: hidden;
+}
+
+.shape-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 5px;
+    font-size: 0.8rem;
+    color: #888;
+}
+
+/* Pitch Controls */
+.slider-value {
+    font-size: 0.9rem;
+    text-align: center;
+    color: #00ccff;
+    margin-top: 4px;
+}
+
+/* Keyboard Header with Octave Selector */
+.keyboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.octave-selector {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.octave-label {
+    font-size: 0.8rem;
+    color: #888;
+    margin-right: 5px;
+}
+
+.octave-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid #666;
+    border-radius: 6px;
+    color: #aaa;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.octave-btn.active {
+    background: #ff00ff;
+    border-color: #ff00ff;
+    color: #fff;
+    box-shadow: 0 0 10px rgba(255, 0, 255, 0.6);
+}
+
+.octave-btn:hover {
+    transform: scale(1.05);
+    border-color: #fff;
+}
+
+/* Toggle Buttons */
+.toggle-btn {
+    width: 100%;
+    padding: 8px;
+    font-size: 1rem;
+    font-weight: bold;
+    background: rgba(255, 0, 0, 0.3);
+    border: 2px solid #ff0000;
+    border-radius: 6px;
+    color: #ff0000;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-bottom: 8px;
+}
+
+.toggle-btn.active {
+    background: rgba(0, 255, 136, 0.3);
+    border-color: #00ff88;
+    color: #00ff88;
+    box-shadow: 0 0 15px rgba(0, 255, 136, 0.5);
+}
+
+/* Arp Pattern Buttons */
+.arp-pattern-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    margin-bottom: 8px;
+}
+
+.arp-btn {
+    padding: 8px 6px;
+    font-size: 0.85rem;
+    font-weight: bold;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid #666;
+    border-radius: 6px;
+    color: #aaa;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.arp-btn.active {
+    background: #00ccff;
+    border-color: #00ccff;
+    color: #000;
+    box-shadow: 0 0 12px rgba(0, 204, 255, 0.6);
+}
+
+.arp-btn:hover {
+    transform: scale(1.02);
+}
+
+/* Delay Controls */
+.delay-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.mini-control {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.mini-control label {
+    font-size: 0.75rem;
+    color: #aaa;
+}
+
+.mini-slider {
+    height: 5px;
+}
+
+.value-display {
+    font-size: 0.75rem;
+    color: #00ff88;
+    text-align: center;
+}
+
+/* Drum Pads */
+.drum-pads {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.drum-pad {
+    aspect-ratio: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    background: rgba(255, 255, 255, 0.1);
+    border: 3px solid #666;
+    border-radius: 15px;
+    cursor: pointer;
+    transition: all 0.15s;
+    position: relative;
+    overflow: hidden;
+}
+
+.drum-pad::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle, transparent 30%, rgba(0, 0, 0, 0.5));
+    opacity: 0;
+    transition: opacity 0.15s;
+}
+
+.drum-pad:hover {
+    transform: scale(1.05);
+    border-color: #fff;
+}
+
+.drum-pad:active,
+.drum-pad.playing {
+    transform: scale(0.95);
+    box-shadow: inset 0 0 30px rgba(255, 255, 255, 0.5);
+}
+
+.drum-pad.playing::before {
+    opacity: 1;
+}
+
+.drum-pad.kick {
+    border-color: #ff0066;
+    color: #ff0066;
+}
+
+.drum-pad.kick:active,
+.drum-pad.kick.playing {
+    background: rgba(255, 0, 102, 0.4);
+    box-shadow: 0 0 30px rgba(255, 0, 102, 0.8);
+}
+
+.drum-pad.snare {
+    border-color: #ffaa00;
+    color: #ffaa00;
+}
+
+.drum-pad.snare:active,
+.drum-pad.snare.playing {
+    background: rgba(255, 170, 0, 0.4);
+    box-shadow: 0 0 30px rgba(255, 170, 0, 0.8);
+}
+
+.drum-pad.hihat-closed,
+.drum-pad.hihat-open {
+    border-color: #00ccff;
+    color: #00ccff;
+}
+
+.drum-pad.hihat-closed:active,
+.drum-pad.hihat-closed.playing,
+.drum-pad.hihat-open:active,
+.drum-pad.hihat-open.playing {
+    background: rgba(0, 204, 255, 0.4);
+    box-shadow: 0 0 30px rgba(0, 204, 255, 0.8);
+}
+
+.drum-pad.clap {
+    border-color: #ff00ff;
+    color: #ff00ff;
+}
+
+.drum-pad.clap:active,
+.drum-pad.clap.playing {
+    background: rgba(255, 0, 255, 0.4);
+    box-shadow: 0 0 30px rgba(255, 0, 255, 0.8);
+}
+
+.drum-pad.tom {
+    border-color: #00ff88;
+    color: #00ff88;
+}
+
+.drum-pad.tom:active,
+.drum-pad.tom.playing {
+    background: rgba(0, 255, 136, 0.4);
+    box-shadow: 0 0 30px rgba(0, 255, 136, 0.8);
+}
+
+.drum-pad.crash {
+    border-color: #ffff00;
+    color: #ffff00;
+}
+
+.drum-pad.crash:active,
+.drum-pad.crash.playing {
+    background: rgba(255, 255, 0, 0.4);
+    box-shadow: 0 0 30px rgba(255, 255, 0, 0.8);
+}
+
+.drum-pad.rim {
+    border-color: #ff6600;
+    color: #ff6600;
+}
+
+.drum-pad.rim:active,
+.drum-pad.rim.playing {
+    background: rgba(255, 102, 0, 0.4);
+    box-shadow: 0 0 30px rgba(255, 102, 0, 0.8);
+}
+
+.pad-icon {
+    font-size: 2.5rem;
+}
+
+.pad-label {
+    font-size: 0.9rem;
+}
+
+/* Beat Sequencer Controls in Live Mode */
+.beat-sequencer-controls {
+    margin-top: 30px;
+    padding: 20px;
+    background: rgba(0, 255, 136, 0.1);
+    border-radius: 10px;
+    border: 2px solid #00ff88;
+}
+
+.beat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.beat-header h3 {
+    color: #00ff88;
+    text-shadow: 0 0 10px #00ff88;
+    margin: 0;
+}
+
+.beat-status {
+    font-size: 1.5rem;
+    color: #666;
+    transition: all 0.3s;
+}
+
+.beat-status.playing {
+    color: #00ff88;
+    text-shadow: 0 0 20px #00ff88;
+    animation: beatPulse 1s ease-in-out infinite;
+}
+
+@keyframes beatPulse {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.6;
+        transform: scale(1.2);
+    }
+}
+
+.beat-controls {
+    display: flex;
+    gap: 10px;
+}
+
+.beat-btn {
+    flex: 1;
+    padding: 12px;
+    font-size: 1rem;
+    font-weight: bold;
+    background: rgba(0, 255, 136, 0.2);
+    border: 2px solid #00ff88;
+    border-radius: 8px;
+    color: #00ff88;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.beat-btn:hover {
+    background: rgba(0, 255, 136, 0.4);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 255, 136, 0.4);
+}
+
+.beat-btn:active {
+    transform: translateY(0);
+}
+
+.beat-btn.active {
+    background: #00ff88;
+    color: #000;
+    box-shadow: 0 0 20px rgba(0, 255, 136, 0.8);
+}
+
+/* Keyboard */
+.keyboard-container {
+    margin-top: 30px;
+}
+
+/* Sustain Control */
+.sustain-control {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 15px;
+    padding: 10px 15px;
+    background: rgba(255, 0, 255, 0.1);
+    border-radius: 8px;
+    border: 2px solid #ff00ff40;
+}
+
+.sustain-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1rem;
+    font-weight: bold;
+    color: #ff00ff;
+    text-shadow: 0 0 10px #ff00ff;
+}
+
+.sustain-icon {
+    font-size: 1.2rem;
+}
+
+.sustain-toggle-btn {
+    padding: 8px 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    background: rgba(255, 0, 0, 0.3);
+    border: 2px solid #ff0000;
+    border-radius: 6px;
+    color: #ff0000;
+    cursor: pointer;
+    transition: all 0.3s;
+    min-width: 60px;
+}
+
+.sustain-toggle-btn.active {
+    background: rgba(255, 0, 255, 0.4);
+    border-color: #ff00ff;
+    color: #ff00ff;
+    box-shadow: 0 0 15px rgba(255, 0, 255, 0.6);
+}
+
+.sustain-toggle-btn:hover {
+    transform: scale(1.05);
+}
+
+.keyboard-container h3 {
+    color: #ff00ff;
+    margin-bottom: 15px;
+    text-shadow: 0 0 10px #ff00ff;
+}
+
+.keyboard {
+    display: flex;
+    gap: 2px;
+    background: #000;
+    padding: 15px;
+    border-radius: 10px;
+    border: 2px solid #333;
+    justify-content: center;
+}
+
+.key {
+    width: 40px;
+    height: 150px;
+    background: #fff;
+    border: 2px solid #000;
+    border-radius: 0 0 5px 5px;
+    cursor: pointer;
+    transition: all 0.1s;
+    position: relative;
+}
+
+.key.white {
+    background: linear-gradient(180deg, #fff 0%, #ddd 100%);
+}
+
+.key.black {
+    width: 30px;
+    height: 100px;
+    background: linear-gradient(180deg, #333 0%, #000 100%);
+    margin: 0 -16px;
+    z-index: 2;
+}
+
+.key:hover {
+    filter: brightness(1.2);
+}
+
+.key.active {
+    background: #00ff88 !important;
+    box-shadow: 0 0 20px rgba(0, 255, 136, 0.8);
+    transform: translateY(3px);
+}
+
+.key-label {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.7rem;
+    font-weight: bold;
+    color: #000;
+}
+
+.key.black .key-label {
+    color: #fff;
+}
+
+/* MIDI Status */
+.midi-status {
+    margin-top: 20px;
+    padding: 15px;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 8px;
+    border: 2px solid #666;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.midi-status.connected {
+    border-color: #00ff88;
+    background: rgba(0, 255, 136, 0.1);
+}
+
+.status-icon {
+    font-size: 1.5rem;
+}
+
+.status-text {
+    font-size: 1rem;
+    color: #aaa;
+}
+
+.midi-status.connected .status-text {
+    color: #00ff88;
+}
+
+/* Sequencer Mode */
+.sequencer-mode {
+    display: none;
+}
+
+.sequencer-mode.active {
+    display: block;
+}
+
+.live-mode {
+    display: none;
+}
+
+.live-mode.active {
+    display: block;
+}
+
+.sequencer-controls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+    padding: 15px;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 10px;
+}
+
+.seq-btn {
+    width: 60px;
+    height: 60px;
+    font-size: 1.5rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid #666;
+    border-radius: 10px;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.seq-btn:hover {
+    transform: scale(1.1);
+}
+
+.play-btn {
+    border-color: #00ff88;
+    color: #00ff88;
+}
+
+.play-btn:hover,
+.play-btn.active {
+    background: rgba(0, 255, 136, 0.3);
+    box-shadow: 0 0 20px rgba(0, 255, 136, 0.6);
+}
+
+.stop-btn {
+    border-color: #ff0066;
+    color: #ff0066;
+}
+
+.stop-btn:hover {
+    background: rgba(255, 0, 102, 0.3);
+    box-shadow: 0 0 20px rgba(255, 0, 102, 0.6);
+}
+
+.clear-btn {
+    border-color: #ffaa00;
+    color: #ffaa00;
+}
+
+.clear-btn:hover {
+    background: rgba(255, 170, 0, 0.3);
+    box-shadow: 0 0 20px rgba(255, 170, 0, 0.6);
+}
+
+.tempo-control {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.tempo-control label {
+    color: #aaa;
+    font-size: 1rem;
+}
+
+/* Sequencer Grid */
+.sequencer-grid {
+    background: rgba(0, 0, 0, 0.5);
+    padding: 20px;
+    border-radius: 10px;
+    border: 2px solid #333;
+    overflow-x: auto;
+}
+
+.seq-cell {
+    position: relative;
+    transition: all 0.2s ease;
+}
+
+.seq-cell.active {
+    animation: cellPulse 0.3s ease-out;
+}
+
+.step-header {
+    transition: all 0.15s ease;
+}
+
+.track-label {
+    user-select: none;
+}
+
+@keyframes cellPulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.15);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Mixer */
+.mixer-section {
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-end;
+    gap: 20px;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 10px;
+    border: 2px solid #444;
+    margin-bottom: 15px;
+}
+
+.mixer-control {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+}
+
+.mixer-label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: #fff;
+    text-align: center;
+}
+
+.mixer-icon {
+    font-size: 1.5rem;
+}
+
+.mixer-slider {
+    width: 100%;
+    height: 8px;
+    background: linear-gradient(90deg, #333, #00ff88);
+    border-radius: 5px;
+    outline: none;
+    opacity: 0.9;
+    transition: opacity 0.3s;
+}
+
+.mixer-slider:hover {
+    opacity: 1;
+}
+
+.mixer-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 30px;
+    height: 30px;
+    background: #fff;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
+    border: 3px solid #00ff88;
+}
+
+.mixer-slider::-moz-range-thumb {
+    width: 30px;
+    height: 30px;
+    background: #fff;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
+    border: 3px solid #00ff88;
+}
+
+.mixer-value {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #00ff88;
+    text-shadow: 0 0 10px #00ff88;
+    min-width: 50px;
+    text-align: center;
+}
+
+/* Visualizer */
+.visualizer {
+    width: 100%;
+    height: 250px;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 10px;
+    border: 2px solid #00ff88;
+}
+
+
+/* Responsive Design */
+@media (max-width: 1400px) {
+    .main-content {
+        grid-template-columns: 1fr;
+    }
+
+    .title {
+        font-size: 2rem;
+    }
+
+    .mode-btn {
+        padding: 10px 20px;
+        font-size: 1rem;
+    }
+}
+
+/* Animation for playing elements */
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+.playing {
+    animation: pulse 0.3s ease-in-out;
+}

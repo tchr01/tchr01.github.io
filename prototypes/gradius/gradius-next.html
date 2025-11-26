@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GradiusNext - EDM Synth & Drums</title>
+    <link rel="stylesheet" href="gradius-next.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1 class="title">GRADIUS<span class="next">NEXT</span></h1>
+            <div class="mode-switch">
+                <button class="mode-btn active" data-mode="live">🎹 LIVE</button>
+                <button class="mode-btn" data-mode="sequencer">🎵 SEQUENCER</button>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <div class="main-content">
+            <!-- Left Panel: Sound Controls -->
+            <aside class="controls-panel">
+                <h2>SYNTH CONTROLS</h2>
+
+                <!-- Voice Selector -->
+                <div class="control-group voice-selector">
+                    <label class="control-label">
+                        <span class="icon">🎛️</span> VOICE
+                    </label>
+                    <div class="voice-buttons" id="voiceButtons">
+                        <button class="voice-btn active" data-voice="lead">
+                            <span class="voice-icon">🎸</span>
+                            <span class="voice-name">LEAD</span>
+                        </button>
+                        <button class="voice-btn" data-voice="bass">
+                            <span class="voice-icon">🔊</span>
+                            <span class="voice-name">BASS</span>
+                        </button>
+                        <button class="voice-btn" data-voice="pad">
+                            <span class="voice-icon">☁️</span>
+                            <span class="voice-name">PAD</span>
+                        </button>
+                        <button class="voice-btn" data-voice="pluck">
+                            <span class="voice-icon">🎹</span>
+                            <span class="voice-name">PLUCK</span>
+                        </button>
+                        <button class="voice-btn" data-voice="organ">
+                            <span class="voice-icon">🎺</span>
+                            <span class="voice-name">ORGAN</span>
+                        </button>
+                        <button class="voice-btn" data-voice="bell">
+                            <span class="voice-icon">🔔</span>
+                            <span class="voice-name">BELL</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Shape Control -->
+                <div class="control-group">
+                    <label class="control-label">
+                        <span class="icon">🌊</span> SHAPE
+                    </label>
+                    <div class="waveform-display" id="waveformDisplay"></div>
+                    <input type="range" class="slider shape-slider" id="shapeSlider" min="0" max="4" step="0.1" value="1">
+                    <div class="shape-labels">
+                        <span>SINE</span>
+                        <span>SAW</span>
+                        <span>SQR</span>
+                        <span>TRI</span>
+                        <span>PWM</span>
+                    </div>
+                </div>
+
+                <!-- Pitch Bend Control -->
+                <div class="control-group compact">
+                    <label class="control-label">
+                        <span class="icon">🎵</span> PITCH BEND
+                    </label>
+                    <input type="range" class="slider pitch-slider" id="pitchBend" min="-200" max="200" step="1" value="0">
+                    <div class="slider-value" id="pitchDisplay">0</div>
+                </div>
+
+                <!-- Arpeggiator Control -->
+                <div class="control-group">
+                    <label class="control-label">
+                        <span class="icon">⚡</span> ARPEGGIATOR
+                    </label>
+                    <div class="arp-toggle">
+                        <button class="toggle-btn" id="arpToggle">OFF</button>
+                    </div>
+                    <div class="arp-pattern-buttons">
+                        <button class="arp-btn active" data-pattern="up">↑ UP</button>
+                        <button class="arp-btn" data-pattern="down">↓ DOWN</button>
+                        <button class="arp-btn" data-pattern="updown">↕ UP-DOWN</button>
+                        <button class="arp-btn" data-pattern="random">🎲 RANDOM</button>
+                    </div>
+                    <input type="range" class="slider arp-slider" id="arpSpeed" min="50" max="500" step="10" value="150">
+                    <div class="slider-label">SPEED: <span id="arpSpeedValue">150ms</span></div>
+                </div>
+
+            </aside>
+
+            <!-- Center: Drum Pads / Sequencer -->
+            <section class="center-panel">
+                <!-- Live Mode: Drum Pads -->
+                <div class="live-mode active" id="liveMode">
+                    <h2>DRUM PADS</h2>
+                    <div class="drum-pads">
+                        <button class="drum-pad kick" data-sound="kick">
+                            <span class="pad-icon">🥁</span>
+                            <span class="pad-label">KICK</span>
+                        </button>
+                        <button class="drum-pad snare" data-sound="snare">
+                            <span class="pad-icon">🥁</span>
+                            <span class="pad-label">SNARE</span>
+                        </button>
+                        <button class="drum-pad hihat-closed" data-sound="hihat-closed">
+                            <span class="pad-icon">🎩</span>
+                            <span class="pad-label">HI-HAT</span>
+                        </button>
+                        <button class="drum-pad hihat-open" data-sound="hihat-open">
+                            <span class="pad-icon">🎩</span>
+                            <span class="pad-label">HI-HAT OPEN</span>
+                        </button>
+                        <button class="drum-pad clap" data-sound="clap">
+                            <span class="pad-icon">👏</span>
+                            <span class="pad-label">CLAP</span>
+                        </button>
+                        <button class="drum-pad tom" data-sound="tom">
+                            <span class="pad-icon">🥁</span>
+                            <span class="pad-label">TOM</span>
+                        </button>
+                        <button class="drum-pad crash" data-sound="crash">
+                            <span class="pad-icon">💥</span>
+                            <span class="pad-label">CRASH</span>
+                        </button>
+                        <button class="drum-pad rim" data-sound="rim">
+                            <span class="pad-icon">⭕</span>
+                            <span class="pad-label">RIMSHOT</span>
+                        </button>
+                    </div>
+
+                    <!-- Beat Sequencer Controls -->
+                    <div class="beat-sequencer-controls">
+                        <div class="beat-header">
+                            <h3>BEAT SEQUENCER</h3>
+                            <span class="beat-status" id="beatStatus">●</span>
+                        </div>
+                        <div class="beat-controls">
+                            <button class="beat-btn" id="beatPlay">▶ PLAY BEAT</button>
+                            <button class="beat-btn" id="beatStop">⏹ STOP</button>
+                            <button class="beat-btn" id="beatEdit">✎ EDIT</button>
+                        </div>
+                    </div>
+
+                    <!-- Keyboard Visualization -->
+                    <div class="keyboard-container">
+                        <div class="keyboard-header">
+                            <h3>KEYBOARD</h3>
+                            <div class="octave-selector">
+                                <span class="octave-label">OCTAVE:</span>
+                                <button class="octave-btn" data-octave="2">2</button>
+                                <button class="octave-btn" data-octave="3">3</button>
+                                <button class="octave-btn active" data-octave="4">4</button>
+                                <button class="octave-btn" data-octave="5">5</button>
+                                <button class="octave-btn" data-octave="6">6</button>
+                            </div>
+                        </div>
+                        <div class="keyboard" id="keyboard">
+                            <!-- Will be generated by JS -->
+                        </div>
+
+                        <!-- Sustain Toggle -->
+                        <div class="sustain-control">
+                            <label class="sustain-label">
+                                <span class="sustain-icon">🎹</span>
+                                SUSTAIN
+                            </label>
+                            <button class="sustain-toggle-btn" id="sustainToggle">OFF</button>
+                        </div>
+                    </div>
+
+                    <!-- MIDI Status -->
+                    <div class="midi-status" id="midiStatus">
+                        <span class="status-icon">🎹</span>
+                        <span class="status-text">MIDI: Not Connected</span>
+                    </div>
+                </div>
+
+                <!-- Sequencer Mode -->
+                <div class="sequencer-mode" id="sequencerMode">
+                    <h2>SEQUENCER</h2>
+                    <div class="sequencer-controls">
+                        <button class="seq-btn play-btn" id="seqPlay">▶</button>
+                        <button class="seq-btn stop-btn" id="seqStop">⏹</button>
+                        <button class="seq-btn clear-btn" id="seqClear">✕</button>
+                        <div class="tempo-control">
+                            <label>BPM: <span id="bpmValue">120</span></label>
+                            <input type="range" class="slider" id="bpmSlider" min="60" max="180" step="1" value="120">
+                        </div>
+                    </div>
+                    <div class="sequencer-grid" id="sequencerGrid">
+                        <!-- Will be generated by JS -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Right Panel: Effects & Visualizer -->
+            <aside class="visual-panel">
+                <h2>EFFECTS</h2>
+
+                <!-- Synth Delay Effect -->
+                <div class="control-group synth-effect">
+                    <label class="control-label">
+                        <span class="icon">🔁</span> SYNTH DELAY
+                    </label>
+                    <div class="effect-toggle">
+                        <button class="toggle-btn active" id="synthDelayToggle">ON</button>
+                    </div>
+                    <div class="delay-controls">
+                        <div class="mini-control">
+                            <label>TIME</label>
+                            <input type="range" class="slider mini-slider" id="synthDelayTime" min="0.05" max="1.0" step="0.05" value="0.3">
+                            <span class="value-display" id="synthDelayTimeValue">300ms</span>
+                        </div>
+                        <div class="mini-control">
+                            <label>FEEDBACK</label>
+                            <input type="range" class="slider mini-slider" id="synthDelayFeedback" min="0" max="0.8" step="0.05" value="0.3">
+                            <span class="value-display" id="synthDelayFeedbackValue">30%</span>
+                        </div>
+                        <div class="mini-control">
+                            <label>MIX</label>
+                            <input type="range" class="slider mini-slider" id="synthDelayMix" min="0" max="1" step="0.05" value="0.3">
+                            <span class="value-display" id="synthDelayMixValue">30%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Drum Delay Effect -->
+                <div class="control-group drum-effect">
+                    <label class="control-label">
+                        <span class="icon">🥁</span> DRUM DELAY
+                    </label>
+                    <div class="effect-toggle">
+                        <button class="toggle-btn" id="drumDelayToggle">OFF</button>
+                    </div>
+                    <div class="delay-controls">
+                        <div class="mini-control">
+                            <label>TIME</label>
+                            <input type="range" class="slider mini-slider" id="drumDelayTime" min="0.05" max="1.0" step="0.05" value="0.3">
+                            <span class="value-display" id="drumDelayTimeValue">300ms</span>
+                        </div>
+                        <div class="mini-control">
+                            <label>FEEDBACK</label>
+                            <input type="range" class="slider mini-slider" id="drumDelayFeedback" min="0" max="0.8" step="0.05" value="0.3">
+                            <span class="value-display" id="drumDelayFeedbackValue">30%</span>
+                        </div>
+                        <div class="mini-control">
+                            <label>MIX</label>
+                            <input type="range" class="slider mini-slider" id="drumDelayMix" min="0" max="1" step="0.05" value="0.0">
+                            <span class="value-display" id="drumDelayMixValue">0%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mixer -->
+                <h2 style="margin-top: 20px;">MIXER</h2>
+                <div class="mixer-section">
+                    <div class="mixer-control">
+                        <label class="mixer-label">
+                            <span class="mixer-icon">🥁</span>
+                            DRUMS
+                        </label>
+                        <input type="range" class="slider mixer-slider" id="drumVolume" min="0" max="1" step="0.01" value="1.0" orient="vertical">
+                        <span class="mixer-value" id="drumVolumeValue">100%</span>
+                    </div>
+                    <div class="mixer-control">
+                        <label class="mixer-label">
+                            <span class="mixer-icon">🎹</span>
+                            SYNTH
+                        </label>
+                        <input type="range" class="slider mixer-slider" id="synthVolume" min="0" max="1" step="0.01" value="1.0" orient="vertical">
+                        <span class="mixer-value" id="synthVolumeValue">100%</span>
+                    </div>
+                </div>
+
+                <h2 style="margin-top: 20px;">VISUALIZER</h2>
+                <canvas class="visualizer" id="visualizer" width="300" height="250"></canvas>
+            </aside>
+        </div>
+    </div>
+
+    <script src="gradius-next.js"></script>
+</body>
+</html>
