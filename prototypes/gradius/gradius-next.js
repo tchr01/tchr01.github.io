@@ -27,7 +27,7 @@ class GradiusNext {
         this.drumDelay = { node: null, feedback: null, wet: null, dry: null };
         this.synthDelay = { node: null, feedback: null, wet: null, dry: null };
         this.drumDelaySavedMix = 0.3; // Save mix value when toggling off
-        this.synthDelaySavedMix = 0.0; // Save mix value when toggling off (0% default - off)
+        this.synthDelaySavedMix = 0.5; // Save mix value when toggling off (50% default - on)
 
         // Flanger effect
         this.flanger = {
@@ -204,10 +204,10 @@ class GradiusNext {
         this.synthDelay.feedback.gain.value = 0.65; // 65% feedback default
 
         this.synthDelay.wet = this.audioContext.createGain();
-        this.synthDelay.wet.gain.value = 0.0; // 0% mix (off by default)
+        this.synthDelay.wet.gain.value = 0.5; // 50% mix (on by default)
 
         this.synthDelay.dry = this.audioContext.createGain();
-        this.synthDelay.dry.gain.value = 1.0; // 100% dry (off by default)
+        this.synthDelay.dry.gain.value = 0.5; // 50% dry (on by default)
 
         // Connect synth delay chain
         this.synthDelay.node.connect(this.synthDelay.feedback);
