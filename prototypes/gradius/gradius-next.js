@@ -29,16 +29,16 @@ class GradiusNext {
         this.drumDelaySavedMix = 0.3; // Save mix value when toggling off
         this.synthDelaySavedMix = 0.5; // Save mix value when toggling off (50% default - on)
 
-        // Flanger effect
-        this.flanger = {
-            delay: null,        // DelayNode for flanger effect
+        // Phaser effect
+        this.phaser = {
+            delay: null,        // DelayNode for phaser effect
             lfo: null,          // OscillatorNode for LFO
             lfoGain: null,      // GainNode to control LFO depth
             feedback: null,     // GainNode for feedback
             wet: null,          // GainNode for wet signal
             dry: null           // GainNode for dry signal
         };
-        this.flangerDepth = 0.0; // 0-1 intensity (default 0% - off)
+        this.phaserSpeed = 0.5; // 0.1-10 Hz LFO speed (default 0.5 Hz)
 
         this.setupDelayChains();
 
@@ -216,40 +216,40 @@ class GradiusNext {
         this.synthDelay.wet.connect(this.synthMixer);
         this.synthDelay.dry.connect(this.synthMixer);
 
-        // Create FLANGER chain (MORE DRAMATIC)
-        this.flanger.delay = this.audioContext.createDelay(0.05); // 50ms max delay (bigger range)
-        this.flanger.delay.delayTime.value = 0.01; // 10ms base delay (deeper starting point)
+        // Create PHASER chain
+        this.phaser.delay = this.audioContext.createDelay(0.02); // 20ms max delay for phaser
+        this.phaser.delay.delayTime.value = 0.003; // 3ms base delay
 
-        this.flanger.lfo = this.audioContext.createOscillator();
-        this.flanger.lfo.frequency.value = 0.3; // 0.3 Hz LFO rate (slower sweep for more drama)
+        this.phaser.lfo = this.audioContext.createOscillator();
+        this.phaser.lfo.frequency.value = 0.5; // 0.5 Hz default LFO rate
 
-        this.flanger.lfoGain = this.audioContext.createGain();
-        this.flanger.lfoGain.gain.value = 0.0; // 0ms depth (off by default)
+        this.phaser.lfoGain = this.audioContext.createGain();
+        this.phaser.lfoGain.gain.value = 0.005; // 5ms depth (subtle phaser effect)
 
-        this.flanger.feedback = this.audioContext.createGain();
-        this.flanger.feedback.gain.value = 0.7; // 70% feedback (more resonance)
+        this.phaser.feedback = this.audioContext.createGain();
+        this.phaser.feedback.gain.value = 0.6; // 60% feedback for phaser resonance
 
-        this.flanger.wet = this.audioContext.createGain();
-        this.flanger.wet.gain.value = 0.0; // 0% wet (off by default)
+        this.phaser.wet = this.audioContext.createGain();
+        this.phaser.wet.gain.value = 0.5; // 50% wet (on by default)
 
-        this.flanger.dry = this.audioContext.createGain();
-        this.flanger.dry.gain.value = 1.0; // 100% dry (off by default)
+        this.phaser.dry = this.audioContext.createGain();
+        this.phaser.dry.gain.value = 1.0; // 100% dry
 
-        // Connect flanger chain
-        this.flanger.lfo.connect(this.flanger.lfoGain);
-        this.flanger.lfoGain.connect(this.flanger.delay.delayTime);
-        this.flanger.delay.connect(this.flanger.feedback);
-        this.flanger.feedback.connect(this.flanger.delay);
+        // Connect phaser chain
+        this.phaser.lfo.connect(this.phaser.lfoGain);
+        this.phaser.lfoGain.connect(this.phaser.delay.delayTime);
+        this.phaser.delay.connect(this.phaser.feedback);
+        this.phaser.feedback.connect(this.phaser.delay);
 
-        // Connect flanger output to existing delay chain
-        this.flanger.delay.connect(this.flanger.wet);
-        this.flanger.wet.connect(this.synthDelay.node);
-        this.flanger.wet.connect(this.synthDelay.dry);
-        this.flanger.dry.connect(this.synthDelay.node);
-        this.flanger.dry.connect(this.synthDelay.dry);
+        // Connect phaser output to existing delay chain
+        this.phaser.delay.connect(this.phaser.wet);
+        this.phaser.wet.connect(this.synthDelay.node);
+        this.phaser.wet.connect(this.synthDelay.dry);
+        this.phaser.dry.connect(this.synthDelay.node);
+        this.phaser.dry.connect(this.synthDelay.dry);
 
         // Start LFO
-        this.flanger.lfo.start();
+        this.phaser.lfo.start();
     }
 
     getDrumDestination() {
@@ -258,8 +258,8 @@ class GradiusNext {
     }
 
     getSynthDestination() {
-        // Return synth audio destination (routes through flanger first, then delay)
-        return this.flanger.delay;
+        // Return synth audio destination (routes through phaser first, then delay)
+        return this.phaser.delay;
     }
 
     // ===== DRUM SAMPLES =====
@@ -1011,8 +1011,8 @@ class GradiusNext {
         gain.gain.value = 0.6;
 
         source.connect(gain);
-        gain.connect(this.flanger.delay);
-        gain.connect(this.flanger.dry);
+        gain.connect(this.phaser.delay);
+        gain.connect(this.phaser.dry);
 
         source.start(0);
 
@@ -1063,10 +1063,10 @@ class GradiusNext {
         const gain = this.audioContext.createGain();
         gain.gain.value = 0;
 
-        // Connect audio chain - route through flanger then delay
+        // Connect audio chain - route through phaser then delay
         osc.connect(gain);
-        gain.connect(this.flanger.delay);
-        gain.connect(this.flanger.dry);
+        gain.connect(this.phaser.delay);
+        gain.connect(this.phaser.dry);
 
         // ADSR envelope from voice preset
         const now = this.audioContext.currentTime;
@@ -1359,20 +1359,18 @@ class GradiusNext {
                     }
                     this.lastCC64Value = velocity;
                 } else if (note === 7) {
-                    // CC7 Volume Knob - Flanger Intensity (0-127)
-                    const intensity = velocity / 127; // Normalize to 0-1
-                    this.flangerDepth = intensity;
+                    // CC7 Volume Knob - Phaser Speed (0-127)
+                    const speed = 0.1 + (velocity / 127) * 9.9; // Map to 0.1-10 Hz
+                    this.phaserSpeed = speed;
 
-                    // Update LFO depth and wet/dry mix (MORE DRAMATIC)
-                    this.flanger.lfoGain.gain.value = 0.03 * intensity; // 0-30ms modulation (6x bigger)
-                    this.flanger.wet.gain.value = intensity * 0.8; // Max 80% wet (much more pronounced)
-                    this.flanger.dry.gain.value = 1 - (intensity * 0.5); // More dry reduction (50-100%)
+                    // Update LFO frequency
+                    this.phaser.lfo.frequency.value = speed;
 
                     // Update UI slider
-                    document.getElementById('flangerIntensity').value = intensity;
-                    document.getElementById('flangerIntensityValue').textContent = Math.round(intensity * 100) + '%';
+                    document.getElementById('phaserSpeed').value = speed;
+                    document.getElementById('phaserSpeedValue').textContent = speed.toFixed(1) + ' Hz';
 
-                    console.log(`🌊 Flanger intensity: ${Math.round(intensity * 100)}%`);
+                    console.log(`🌊 Phaser speed: ${speed.toFixed(1)} Hz`);
                 } else if (note === 102 && velocity > 0) {
                     // CC102: Octave Up (M-Audio convention - if controller sends it)
                     if (this.currentOctave < 6) {
@@ -1412,7 +1410,7 @@ class GradiusNext {
     // ===== SEQUENCER =====
     createEmptySequencer() {
         // 8 drum tracks + 4 synth tracks = 12 tracks total
-        // C major pentatonic scale: C, D, E, G, A (in octave 4)
+        // C major pentatonic scale: C, D, E, G, A (in octave 2)
         const drumTracks = [
             { steps: Array(16).fill(false), isDrum: true, drumSound: 'kick', label: 'KICK', color: '#ff0066' },
             { steps: Array(16).fill(false), isDrum: true, drumSound: 'snare', label: 'SNARE', color: '#ffaa00' },
@@ -1425,10 +1423,10 @@ class GradiusNext {
         ];
 
         const synthTracks = [
-            { steps: Array(16).fill(false), isDrum: false, note: 72, label: 'C5', color: '#9d4edd', isSynthSeq: true }, // C5
-            { steps: Array(16).fill(false), isDrum: false, note: 69, label: 'A4', color: '#7b2cbf', isSynthSeq: true }, // A4
-            { steps: Array(16).fill(false), isDrum: false, note: 67, label: 'G4', color: '#5a189a', isSynthSeq: true }, // G4
-            { steps: Array(16).fill(false), isDrum: false, note: 64, label: 'E4', color: '#3c096c', isSynthSeq: true }  // E4
+            { steps: Array(16).fill(false), isDrum: false, note: 36, label: 'C2', color: '#9d4edd', isSynthSeq: true }, // C2
+            { steps: Array(16).fill(false), isDrum: false, note: 45, label: 'A2', color: '#7b2cbf', isSynthSeq: true }, // A2
+            { steps: Array(16).fill(false), isDrum: false, note: 43, label: 'G2', color: '#5a189a', isSynthSeq: true }, // G2
+            { steps: Array(16).fill(false), isDrum: false, note: 40, label: 'E2', color: '#3c096c', isSynthSeq: true }  // E2
         ];
 
         return [...drumTracks, ...synthTracks];
@@ -2130,17 +2128,15 @@ class GradiusNext {
             document.getElementById('synthDelayMixValue').textContent = Math.round(value * 100) + '%';
         });
 
-        // FLANGER Intensity control
-        document.getElementById('flangerIntensity').addEventListener('input', (e) => {
-            const intensity = parseFloat(e.target.value);
-            this.flangerDepth = intensity;
+        // PHASER Speed control
+        document.getElementById('phaserSpeed').addEventListener('input', (e) => {
+            const speed = parseFloat(e.target.value);
+            this.phaserSpeed = speed;
 
-            // Update flanger parameters (MORE DRAMATIC)
-            this.flanger.lfoGain.gain.value = 0.03 * intensity; // 0-30ms modulation depth (6x bigger)
-            this.flanger.wet.gain.value = intensity * 0.8; // Max 80% wet (much more pronounced)
-            this.flanger.dry.gain.value = 1 - (intensity * 0.5); // More dry reduction (50-100%)
+            // Update phaser LFO frequency
+            this.phaser.lfo.frequency.value = speed;
 
-            document.getElementById('flangerIntensityValue').textContent = Math.round(intensity * 100) + '%';
+            document.getElementById('phaserSpeedValue').textContent = speed.toFixed(1) + ' Hz';
         });
 
         // DRUM Delay toggle
