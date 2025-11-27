@@ -20,8 +20,12 @@ class GradiusNext {
         this.drumMixer.connect(this.analyser);
 
         this.synthMixer = this.audioContext.createGain();
-        this.synthMixer.gain.value = 1.0; // Default 100% synth
+        this.synthMixer.gain.value = 0.3; // Default 30% synth
         this.synthMixer.connect(this.analyser);
+
+        // Lead voice volume control (independent gain stage for LEAD voice notes)
+        this.leadVolumeGain = this.audioContext.createGain();
+        this.leadVolumeGain.gain.value = 0.49; // Match initial 70% slider with exponential curve: 0.7^2 ≈ 0.49
 
         // Separate effects chains
         this.drumDelay = { node: null, feedback: null, wet: null, dry: null };
@@ -38,7 +42,14 @@ class GradiusNext {
             wet: null,          // GainNode for wet signal
             dry: null           // GainNode for dry signal
         };
-        this.phaserSpeed = 0.5; // 0.1-10 Hz LFO speed (default 0.5 Hz)
+        this.phaserSpeed = 0; // 0-10 Hz LFO speed (0 = OFF, default OFF)
+
+        // Master reverb (affects entire mix)
+        this.masterReverb = {
+            convolver: null,    // ConvolverNode for reverb
+            wet: null,          // GainNode for wet signal
+            dry: null           // GainNode for dry signal
+        };
 
         this.setupDelayChains();
 
@@ -120,6 +131,14 @@ class GradiusNext {
         this.arpNotes = [];
         this.arpInterval = null;
         this.arpIndex = 0;
+        this.arpScale = 'major-pent'; // major-pent, minor-pent, minor-triad
+
+        // Arpeggio scale patterns (semitone intervals from root) - 4 notes
+        this.arpScales = {
+            'major-pent': [0, 4, 7, 12],      // Major pentatonic: bright, uplifting
+            'minor-pent': [0, 3, 5, 10],      // Minor pentatonic: dark, moody
+            'minor-triad': [0, 3, 7, 12]      // Minor triad: deep, hypnotic
+        };
 
         // Sustain amount
         this.sustainAmount = 0; // 0-100% - extends release time
@@ -147,14 +166,14 @@ class GradiusNext {
         // Sequencer
         this.sequencerPlaying = false;
         this.currentStep = 0;
-        this.bpm = 120;
+        this.bpm = 147;
         this.sequencerInterval = null;
         this.sequencerGrid = this.createEmptySequencer();
 
         // Secondary synth sequencer settings
         this.synthSeqDelay = 0.3;
         this.synthSeqSustain = 50; // 0-100%
-        this.synthSeqShape = 0; // 0-4 (same as main synth)
+        this.synthSeqShape = 4; // 0-4 (same as main synth) - default PWM
 
         // UI Mode
         this.currentMode = 'live'; // 'live' or 'sequencer'
@@ -178,16 +197,16 @@ class GradiusNext {
     setupDelayChains() {
         // Create DRUM delay chain
         this.drumDelay.node = this.audioContext.createDelay(2.0);
-        this.drumDelay.node.delayTime.value = 0.3;
+        this.drumDelay.node.delayTime.value = 0.3; // 300ms
 
         this.drumDelay.feedback = this.audioContext.createGain();
-        this.drumDelay.feedback.gain.value = 0.3;
+        this.drumDelay.feedback.gain.value = 0.5; // 50% feedback
 
         this.drumDelay.wet = this.audioContext.createGain();
-        this.drumDelay.wet.gain.value = 0.0; // Off by default
+        this.drumDelay.wet.gain.value = 0.4; // 40% mix (ON by default)
 
         this.drumDelay.dry = this.audioContext.createGain();
-        this.drumDelay.dry.gain.value = 1.0;
+        this.drumDelay.dry.gain.value = 0.6; // 60% dry (complement of 40% wet)
 
         // Connect drum delay chain
         this.drumDelay.node.connect(this.drumDelay.feedback);
@@ -216,24 +235,24 @@ class GradiusNext {
         this.synthDelay.wet.connect(this.synthMixer);
         this.synthDelay.dry.connect(this.synthMixer);
 
-        // Create PHASER chain
-        this.phaser.delay = this.audioContext.createDelay(0.02); // 20ms max delay for phaser
-        this.phaser.delay.delayTime.value = 0.003; // 3ms base delay
+        // Create PHASER chain (DRAMATIC SWEEPING)
+        this.phaser.delay = this.audioContext.createDelay(0.04); // 40ms max delay for wider sweeps
+        this.phaser.delay.delayTime.value = 0.008; // 8ms base delay
 
         this.phaser.lfo = this.audioContext.createOscillator();
         this.phaser.lfo.frequency.value = 0.5; // 0.5 Hz default LFO rate
 
         this.phaser.lfoGain = this.audioContext.createGain();
-        this.phaser.lfoGain.gain.value = 0.005; // 5ms depth (subtle phaser effect)
+        this.phaser.lfoGain.gain.value = 0.015; // 15ms depth (dramatic sweeping effect)
 
         this.phaser.feedback = this.audioContext.createGain();
-        this.phaser.feedback.gain.value = 0.6; // 60% feedback for phaser resonance
+        this.phaser.feedback.gain.value = 0.7; // 70% feedback for strong resonance
 
         this.phaser.wet = this.audioContext.createGain();
-        this.phaser.wet.gain.value = 0.5; // 50% wet (on by default)
+        this.phaser.wet.gain.value = 0; // OFF by default
 
         this.phaser.dry = this.audioContext.createGain();
-        this.phaser.dry.gain.value = 1.0; // 100% dry
+        this.phaser.dry.gain.value = 1.0; // 100% dry (OFF by default)
 
         // Connect phaser chain
         this.phaser.lfo.connect(this.phaser.lfoGain);
@@ -247,6 +266,48 @@ class GradiusNext {
         this.phaser.wet.connect(this.synthDelay.dry);
         this.phaser.dry.connect(this.synthDelay.node);
         this.phaser.dry.connect(this.synthDelay.dry);
+
+        // Create pre-effects routing stage for proper signal flow
+        this.synthPreEffects = this.audioContext.createGain();
+        this.synthPreEffects.gain.value = 1.0;
+
+        // Connect pre-effects to phaser input
+        this.synthPreEffects.connect(this.phaser.delay);
+        this.synthPreEffects.connect(this.phaser.dry);
+
+        // Connect leadVolumeGain to pre-effects stage (so LEAD volume comes before effects)
+        this.leadVolumeGain.connect(this.synthPreEffects);
+
+        // Create MASTER REVERB - affects entire mix
+        this.masterReverb.convolver = this.audioContext.createConvolver();
+        this.masterReverb.wet = this.audioContext.createGain();
+        this.masterReverb.dry = this.audioContext.createGain();
+
+        // Generate room reverb impulse response (2 second decay room)
+        const reverbLength = this.audioContext.sampleRate * 2; // 2 seconds
+        const impulse = this.audioContext.createBuffer(2, reverbLength, this.audioContext.sampleRate);
+        const impulseL = impulse.getChannelData(0);
+        const impulseR = impulse.getChannelData(1);
+
+        for (let i = 0; i < reverbLength; i++) {
+            const decay = Math.pow(1 - i / reverbLength, 3); // Exponential decay curve
+            impulseL[i] = (Math.random() * 2 - 1) * decay;
+            impulseR[i] = (Math.random() * 2 - 1) * decay;
+        }
+
+        this.masterReverb.convolver.buffer = impulse;
+
+        // Default: 30% wet reverb, 70% dry signal
+        this.masterReverb.wet.gain.value = 0.3;
+        this.masterReverb.dry.gain.value = 0.7;
+
+        // Reroute analyser output through master reverb
+        this.analyser.disconnect(); // Disconnect from masterGain
+        this.analyser.connect(this.masterReverb.convolver);
+        this.analyser.connect(this.masterReverb.dry);
+        this.masterReverb.convolver.connect(this.masterReverb.wet);
+        this.masterReverb.wet.connect(this.masterGain);
+        this.masterReverb.dry.connect(this.masterGain);
 
         // Start LFO
         this.phaser.lfo.start();
@@ -1063,10 +1124,17 @@ class GradiusNext {
         const gain = this.audioContext.createGain();
         gain.gain.value = 0;
 
-        // Connect audio chain - route through phaser then delay
+        // Connect audio chain - route through effects (phaser, delay)
         osc.connect(gain);
-        gain.connect(this.phaser.delay);
-        gain.connect(this.phaser.dry);
+
+        // For LEAD voice, route through leadVolumeGain for real-time volume control
+        // leadVolumeGain is connected to synthPreEffects in setupDelayChains()
+        if (this.currentVoice === 'lead') {
+            gain.connect(this.leadVolumeGain);
+        } else {
+            // Other voices route directly to pre-effects stage
+            gain.connect(this.synthPreEffects);
+        }
 
         // ADSR envelope from voice preset
         const now = this.audioContext.currentTime;
@@ -1192,7 +1260,17 @@ class GradiusNext {
     updateArpNotes() {
         // Update list of notes for arpeggiator based on held keys
         const oldNotes = [...this.arpNotes];
-        this.arpNotes = Array.from(this.heldKeys).sort((a, b) => a - b);
+
+        // Generate 5-note chord from the lowest held key using selected scale pattern
+        if (this.heldKeys.size > 0) {
+            const rootNote = Math.min(...Array.from(this.heldKeys));
+            const pattern = this.arpScales[this.arpScale]; // Get selected scale pattern
+
+            // Build chord from pattern intervals
+            this.arpNotes = pattern.map(interval => rootNote + interval);
+        } else {
+            this.arpNotes = [];
+        }
 
         // Check if notes changed
         const notesChanged = oldNotes.length !== this.arpNotes.length ||
@@ -1290,11 +1368,13 @@ class GradiusNext {
             case 9: // Note On
                 if (velocity > 0) {
                     // Apply octave transposition to MIDI input
-                    // Default octave is 4, so offset by (currentOctave - 4) * 12 semitones
-                    const octaveOffset = (this.currentOctave - 4) * 12;
+                    // Controller starts at C3 (note 48), map to virtual keyboard range
+                    const controllerStartNote = 48; // C3 - where 32-key controllers typically start
+                    const virtualStartNote = this.currentOctave * 12; // C of selected octave
+                    const octaveOffset = virtualStartNote - controllerStartNote;
                     const transposedNote = note + octaveOffset;
 
-                    this.heldKeys.add(note); // Store original note for tracking
+                    this.heldKeys.add(transposedNote); // Store transposed note for consistent arpeggiator behavior
                     if (this.arpEnabled) {
                         this.updateArpNotes();
                     } else {
@@ -1302,10 +1382,12 @@ class GradiusNext {
                     }
                 } else {
                     // Velocity 0 is Note Off
-                    const octaveOffset = (this.currentOctave - 4) * 12;
+                    const controllerStartNote = 48; // C3
+                    const virtualStartNote = this.currentOctave * 12;
+                    const octaveOffset = virtualStartNote - controllerStartNote;
                     const transposedNote = note + octaveOffset;
 
-                    this.heldKeys.delete(note);
+                    this.heldKeys.delete(transposedNote); // Delete transposed note
                     if (this.arpEnabled) {
                         this.updateArpNotes();
                     } else {
@@ -1316,10 +1398,12 @@ class GradiusNext {
 
             case 8: // Note Off
                 // Apply octave transposition to MIDI input
-                const octaveOffsetNoteOff = (this.currentOctave - 4) * 12;
+                const controllerStartNoteOff = 48; // C3
+                const virtualStartNoteOff = this.currentOctave * 12;
+                const octaveOffsetNoteOff = virtualStartNoteOff - controllerStartNoteOff;
                 const transposedNoteOff = note + octaveOffsetNoteOff;
 
-                this.heldKeys.delete(note);
+                this.heldKeys.delete(transposedNoteOff); // Delete transposed note
                 if (this.arpEnabled) {
                     this.updateArpNotes();
                 } else {
@@ -1360,17 +1444,25 @@ class GradiusNext {
                     this.lastCC64Value = velocity;
                 } else if (note === 7) {
                     // CC7 Volume Knob - Phaser Speed (0-127)
-                    const speed = 0.1 + (velocity / 127) * 9.9; // Map to 0.1-10 Hz
+                    const speed = (velocity / 127) * 10; // Map to 0-10 Hz (0 = OFF)
                     this.phaserSpeed = speed;
 
-                    // Update LFO frequency
-                    this.phaser.lfo.frequency.value = speed;
-
-                    // Update UI slider
-                    document.getElementById('phaserSpeed').value = speed;
-                    document.getElementById('phaserSpeedValue').textContent = speed.toFixed(1) + ' Hz';
-
-                    console.log(`🌊 Phaser speed: ${speed.toFixed(1)} Hz`);
+                    if (speed === 0 || velocity === 0) {
+                        // Turn OFF phaser
+                        this.phaser.wet.gain.value = 0;
+                        this.phaser.dry.gain.value = 1.0;
+                        document.getElementById('phaserSpeed').value = 0;
+                        document.getElementById('phaserSpeedValue').textContent = 'OFF';
+                        console.log(`🌊 Phaser: OFF`);
+                    } else {
+                        // Turn ON phaser with speed
+                        this.phaser.lfo.frequency.value = speed;
+                        this.phaser.wet.gain.value = 0.75;
+                        this.phaser.dry.gain.value = 0.5;
+                        document.getElementById('phaserSpeed').value = speed;
+                        document.getElementById('phaserSpeedValue').textContent = speed.toFixed(1) + ' Hz';
+                        console.log(`🌊 Phaser speed: ${speed.toFixed(1)} Hz`);
+                    }
                 } else if (note === 102 && velocity > 0) {
                     // CC102: Octave Up (M-Audio convention - if controller sends it)
                     if (this.currentOctave < 6) {
@@ -1411,22 +1503,30 @@ class GradiusNext {
     createEmptySequencer() {
         // 8 drum tracks + 4 synth tracks = 12 tracks total
         // C major pentatonic scale: C, D, E, G, A (in octave 2)
+
+        // Helper function to create step array with specific steps enabled
+        const createSteps = (enabledSteps = []) => {
+            const steps = Array(16).fill(false);
+            enabledSteps.forEach(step => steps[step] = true);
+            return steps;
+        };
+
         const drumTracks = [
-            { steps: Array(16).fill(false), isDrum: true, drumSound: 'kick', label: 'KICK', color: '#ff0066' },
-            { steps: Array(16).fill(false), isDrum: true, drumSound: 'snare', label: 'SNARE', color: '#ffaa00' },
-            { steps: Array(16).fill(false), isDrum: true, drumSound: 'hihat-closed', label: 'HI-HAT', color: '#00ccff' },
-            { steps: Array(16).fill(false), isDrum: true, drumSound: 'hihat-open', label: 'HAT OPEN', color: '#00ddff' },
-            { steps: Array(16).fill(false), isDrum: true, drumSound: 'clap', label: 'CLAP', color: '#ff00ff' },
-            { steps: Array(16).fill(false), isDrum: true, drumSound: 'tom', label: 'TOM', color: '#00ff88' },
-            { steps: Array(16).fill(false), isDrum: true, drumSound: 'crash', label: 'CRASH', color: '#ffff00' },
-            { steps: Array(16).fill(false), isDrum: true, drumSound: 'rim', label: 'RIMSHOT', color: '#ff6600' }
+            { steps: createSteps([0, 3, 4, 8, 11]), isDrum: true, drumSound: 'kick', label: 'KICK', color: '#ff0066' },
+            { steps: createSteps(), isDrum: true, drumSound: 'snare', label: 'SNARE', color: '#ffaa00' },
+            { steps: createSteps([4, 12]), isDrum: true, drumSound: 'hihat-closed', label: 'HI-HAT', color: '#00ccff' },
+            { steps: createSteps(), isDrum: true, drumSound: 'hihat-open', label: 'HAT OPEN', color: '#00ddff' },
+            { steps: createSteps(), isDrum: true, drumSound: 'clap', label: 'CLAP', color: '#ff00ff' },
+            { steps: createSteps([0, 4, 8, 12]), isDrum: true, drumSound: 'tom', label: 'TOM', color: '#00ff88' },
+            { steps: createSteps(), isDrum: true, drumSound: 'crash', label: 'CRASH', color: '#ffff00' },
+            { steps: createSteps(), isDrum: true, drumSound: 'rim', label: 'RIMSHOT', color: '#ff6600' }
         ];
 
         const synthTracks = [
-            { steps: Array(16).fill(false), isDrum: false, note: 36, label: 'C2', color: '#9d4edd', isSynthSeq: true }, // C2
-            { steps: Array(16).fill(false), isDrum: false, note: 45, label: 'A2', color: '#7b2cbf', isSynthSeq: true }, // A2
-            { steps: Array(16).fill(false), isDrum: false, note: 43, label: 'G2', color: '#5a189a', isSynthSeq: true }, // G2
-            { steps: Array(16).fill(false), isDrum: false, note: 40, label: 'E2', color: '#3c096c', isSynthSeq: true }  // E2
+            { steps: createSteps([0]), isDrum: false, note: 36, label: 'C2', color: '#9d4edd', isSynthSeq: true }, // C2
+            { steps: createSteps(), isDrum: false, note: 45, label: 'A2', color: '#7b2cbf', isSynthSeq: true }, // A2
+            { steps: createSteps([6]), isDrum: false, note: 43, label: 'G2', color: '#5a189a', isSynthSeq: true }, // G2
+            { steps: createSteps(), isDrum: false, note: 40, label: 'E2', color: '#3c096c', isSynthSeq: true }  // E2
         ];
 
         return [...drumTracks, ...synthTracks];
@@ -1579,19 +1679,61 @@ class GradiusNext {
     }
 
     clearSequencer() {
-        this.sequencerGrid = this.createEmptySequencer();
+        // Stop playback if running
+        if (this.sequencerPlaying) {
+            this.stopSequencer();
+        }
+
+        // Create a completely empty sequencer (no default notes)
+        const createSteps = (enabledSteps = []) => {
+            const steps = Array(16).fill(false);
+            enabledSteps.forEach(step => steps[step] = true);
+            return steps;
+        };
+
+        const drumTracks = [
+            { steps: createSteps(), isDrum: true, drumSound: 'kick', label: 'KICK', color: '#ff0066' },
+            { steps: createSteps(), isDrum: true, drumSound: 'snare', label: 'SNARE', color: '#ffaa00' },
+            { steps: createSteps(), isDrum: true, drumSound: 'hihat-closed', label: 'HI-HAT', color: '#00ccff' },
+            { steps: createSteps(), isDrum: true, drumSound: 'hihat-open', label: 'HAT OPEN', color: '#00ddff' },
+            { steps: createSteps(), isDrum: true, drumSound: 'clap', label: 'CLAP', color: '#ff00ff' },
+            { steps: createSteps(), isDrum: true, drumSound: 'tom', label: 'TOM', color: '#00ff88' },
+            { steps: createSteps(), isDrum: true, drumSound: 'crash', label: 'CRASH', color: '#ffff00' },
+            { steps: createSteps(), isDrum: true, drumSound: 'rim', label: 'RIMSHOT', color: '#ff6600' }
+        ];
+
+        const synthTracks = [
+            { steps: createSteps(), isDrum: false, note: 36, label: 'C2', color: '#9d4edd', isSynthSeq: true },
+            { steps: createSteps(), isDrum: false, note: 45, label: 'A2', color: '#7b2cbf', isSynthSeq: true },
+            { steps: createSteps(), isDrum: false, note: 43, label: 'G2', color: '#5a189a', isSynthSeq: true },
+            { steps: createSteps(), isDrum: false, note: 40, label: 'E2', color: '#3c096c', isSynthSeq: true }
+        ];
+
+        this.sequencerGrid = [...drumTracks, ...synthTracks];
         this.renderSequencerGrid();
     }
 
     generateRandomPattern() {
         // Array of preset patterns
         const patterns = [
+            // Original patterns
             { name: 'Fast & Aggressive', bpm: 150, pattern: 'aggressive', tempo: 'fast' },
             { name: 'Slow & Melodic', bpm: 90, pattern: 'melodic', tempo: 'slow' },
             { name: 'Mid Tempo Groove', bpm: 120, pattern: 'groove', tempo: 'mid' },
             { name: 'Energetic Dance', bpm: 140, pattern: 'dance', tempo: 'fast' },
             { name: 'Chill Ambient', bpm: 80, pattern: 'ambient', tempo: 'slow' },
-            { name: 'Breakbeat', bpm: 165, pattern: 'breakbeat', tempo: 'fast' }
+            { name: 'Breakbeat', bpm: 165, pattern: 'breakbeat', tempo: 'fast' },
+            // New patterns
+            { name: 'Techno Pumper', bpm: 147, pattern: 'techno', tempo: 'fast' },
+            { name: 'Half-Time Trap', bpm: 140, pattern: 'halftime', tempo: 'fast' },
+            { name: 'Minimal Deep House', bpm: 125, pattern: 'minimal', tempo: 'mid' },
+            { name: 'Jungle Madness', bpm: 170, pattern: 'jungle', tempo: 'fast' },
+            { name: 'Industrial Glitch', bpm: 135, pattern: 'glitch', tempo: 'mid' },
+            { name: 'Retro Synthwave', bpm: 110, pattern: 'synthwave', tempo: 'slow' },
+            { name: 'Downtempo Chill', bpm: 95, pattern: 'downtempo', tempo: 'slow' },
+            { name: 'Hardstyle Kick', bpm: 150, pattern: 'hardstyle', tempo: 'fast' },
+            { name: 'Dubstep Wobble', bpm: 140, pattern: 'dubstep', tempo: 'fast' },
+            { name: 'Progressive Trance', bpm: 138, pattern: 'progtrance', tempo: 'mid' }
         ];
 
         // Pick random pattern
@@ -1602,6 +1744,25 @@ class GradiusNext {
         this.bpm = preset.bpm;
         document.getElementById('bpmSlider').value = this.bpm;
         document.getElementById('bpmValue').textContent = this.bpm;
+
+        // Randomize drum delay settings for variation
+        const delayTime = 0.05 + Math.random() * 0.45; // 50-500ms
+        const delayFeedback = Math.random() * 0.6; // 0-60%
+        const delayMix = Math.random() * 0.5; // 0-50%
+
+        // Apply to drum delay
+        this.drumDelay.node.delayTime.value = delayTime;
+        this.drumDelay.feedback.gain.value = delayFeedback;
+        this.drumDelay.wet.gain.value = delayMix;
+        this.drumDelay.dry.gain.value = 1 - delayMix;
+
+        // Update UI sliders
+        document.getElementById('drumDelayTime').value = delayTime;
+        document.getElementById('drumDelayTimeValue').textContent = Math.round(delayTime * 1000) + 'ms';
+        document.getElementById('drumDelayFeedback').value = delayFeedback;
+        document.getElementById('drumDelayFeedbackValue').textContent = Math.round(delayFeedback * 100) + '%';
+        document.getElementById('drumDelayMix').value = delayMix;
+        document.getElementById('drumDelayMixValue').textContent = Math.round(delayMix * 100) + '%';
 
         // Clear existing pattern
         this.sequencerGrid = this.createEmptySequencer();
@@ -1625,6 +1786,36 @@ class GradiusNext {
                 break;
             case 'breakbeat':
                 this.generateBreakbeatPattern();
+                break;
+            case 'techno':
+                this.generateTechnoPumperPattern();
+                break;
+            case 'halftime':
+                this.generateHalfTimeTrapPattern();
+                break;
+            case 'minimal':
+                this.generateMinimalDeepHousePattern();
+                break;
+            case 'jungle':
+                this.generateJungleMadnessPattern();
+                break;
+            case 'glitch':
+                this.generateIndustrialGlitchPattern();
+                break;
+            case 'synthwave':
+                this.generateRetroSynthwavePattern();
+                break;
+            case 'downtempo':
+                this.generateDowntempoChillPattern();
+                break;
+            case 'hardstyle':
+                this.generateHardstyleKickPattern();
+                break;
+            case 'dubstep':
+                this.generateDubstepWobblePattern();
+                break;
+            case 'progtrance':
+                this.generateProgressiveTrancePattern();
                 break;
         }
 
@@ -1826,6 +2017,288 @@ class GradiusNext {
         // Randomize synth seq shape - breakbeat can be anything
         const breakbeatShapes = [0, 1, 2, 3, 4]; // All shapes equally
         this.synthSeqShape = breakbeatShapes[Math.floor(Math.random() * breakbeatShapes.length)];
+        document.getElementById('synthSeqShape').value = this.synthSeqShape;
+    }
+
+    generateTechnoPumperPattern() {
+        // Four-on-the-floor kick
+        for (let i = 0; i < 16; i += 4) {
+            this.sequencerGrid[0].steps[i] = true;
+        }
+        // Offbeat claps
+        this.sequencerGrid[4].steps[2] = true;
+        this.sequencerGrid[4].steps[6] = true;
+        this.sequencerGrid[4].steps[10] = true;
+        this.sequencerGrid[4].steps[14] = true;
+        // Hi-hat 8ths
+        for (let i = 0; i < 16; i += 2) {
+            this.sequencerGrid[2].steps[i] = true;
+        }
+        // Driving bass line
+        this.sequencerGrid[11].steps[0] = true;
+        this.sequencerGrid[11].steps[2] = true;
+        this.sequencerGrid[11].steps[4] = true;
+        this.sequencerGrid[11].steps[6] = true;
+        this.sequencerGrid[11].steps[8] = true;
+        this.sequencerGrid[11].steps[10] = true;
+        this.sequencerGrid[11].steps[12] = true;
+        this.sequencerGrid[11].steps[14] = true;
+
+        const technoShapes = [1, 2, 4]; // SAW, SQUARE, PWM
+        this.synthSeqShape = technoShapes[Math.floor(Math.random() * technoShapes.length)];
+        document.getElementById('synthSeqShape').value = this.synthSeqShape;
+    }
+
+    generateHalfTimeTrapPattern() {
+        // Sparse kicks
+        this.sequencerGrid[0].steps[0] = true;
+        this.sequencerGrid[0].steps[8] = true;
+        // Snare on 3
+        this.sequencerGrid[1].steps[6] = true;
+        this.sequencerGrid[1].steps[14] = true;
+        // Rolling hi-hats
+        this.sequencerGrid[2].steps[1] = true;
+        this.sequencerGrid[2].steps[3] = true;
+        this.sequencerGrid[2].steps[5] = true;
+        this.sequencerGrid[2].steps[7] = true;
+        this.sequencerGrid[2].steps[9] = true;
+        this.sequencerGrid[2].steps[11] = true;
+        this.sequencerGrid[2].steps[13] = true;
+        this.sequencerGrid[2].steps[15] = true;
+        // Heavy sub bass
+        this.sequencerGrid[11].steps[0] = true;
+        this.sequencerGrid[11].steps[6] = true;
+        this.sequencerGrid[11].steps[12] = true;
+
+        const trapShapes = [1, 4]; // SAW, PWM
+        this.synthSeqShape = trapShapes[Math.floor(Math.random() * trapShapes.length)];
+        document.getElementById('synthSeqShape').value = this.synthSeqShape;
+    }
+
+    generateMinimalDeepHousePattern() {
+        // Minimal kick pattern
+        this.sequencerGrid[0].steps[0] = true;
+        this.sequencerGrid[0].steps[4] = true;
+        this.sequencerGrid[0].steps[8] = true;
+        this.sequencerGrid[0].steps[12] = true;
+        // Atmospheric snare
+        this.sequencerGrid[1].steps[6] = true;
+        // Subtle hi-hats
+        this.sequencerGrid[2].steps[2] = true;
+        this.sequencerGrid[2].steps[6] = true;
+        this.sequencerGrid[2].steps[10] = true;
+        this.sequencerGrid[2].steps[14] = true;
+        // Atmospheric pads
+        this.sequencerGrid[8].steps[0] = true;
+        this.sequencerGrid[9].steps[4] = true;
+        this.sequencerGrid[10].steps[8] = true;
+        this.sequencerGrid[11].steps[12] = true;
+
+        this.synthSeqSustain = 85;
+        document.getElementById('synthSeqSustain').value = 85;
+        document.getElementById('synthSeqSustainValue').textContent = '85%';
+
+        const minimalShapes = [0, 3]; // SINE, TRIANGLE
+        this.synthSeqShape = minimalShapes[Math.floor(Math.random() * minimalShapes.length)];
+        document.getElementById('synthSeqShape').value = this.synthSeqShape;
+    }
+
+    generateJungleMadnessPattern() {
+        // Rapid kick pattern
+        this.sequencerGrid[0].steps[0] = true;
+        this.sequencerGrid[0].steps[2] = true;
+        this.sequencerGrid[0].steps[4] = true;
+        this.sequencerGrid[0].steps[6] = true;
+        this.sequencerGrid[0].steps[8] = true;
+        this.sequencerGrid[0].steps[10] = true;
+        this.sequencerGrid[0].steps[12] = true;
+        this.sequencerGrid[0].steps[14] = true;
+        // Snare breakbeat
+        this.sequencerGrid[1].steps[3] = true;
+        this.sequencerGrid[1].steps[7] = true;
+        this.sequencerGrid[1].steps[11] = true;
+        // Rapid hi-hat
+        for (let i = 0; i < 16; i++) {
+            this.sequencerGrid[2].steps[i] = true;
+        }
+        // Chopped synth
+        this.sequencerGrid[8].steps[1] = true;
+        this.sequencerGrid[9].steps[3] = true;
+        this.sequencerGrid[10].steps[5] = true;
+        this.sequencerGrid[9].steps[7] = true;
+        this.sequencerGrid[8].steps[9] = true;
+        this.sequencerGrid[10].steps[11] = true;
+
+        const jungleShapes = [1, 2]; // SAW, SQUARE
+        this.synthSeqShape = jungleShapes[Math.floor(Math.random() * jungleShapes.length)];
+        document.getElementById('synthSeqShape').value = this.synthSeqShape;
+    }
+
+    generateIndustrialGlitchPattern() {
+        // Irregular kick pattern
+        this.sequencerGrid[0].steps[0] = true;
+        this.sequencerGrid[0].steps[2] = true;
+        this.sequencerGrid[0].steps[5] = true;
+        this.sequencerGrid[0].steps[9] = true;
+        this.sequencerGrid[0].steps[11] = true;
+        this.sequencerGrid[0].steps[14] = true;
+        // Glitchy snare
+        this.sequencerGrid[1].steps[1] = true;
+        this.sequencerGrid[1].steps[4] = true;
+        this.sequencerGrid[1].steps[8] = true;
+        this.sequencerGrid[1].steps[13] = true;
+        // Sparse hi-hat
+        this.sequencerGrid[2].steps[3] = true;
+        this.sequencerGrid[2].steps[7] = true;
+        this.sequencerGrid[2].steps[12] = true;
+        // Experimental synth
+        this.sequencerGrid[8].steps[2] = true;
+        this.sequencerGrid[10].steps[5] = true;
+        this.sequencerGrid[9].steps[9] = true;
+        this.sequencerGrid[11].steps[13] = true;
+
+        const glitchShapes = [2, 4]; // SQUARE, PWM
+        this.synthSeqShape = glitchShapes[Math.floor(Math.random() * glitchShapes.length)];
+        document.getElementById('synthSeqShape').value = this.synthSeqShape;
+    }
+
+    generateRetroSynthwavePattern() {
+        // 80s-style kick
+        this.sequencerGrid[0].steps[0] = true;
+        this.sequencerGrid[0].steps[8] = true;
+        // Gated reverb snare
+        this.sequencerGrid[1].steps[4] = true;
+        this.sequencerGrid[1].steps[12] = true;
+        // Sparse hi-hat
+        this.sequencerGrid[2].steps[2] = true;
+        this.sequencerGrid[2].steps[6] = true;
+        this.sequencerGrid[2].steps[10] = true;
+        this.sequencerGrid[2].steps[14] = true;
+        // Melodic arpeggio synth
+        this.sequencerGrid[8].steps[0] = true;
+        this.sequencerGrid[9].steps[2] = true;
+        this.sequencerGrid[10].steps[4] = true;
+        this.sequencerGrid[11].steps[6] = true;
+        this.sequencerGrid[10].steps[8] = true;
+        this.sequencerGrid[9].steps[10] = true;
+        this.sequencerGrid[8].steps[12] = true;
+        this.sequencerGrid[9].steps[14] = true;
+
+        this.synthSeqSustain = 70;
+        document.getElementById('synthSeqSustain').value = 70;
+        document.getElementById('synthSeqSustainValue').textContent = '70%';
+
+        const synthwaveShapes = [0, 3]; // SINE, TRIANGLE
+        this.synthSeqShape = synthwaveShapes[Math.floor(Math.random() * synthwaveShapes.length)];
+        document.getElementById('synthSeqShape').value = this.synthSeqShape;
+    }
+
+    generateDowntempoChillPattern() {
+        // Laid-back kick
+        this.sequencerGrid[0].steps[0] = true;
+        this.sequencerGrid[0].steps[6] = true;
+        // Snare on 2 and 4
+        this.sequencerGrid[1].steps[4] = true;
+        this.sequencerGrid[1].steps[12] = true;
+        // Jazzy hi-hat
+        this.sequencerGrid[2].steps[1] = true;
+        this.sequencerGrid[2].steps[5] = true;
+        this.sequencerGrid[2].steps[9] = true;
+        this.sequencerGrid[2].steps[13] = true;
+        // Warm pads
+        this.sequencerGrid[9].steps[0] = true;
+        this.sequencerGrid[10].steps[4] = true;
+        this.sequencerGrid[11].steps[8] = true;
+        this.sequencerGrid[9].steps[12] = true;
+
+        this.synthSeqSustain = 90;
+        document.getElementById('synthSeqSustain').value = 90;
+        document.getElementById('synthSeqSustainValue').textContent = '90%';
+
+        const chillShapes = [0, 0, 3]; // SINE (weighted), TRIANGLE
+        this.synthSeqShape = chillShapes[Math.floor(Math.random() * chillShapes.length)];
+        document.getElementById('synthSeqShape').value = this.synthSeqShape;
+    }
+
+    generateHardstyleKickPattern() {
+        // Distorted kicks
+        this.sequencerGrid[0].steps[0] = true;
+        this.sequencerGrid[0].steps[4] = true;
+        this.sequencerGrid[0].steps[8] = true;
+        this.sequencerGrid[0].steps[12] = true;
+        // Reverse bass
+        this.sequencerGrid[11].steps[2] = true;
+        this.sequencerGrid[11].steps[6] = true;
+        this.sequencerGrid[11].steps[10] = true;
+        this.sequencerGrid[11].steps[14] = true;
+        // Epic snare
+        this.sequencerGrid[1].steps[6] = true;
+        // Driving hi-hat
+        for (let i = 0; i < 16; i += 2) {
+            this.sequencerGrid[2].steps[i] = true;
+        }
+        // Epic synth stabs
+        this.sequencerGrid[8].steps[0] = true;
+        this.sequencerGrid[8].steps[8] = true;
+
+        const hardstyleShapes = [1, 2]; // SAW, SQUARE
+        this.synthSeqShape = hardstyleShapes[Math.floor(Math.random() * hardstyleShapes.length)];
+        document.getElementById('synthSeqShape').value = this.synthSeqShape;
+    }
+
+    generateDubstepWobblePattern() {
+        // Half-time kick
+        this.sequencerGrid[0].steps[0] = true;
+        this.sequencerGrid[0].steps[8] = true;
+        // Wobbly bass pattern
+        this.sequencerGrid[11].steps[0] = true;
+        this.sequencerGrid[11].steps[2] = true;
+        this.sequencerGrid[11].steps[4] = true;
+        this.sequencerGrid[11].steps[6] = true;
+        this.sequencerGrid[11].steps[8] = true;
+        this.sequencerGrid[11].steps[10] = true;
+        this.sequencerGrid[11].steps[12] = true;
+        this.sequencerGrid[11].steps[14] = true;
+        // Snare with reverb
+        this.sequencerGrid[1].steps[6] = true;
+        // Sparse hi-hat
+        this.sequencerGrid[2].steps[4] = true;
+        this.sequencerGrid[2].steps[12] = true;
+
+        const dubstepShapes = [4]; // PWM (wobble)
+        this.synthSeqShape = dubstepShapes[Math.floor(Math.random() * dubstepShapes.length)];
+        document.getElementById('synthSeqShape').value = this.synthSeqShape;
+    }
+
+    generateProgressiveTrancePattern() {
+        // Driving kick
+        for (let i = 0; i < 16; i += 4) {
+            this.sequencerGrid[0].steps[i] = true;
+        }
+        // Rolling snare
+        this.sequencerGrid[1].steps[4] = true;
+        this.sequencerGrid[1].steps[12] = true;
+        // Hi-hat 8ths
+        for (let i = 0; i < 16; i += 2) {
+            this.sequencerGrid[2].steps[i] = true;
+        }
+        // Uplifting bass line
+        this.sequencerGrid[11].steps[0] = true;
+        this.sequencerGrid[11].steps[2] = true;
+        this.sequencerGrid[11].steps[4] = true;
+        this.sequencerGrid[11].steps[6] = true;
+        this.sequencerGrid[11].steps[8] = true;
+        this.sequencerGrid[11].steps[10] = true;
+        this.sequencerGrid[11].steps[12] = true;
+        this.sequencerGrid[11].steps[14] = true;
+        // Uplifting synth melody
+        this.sequencerGrid[8].steps[0] = true;
+        this.sequencerGrid[9].steps[2] = true;
+        this.sequencerGrid[10].steps[4] = true;
+        this.sequencerGrid[11].steps[6] = true;
+
+        const progtShapes = [1, 3]; // SAW, TRIANGLE
+        this.synthSeqShape = progtShapes[Math.floor(Math.random() * progtShapes.length)];
         document.getElementById('synthSeqShape').value = this.synthSeqShape;
     }
 
@@ -2080,6 +2553,16 @@ class GradiusNext {
             });
         });
 
+        // Arp scale selector buttons
+        document.querySelectorAll('.arp-scale-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.arp-scale-btn').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                this.arpScale = e.target.dataset.scale;
+                this.updateArpNotes(); // Regenerate notes with new scale
+            });
+        });
+
         // Arp speed
         document.getElementById('arpSpeed').addEventListener('input', (e) => {
             this.arpSpeed = parseInt(e.target.value);
@@ -2087,23 +2570,6 @@ class GradiusNext {
             if (this.arpInterval) {
                 this.stopArpeggiator();
                 this.startArpeggiator();
-            }
-        });
-
-        // SYNTH Delay toggle
-        document.getElementById('synthDelayToggle').addEventListener('click', (e) => {
-            const isActive = e.target.classList.toggle('active');
-            e.target.textContent = isActive ? 'ON' : 'OFF';
-
-            if (isActive) {
-                // Turn ON - restore saved mix value
-                this.synthDelay.wet.gain.value = this.synthDelaySavedMix;
-                this.synthDelay.dry.gain.value = 1 - this.synthDelaySavedMix;
-            } else {
-                // Turn OFF - save current mix and set to 0
-                this.synthDelaySavedMix = this.synthDelay.wet.gain.value;
-                this.synthDelay.wet.gain.value = 0;
-                this.synthDelay.dry.gain.value = 1;
             }
         });
 
@@ -2133,26 +2599,17 @@ class GradiusNext {
             const speed = parseFloat(e.target.value);
             this.phaserSpeed = speed;
 
-            // Update phaser LFO frequency
-            this.phaser.lfo.frequency.value = speed;
-
-            document.getElementById('phaserSpeedValue').textContent = speed.toFixed(1) + ' Hz';
-        });
-
-        // DRUM Delay toggle
-        document.getElementById('drumDelayToggle').addEventListener('click', (e) => {
-            const isActive = e.target.classList.toggle('active');
-            e.target.textContent = isActive ? 'ON' : 'OFF';
-
-            if (isActive) {
-                // Turn ON - restore saved mix value
-                this.drumDelay.wet.gain.value = this.drumDelaySavedMix;
-                this.drumDelay.dry.gain.value = 1 - this.drumDelaySavedMix;
+            if (speed === 0) {
+                // Turn OFF phaser
+                this.phaser.wet.gain.value = 0;
+                this.phaser.dry.gain.value = 1.0;
+                document.getElementById('phaserSpeedValue').textContent = 'OFF';
             } else {
-                // Turn OFF - save current mix and set to 0
-                this.drumDelaySavedMix = this.drumDelay.wet.gain.value;
-                this.drumDelay.wet.gain.value = 0;
-                this.drumDelay.dry.gain.value = 1;
+                // Turn ON phaser with speed
+                this.phaser.lfo.frequency.value = speed;
+                this.phaser.wet.gain.value = 0.75; // 75% wet
+                this.phaser.dry.gain.value = 0.5; // 50% dry
+                document.getElementById('phaserSpeedValue').textContent = speed.toFixed(1) + ' Hz';
             }
         });
 
@@ -2188,6 +2645,24 @@ class GradiusNext {
             const value = parseFloat(e.target.value);
             this.synthMixer.gain.value = value;
             document.getElementById('synthVolumeValue').textContent = Math.round(value * 100) + '%';
+        });
+
+        // Master reverb mix control
+        document.getElementById('masterReverbMix').addEventListener('input', (e) => {
+            const value = parseFloat(e.target.value);
+            this.masterReverb.wet.gain.value = value;
+            this.masterReverb.dry.gain.value = 1 - value;
+            document.getElementById('masterReverbMixValue').textContent = Math.round(value * 100) + '%';
+        });
+
+        // Lead volume control with exponential curve for real-time volume adjustment
+        document.getElementById('leadVolume').addEventListener('input', (e) => {
+            const sliderValue = parseFloat(e.target.value) / 100; // Convert 0-100 to 0-1
+            // Apply exponential curve: value^2 for smoother, more natural volume change
+            const curvedVolume = Math.pow(sliderValue, 2);
+            // Control the LEAD voice gain stage in real-time
+            this.leadVolumeGain.gain.value = curvedVolume;
+            document.getElementById('leadVolumeValue').textContent = Math.round(sliderValue * 100) + '%';
         });
 
         // Drum pads
