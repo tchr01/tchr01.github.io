@@ -16,25 +16,25 @@ class GradiusNext {
 
         // Mixer - separate channels for drums and synth
         this.drumMixer = this.audioContext.createGain();
-        this.drumMixer.gain.value = 1.0;
+        this.drumMixer.gain.value = 0.5; // Default 50% drums
         this.drumMixer.connect(this.analyser);
 
         this.synthMixer = this.audioContext.createGain();
-        this.synthMixer.gain.value = 1.0;
+        this.synthMixer.gain.value = 1.0; // Default 100% synth
         this.synthMixer.connect(this.analyser);
 
         // Separate effects chains
         this.drumDelay = { node: null, feedback: null, wet: null, dry: null };
         this.synthDelay = { node: null, feedback: null, wet: null, dry: null };
         this.drumDelaySavedMix = 0.3; // Save mix value when toggling off
-        this.synthDelaySavedMix = 0.3; // Save mix value when toggling off
+        this.synthDelaySavedMix = 0.5; // Save mix value when toggling off (50% default)
         this.setupDelayChains();
 
         // Synth settings
         this.currentOctave = 4;
         this.pitchBendValue = 0;
-        this.waveformType = 'sawtooth'; // sine, sawtooth, square, triangle
-        this.shapeValue = 1; // 0-4 (sine, saw, square, tri, pwm)
+        this.waveformType = 'triangle'; // sine, sawtooth, square, triangle
+        this.shapeValue = 3; // 0-4 (sine, saw, square, tri, pwm) - default to TRIANGLE
 
         // Synth voice presets
         this.synthVoices = {
@@ -109,9 +109,8 @@ class GradiusNext {
         this.arpInterval = null;
         this.arpIndex = 0;
 
-        // Sustain pedal
-        this.sustainEnabled = false;
-        this.sustainedNotes = new Set(); // Notes held by sustain
+        // Sustain amount
+        this.sustainAmount = 0; // 0-100% - extends release time
 
         // Active notes tracking
         this.activeNotes = new Map(); // MIDI note number -> {osc, gain}
@@ -120,6 +119,14 @@ class GradiusNext {
         // Drum samples
         this.drumBuffers = {};
         this.loadingDrums = false;
+
+        // Sound effects mode
+        this.sfxMode = false; // false = synth, true = sound effects
+        this.sfxBuffers = {};
+
+        // CC button tracking
+        this.lastModValue = 0; // Track last CC1 value for button press detection
+        this.lastCC64Value = 0; // Track last CC64 value for octave switching
 
         // MIDI
         this.midiAccess = null;
@@ -132,6 +139,11 @@ class GradiusNext {
         this.sequencerInterval = null;
         this.sequencerGrid = this.createEmptySequencer();
 
+        // Secondary synth sequencer settings
+        this.synthSeqDelay = 0.3;
+        this.synthSeqSustain = 50; // 0-100%
+        this.synthSeqShape = 0; // 0-4 (same as main synth)
+
         // UI Mode
         this.currentMode = 'live'; // 'live' or 'sequencer'
 
@@ -142,6 +154,7 @@ class GradiusNext {
     async init() {
         this.setupUI();
         await this.loadDrumSamples();
+        await this.loadSoundEffects();
         await this.initMIDI();
         this.setupKeyboard();
         this.startVisualization();
@@ -173,16 +186,16 @@ class GradiusNext {
 
         // Create SYNTH delay chain
         this.synthDelay.node = this.audioContext.createDelay(2.0);
-        this.synthDelay.node.delayTime.value = 0.3;
+        this.synthDelay.node.delayTime.value = 0.35; // 350ms default
 
         this.synthDelay.feedback = this.audioContext.createGain();
-        this.synthDelay.feedback.gain.value = 0.3;
+        this.synthDelay.feedback.gain.value = 0.65; // 65% feedback default
 
         this.synthDelay.wet = this.audioContext.createGain();
-        this.synthDelay.wet.gain.value = 0.3; // On by default
+        this.synthDelay.wet.gain.value = 0.5; // 50% mix default
 
         this.synthDelay.dry = this.audioContext.createGain();
-        this.synthDelay.dry.gain.value = 0.7;
+        this.synthDelay.dry.gain.value = 0.5; // 50% dry default
 
         // Connect synth delay chain
         this.synthDelay.node.connect(this.synthDelay.feedback);
@@ -395,6 +408,572 @@ class GradiusNext {
         }
     }
 
+    // ===== SOUND EFFECTS =====
+    async loadSoundEffects() {
+        const sampleRate = this.audioContext.sampleRate;
+
+        // Map MIDI notes to SFX (24 keys = 2 octaves)
+        this.sfxBuffers[48] = this.generateLaser(sampleRate);      // C3
+        this.sfxBuffers[49] = this.generateLaserDown(sampleRate);  // C#3
+        this.sfxBuffers[50] = this.generateExplosion(sampleRate);  // D3
+        this.sfxBuffers[51] = this.generateExplosion2(sampleRate); // D#3
+        this.sfxBuffers[52] = this.generatePowerUp(sampleRate);    // E3
+        this.sfxBuffers[53] = this.generatePowerDown(sampleRate);  // F3
+        this.sfxBuffers[54] = this.generateRobot(sampleRate);      // F#3
+        this.sfxBuffers[55] = this.generateRobot2(sampleRate);     // G3
+        this.sfxBuffers[56] = this.generateSiren(sampleRate);      // G#3
+        this.sfxBuffers[57] = this.generateAlarm(sampleRate);      // A3
+        this.sfxBuffers[58] = this.generateJump(sampleRate);       // A#3
+        this.sfxBuffers[59] = this.generateCoin(sampleRate);       // B3
+        // Octave 4
+        this.sfxBuffers[60] = this.generateBlip(sampleRate);       // C4
+        this.sfxBuffers[61] = this.generateBloop(sampleRate);      // C#4
+        this.sfxBuffers[62] = this.generateZap(sampleRate);        // D4
+        this.sfxBuffers[63] = this.generateBeep(sampleRate);       // D#4
+        this.sfxBuffers[64] = this.generateWhoosh(sampleRate);     // E4
+        this.sfxBuffers[65] = this.generateHit(sampleRate);        // F4
+        this.sfxBuffers[66] = this.generateShield(sampleRate);     // F#4
+        this.sfxBuffers[67] = this.generateTeleport(sampleRate);   // G4
+        this.sfxBuffers[68] = this.generateGlitch(sampleRate);     // G#4
+        this.sfxBuffers[69] = this.generatePulse(sampleRate);      // A4
+        this.sfxBuffers[70] = this.generateChirp(sampleRate);      // A#4
+        this.sfxBuffers[71] = this.generateBuzz(sampleRate);       // B4
+
+        // Octave 5 - DJ Effects
+        this.sfxBuffers[72] = this.generateAirHorn(sampleRate);         // C5
+        this.sfxBuffers[73] = this.generateBassDrop(sampleRate);        // C#5
+        this.sfxBuffers[74] = this.generateImpactHit(sampleRate);       // D5
+        this.sfxBuffers[75] = this.generateReverseCymbal(sampleRate);   // D#5
+        this.sfxBuffers[76] = this.generateVocalHey(sampleRate);        // E5
+        this.sfxBuffers[77] = this.generateVocalOh(sampleRate);         // F5
+        this.sfxBuffers[78] = this.generateVocalYeah(sampleRate);       // F#5
+        this.sfxBuffers[79] = this.generateVocalChop(sampleRate);       // G5
+        this.sfxBuffers[80] = this.generateScratchForward(sampleRate);  // G#5
+        this.sfxBuffers[81] = this.generateScratchBackward(sampleRate); // A5
+        this.sfxBuffers[82] = this.generateTransformerScratch(sampleRate); // A#5
+        this.sfxBuffers[83] = this.generateRiser(sampleRate);           // B5
+
+        console.log('Sound effects loaded (36 total: 24 classic + 12 DJ effects)!');
+    }
+
+    // SFX Generators (Casio-style classic keyboard sounds)
+    generateLaser(sampleRate) {
+        const duration = 0.3;
+        const buffer = this.audioContext.createBuffer(1, sampleRate * duration, sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < data.length; i++) {
+            const t = i / sampleRate;
+            const freq = 1200 - t * 3000;
+            const env = Math.exp(-t * 8);
+            data[i] = Math.sin(2 * Math.PI * freq * t) * env;
+        }
+        return buffer;
+    }
+
+    generateLaserDown(sampleRate) {
+        const duration = 0.4;
+        const buffer = this.audioContext.createBuffer(1, sampleRate * duration, sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < data.length; i++) {
+            const t = i / sampleRate;
+            const freq = 400 + t * 800;
+            const env = Math.exp(-t * 5);
+            data[i] = Math.sin(2 * Math.PI * freq * t) * env;
+        }
+        return buffer;
+    }
+
+    generateExplosion(sampleRate) {
+        const duration = 0.8;
+        const buffer = this.audioContext.createBuffer(1, sampleRate * duration, sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < data.length; i++) {
+            const t = i / sampleRate;
+            const noise = (Math.random() * 2 - 1);
+            const rumble = Math.sin(2 * Math.PI * 40 * t);
+            const env = Math.exp(-t * 3);
+            data[i] = (noise * 0.7 + rumble * 0.3) * env;
+        }
+        return buffer;
+    }
+
+    generateExplosion2(sampleRate) {
+        const duration = 0.6;
+        const buffer = this.audioContext.createBuffer(1, sampleRate * duration, sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < data.length; i++) {
+            const t = i / sampleRate;
+            const freq = 200 * Math.exp(-t * 10);
+            const noise = (Math.random() * 2 - 1) * 0.5;
+            const tone = Math.sin(2 * Math.PI * freq * t) * 0.5;
+            const env = Math.exp(-t * 4);
+            data[i] = (noise + tone) * env;
+        }
+        return buffer;
+    }
+
+    generatePowerUp(sampleRate) {
+        const duration = 0.5;
+        const buffer = this.audioContext.createBuffer(1, sampleRate * duration, sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < data.length; i++) {
+            const t = i / sampleRate;
+            const freq = 200 + t * 800;
+            const env = 1 - t * 2;
+            data[i] = Math.sin(2 * Math.PI * freq * t) * env * 0.5;
+        }
+        return buffer;
+    }
+
+    generatePowerDown(sampleRate) {
+        const duration = 0.5;
+        const buffer = this.audioContext.createBuffer(1, sampleRate * duration, sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < data.length; i++) {
+            const t = i / sampleRate;
+            const freq = 800 - t * 600;
+            const env = 1 - t * 2;
+            data[i] = Math.sin(2 * Math.PI * freq * t) * env * 0.5;
+        }
+        return buffer;
+    }
+
+    generateRobot(sampleRate) {
+        const duration = 0.2;
+        const buffer = this.audioContext.createBuffer(1, sampleRate * duration, sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < data.length; i++) {
+            const t = i / sampleRate;
+            const freq = 300 + Math.sin(t * 50) * 100;
+            const env = Math.exp(-t * 10);
+            data[i] = (Math.sin(2 * Math.PI * freq * t) > 0 ? 1 : -1) * env * 0.3;
+        }
+        return buffer;
+    }
+
+    generateRobot2(sampleRate) {
+        const duration = 0.15;
+        const buffer = this.audioContext.createBuffer(1, sampleRate * duration, sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < data.length; i++) {
+            const t = i / sampleRate;
+            const freq = 400;
+            const env = Math.exp(-t * 15);
+            data[i] = (Math.sin(2 * Math.PI * freq * t) > 0 ? 1 : -1) * env * 0.3;
+        }
+        return buffer;
+    }
+
+    generateSiren(sampleRate) {
+        const duration = 1.0;
+        const buffer = this.audioContext.createBuffer(1, sampleRate * duration, sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < data.length; i++) {
+            const t = i / sampleRate;
+            const freq = 400 + Math.sin(t * Math.PI * 4) * 200;
+            data[i] = Math.sin(2 * Math.PI * freq * t) * 0.3;
+        }
+        return buffer;
+    }
+
+    generateAlarm(sampleRate) {
+        const duration = 0.8;
+        const buffer = this.audioContext.createBuffer(1, sampleRate * duration, sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < data.length; i++) {
+            const t = i / sampleRate;
+            const freq = (Math.floor(t * 10) % 2 === 0) ? 800 : 600;
+            data[i] = Math.sin(2 * Math.PI * freq * t) * 0.3;
+        }
+        return buffer;
+    }
+
+    generateJump(sampleRate) {
+        const duration = 0.3;
+        const buffer = this.audioContext.createBuffer(1, sampleRate * duration, sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < data.length; i++) {
+            const t = i / sampleRate;
+            const freq = 400 + Math.sin(t * Math.PI * 4) * 400;
+            const env = Math.exp(-t * 8);
+            data[i] = Math.sin(2 * Math.PI * freq * t) * env * 0.4;
+        }
+        return buffer;
+    }
+
+    generateCoin(sampleRate) {
+        const duration = 0.2;
+        const buffer = this.audioContext.createBuffer(1, sampleRate * duration, sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < data.length; i++) {
+            const t = i / sampleRate;
+            const freq1 = 988;
+            const freq2 = 1319;
+            const env = Math.exp(-t * 12);
+            data[i] = (Math.sin(2 * Math.PI * freq1 * t) + Math.sin(2 * Math.PI * freq2 * (t - 0.1))) * env * 0.3;
+        }
+        return buffer;
+    }
+
+    generateBlip(sampleRate) {
+        const duration = 0.05;
+        const buffer = this.audioContext.createBuffer(1, sampleRate * duration, sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < data.length; i++) {
+            const t = i / sampleRate;
+            data[i] = Math.sin(2 * Math.PI * 1000 * t) * 0.3;
+        }
+        return buffer;
+    }
+
+    generateBloop(sampleRate) {
+        const duration = 0.15;
+        const buffer = this.audioContext.createBuffer(1, sampleRate * duration, sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < data.length; i++) {
+            const t = i / sampleRate;
+            const freq = 600 - t * 400;
+            const env = Math.exp(-t * 10);
+            data[i] = Math.sin(2 * Math.PI * freq * t) * env * 0.3;
+        }
+        return buffer;
+    }
+
+    generateZap(sampleRate) {
+        const duration = 0.1;
+        const buffer = this.audioContext.createBuffer(1, sampleRate * duration, sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < data.length; i++) {
+            const t = i / sampleRate;
+            const noise = (Math.random() * 2 - 1);
+            const freq = 2000 - t * 8000;
+            const env = Math.exp(-t * 30);
+            data[i] = (noise * 0.5 + Math.sin(2 * Math.PI * freq * t) * 0.5) * env;
+        }
+        return buffer;
+    }
+
+    generateBeep(sampleRate) {
+        const duration = 0.1;
+        const buffer = this.audioContext.createBuffer(1, sampleRate * duration, sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < data.length; i++) {
+            const t = i / sampleRate;
+            data[i] = Math.sin(2 * Math.PI * 800 * t) * 0.3;
+        }
+        return buffer;
+    }
+
+    generateWhoosh(sampleRate) {
+        const duration = 0.5;
+        const buffer = this.audioContext.createBuffer(1, sampleRate * duration, sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < data.length; i++) {
+            const t = i / sampleRate;
+            const noise = (Math.random() * 2 - 1);
+            const env = Math.sin(t * Math.PI * 2);
+            data[i] = noise * env * 0.2;
+        }
+        return buffer;
+    }
+
+    generateHit(sampleRate) {
+        const duration = 0.15;
+        const buffer = this.audioContext.createBuffer(1, sampleRate * duration, sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < data.length; i++) {
+            const t = i / sampleRate;
+            const noise = (Math.random() * 2 - 1);
+            const freq = 200;
+            const env = Math.exp(-t * 20);
+            data[i] = (noise * 0.7 + Math.sin(2 * Math.PI * freq * t) * 0.3) * env;
+        }
+        return buffer;
+    }
+
+    generateShield(sampleRate) {
+        const duration = 0.3;
+        const buffer = this.audioContext.createBuffer(1, sampleRate * duration, sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < data.length; i++) {
+            const t = i / sampleRate;
+            const freq = 600 + Math.sin(t * 40) * 200;
+            const env = Math.exp(-t * 6);
+            data[i] = Math.sin(2 * Math.PI * freq * t) * env * 0.25;
+        }
+        return buffer;
+    }
+
+    generateTeleport(sampleRate) {
+        const duration = 0.6;
+        const buffer = this.audioContext.createBuffer(1, sampleRate * duration, sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < data.length; i++) {
+            const t = i / sampleRate;
+            const freq = 300 + Math.sin(t * 100) * 500;
+            const env = t < 0.3 ? t / 0.3 : (0.6 - t) / 0.3;
+            data[i] = Math.sin(2 * Math.PI * freq * t) * env * 0.3;
+        }
+        return buffer;
+    }
+
+    generateGlitch(sampleRate) {
+        const duration = 0.2;
+        const buffer = this.audioContext.createBuffer(1, sampleRate * duration, sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < data.length; i++) {
+            const t = i / sampleRate;
+            const freq = Math.floor(Math.random() * 1000) + 200;
+            data[i] = (Math.sin(2 * Math.PI * freq * t) > 0 ? 1 : -1) * 0.3;
+        }
+        return buffer;
+    }
+
+    generatePulse(sampleRate) {
+        const duration = 0.3;
+        const buffer = this.audioContext.createBuffer(1, sampleRate * duration, sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < data.length; i++) {
+            const t = i / sampleRate;
+            const freq = 440;
+            const pulse = Math.sin(t * Math.PI * 20);
+            const env = Math.exp(-t * 6);
+            data[i] = Math.sin(2 * Math.PI * freq * t) * pulse * env * 0.3;
+        }
+        return buffer;
+    }
+
+    generateChirp(sampleRate) {
+        const duration = 0.15;
+        const buffer = this.audioContext.createBuffer(1, sampleRate * duration, sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < data.length; i++) {
+            const t = i / sampleRate;
+            const freq = 800 + t * 1200;
+            const env = Math.exp(-t * 15);
+            data[i] = Math.sin(2 * Math.PI * freq * t) * env * 0.3;
+        }
+        return buffer;
+    }
+
+    generateBuzz(sampleRate) {
+        const duration = 0.3;
+        const buffer = this.audioContext.createBuffer(1, sampleRate * duration, sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < data.length; i++) {
+            const t = i / sampleRate;
+            const freq = 100;
+            data[i] = (Math.sin(2 * Math.PI * freq * t) > 0 ? 1 : -1) * 0.3;
+        }
+        return buffer;
+    }
+
+    // === DJ Sound Effects ===
+
+    generateAirHorn(sampleRate) {
+        const duration = 0.4;
+        const buffer = this.audioContext.createBuffer(1, sampleRate * duration, sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < data.length; i++) {
+            const t = i / sampleRate;
+            const env = Math.max(0, 1 - t * 2.5);
+            // Layered square waves for air horn timbre
+            const sig1 = Math.sin(2 * Math.PI * 185 * t);
+            const sig2 = Math.sin(2 * Math.PI * 220 * t) * 0.8;
+            const sig3 = Math.sin(2 * Math.PI * 277 * t) * 0.6;
+            data[i] = (sig1 + sig2 + sig3) * env * 0.4;
+        }
+        return buffer;
+    }
+
+    generateBassDrop(sampleRate) {
+        const duration = 0.8;
+        const buffer = this.audioContext.createBuffer(1, sampleRate * duration, sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < data.length; i++) {
+            const t = i / sampleRate;
+            const freq = 40 + (60 * Math.exp(-t * 8)); // Drop from 100Hz to 40Hz
+            const env = Math.exp(-t * 2);
+            data[i] = Math.sin(2 * Math.PI * freq * t) * env * 0.8;
+        }
+        return buffer;
+    }
+
+    generateImpactHit(sampleRate) {
+        const duration = 0.15;
+        const buffer = this.audioContext.createBuffer(1, sampleRate * duration, sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < data.length; i++) {
+            const t = i / sampleRate;
+            const env = Math.exp(-t * 25);
+            const noise = (Math.random() - 0.5) * 2;
+            const bass = Math.sin(2 * Math.PI * 80 * t);
+            data[i] = (noise * 0.5 + bass * 0.5) * env * 0.6;
+        }
+        return buffer;
+    }
+
+    generateReverseCymbal(sampleRate) {
+        const duration = 0.5;
+        const buffer = this.audioContext.createBuffer(1, sampleRate * duration, sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < data.length; i++) {
+            const t = i / sampleRate;
+            const env = t / duration; // Reverse envelope (quiet to loud)
+            const noise = (Math.random() - 0.5) * 2;
+            // High-pass filter simulation
+            const filtered = noise * (1 - Math.exp(-t * 20));
+            data[i] = filtered * env * 0.3;
+        }
+        return buffer;
+    }
+
+    generateVocalHey(sampleRate) {
+        const duration = 0.2;
+        const buffer = this.audioContext.createBuffer(1, sampleRate * duration, sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < data.length; i++) {
+            const t = i / sampleRate;
+            const env = Math.exp(-t * 12);
+            // Formant synthesis for "hey" (H-EH-Y)
+            const f1 = Math.sin(2 * Math.PI * 400 * t); // First formant
+            const f2 = Math.sin(2 * Math.PI * 2000 * t) * 0.5; // Second formant
+            const f3 = Math.sin(2 * Math.PI * 3000 * t) * 0.3; // Third formant
+            data[i] = (f1 + f2 + f3) * env * 0.4;
+        }
+        return buffer;
+    }
+
+    generateVocalOh(sampleRate) {
+        const duration = 0.25;
+        const buffer = this.audioContext.createBuffer(1, sampleRate * duration, sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < data.length; i++) {
+            const t = i / sampleRate;
+            const env = Math.exp(-t * 10);
+            // Formant synthesis for "oh" sound
+            const f1 = Math.sin(2 * Math.PI * 300 * t);
+            const f2 = Math.sin(2 * Math.PI * 870 * t) * 0.6;
+            const f3 = Math.sin(2 * Math.PI * 2250 * t) * 0.4;
+            data[i] = (f1 + f2 + f3) * env * 0.4;
+        }
+        return buffer;
+    }
+
+    generateVocalYeah(sampleRate) {
+        const duration = 0.3;
+        const buffer = this.audioContext.createBuffer(1, sampleRate * duration, sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < data.length; i++) {
+            const t = i / sampleRate;
+            const env = Math.exp(-t * 8);
+            // Formant synthesis for "yeah"
+            const f1 = Math.sin(2 * Math.PI * 500 * t);
+            const f2 = Math.sin(2 * Math.PI * 1700 * t) * 0.6;
+            const f3 = Math.sin(2 * Math.PI * 2600 * t) * 0.4;
+            data[i] = (f1 + f2 + f3) * env * 0.4;
+        }
+        return buffer;
+    }
+
+    generateVocalChop(sampleRate) {
+        const duration = 0.4;
+        const buffer = this.audioContext.createBuffer(1, sampleRate * duration, sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < data.length; i++) {
+            const t = i / sampleRate;
+            const env = Math.exp(-t * 6);
+            // Stuttered gate effect (16th notes at 120bpm = 0.125s intervals)
+            const gate = Math.floor(t / 0.05) % 2 === 0 ? 1 : 0;
+            const f1 = Math.sin(2 * Math.PI * 450 * t);
+            const f2 = Math.sin(2 * Math.PI * 1800 * t) * 0.5;
+            data[i] = (f1 + f2) * env * gate * 0.4;
+        }
+        return buffer;
+    }
+
+    generateScratchForward(sampleRate) {
+        const duration = 0.2;
+        const buffer = this.audioContext.createBuffer(1, sampleRate * duration, sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < data.length; i++) {
+            const t = i / sampleRate;
+            const freq = 200 + t * 1500; // Pitch up
+            const env = 0.6;
+            const noise = (Math.random() - 0.5) * 0.3;
+            const tone = Math.sin(2 * Math.PI * freq * t);
+            data[i] = (tone * 0.7 + noise * 0.3) * env;
+        }
+        return buffer;
+    }
+
+    generateScratchBackward(sampleRate) {
+        const duration = 0.2;
+        const buffer = this.audioContext.createBuffer(1, sampleRate * duration, sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < data.length; i++) {
+            const t = i / sampleRate;
+            const freq = 1700 - t * 1500; // Pitch down
+            const env = 0.6;
+            const noise = (Math.random() - 0.5) * 0.3;
+            const tone = Math.sin(2 * Math.PI * freq * t);
+            data[i] = (tone * 0.7 + noise * 0.3) * env;
+        }
+        return buffer;
+    }
+
+    generateTransformerScratch(sampleRate) {
+        const duration = 0.3;
+        const buffer = this.audioContext.createBuffer(1, sampleRate * duration, sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < data.length; i++) {
+            const t = i / sampleRate;
+            // Rapid staccato gating (transformer effect)
+            const gate = Math.sin(2 * Math.PI * 40 * t) > 0 ? 1 : 0;
+            const freq = 400 + Math.sin(2 * Math.PI * 8 * t) * 300;
+            const noise = (Math.random() - 0.5) * 0.3;
+            const tone = Math.sin(2 * Math.PI * freq * t);
+            data[i] = (tone * 0.7 + noise * 0.3) * gate * 0.5;
+        }
+        return buffer;
+    }
+
+    generateRiser(sampleRate) {
+        const duration = 1.0;
+        const buffer = this.audioContext.createBuffer(1, sampleRate * duration, sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < data.length; i++) {
+            const t = i / sampleRate;
+            const env = t / duration; // Linear fade in
+            const noise = (Math.random() - 0.5) * 2;
+            // High-pass filter that increases with time
+            const cutoff = 200 + t * 8000;
+            const filtered = noise * Math.min(1, cutoff / 1000);
+            data[i] = filtered * env * 0.4;
+        }
+        return buffer;
+    }
+
+    playSoundEffect(midiNote) {
+        if (!this.sfxBuffers[midiNote]) return;
+
+        const source = this.audioContext.createBufferSource();
+        source.buffer = this.sfxBuffers[midiNote];
+
+        const gain = this.audioContext.createGain();
+        gain.gain.value = 0.6;
+
+        source.connect(gain);
+        gain.connect(this.synthDelay.node);
+        gain.connect(this.synthDelay.dry);
+
+        source.start(0);
+
+        // Visual feedback
+        this.highlightKey(midiNote, true);
+        setTimeout(() => this.highlightKey(midiNote, false), 100);
+    }
+
     // ===== SYNTH ENGINE =====
     noteToFrequency(note) {
         // MIDI note number to frequency
@@ -412,6 +991,12 @@ class GradiusNext {
     }
 
     playNote(midiNote) {
+        // If in SFX mode, play sound effect instead
+        if (this.sfxMode) {
+            this.playSoundEffect(midiNote);
+            return;
+        }
+
         // Don't play if already playing
         if (this.activeNotes.has(midiNote)) return;
 
@@ -455,18 +1040,16 @@ class GradiusNext {
     }
 
     stopNote(midiNote, forceStop = false) {
-        // If sustain is enabled and not forcing stop, sustain the note
-        if (this.sustainEnabled && !forceStop) {
-            this.sustainedNotes.add(midiNote);
-            return; // Don't actually stop the note
-        }
-
         const note = this.activeNotes.get(midiNote);
         if (!note) return;
 
         const { osc, gain, voice } = note;
         const now = this.audioContext.currentTime;
-        const releaseTime = voice ? voice.release : 0.1;
+        const baseReleaseTime = voice ? voice.release : 0.1;
+
+        // Apply sustain amount - extends release time (0-100% adds 0-5 seconds)
+        const sustainExtension = (this.sustainAmount / 100) * 5;
+        const releaseTime = baseReleaseTime + sustainExtension;
 
         // Release envelope
         gain.gain.cancelScheduledValues(now);
@@ -476,16 +1059,7 @@ class GradiusNext {
         osc.stop(now + releaseTime);
 
         this.activeNotes.delete(midiNote);
-        this.sustainedNotes.delete(midiNote);
         this.highlightKey(midiNote, false);
-    }
-
-    releaseSustainedNotes() {
-        // Stop all sustained notes
-        const notesToRelease = Array.from(this.sustainedNotes);
-        for (const midiNote of notesToRelease) {
-            this.stopNote(midiNote, true); // Force stop
-        }
     }
 
     stopAllNotes() {
@@ -636,6 +1210,35 @@ class GradiusNext {
         const command = status >> 4;
         const channel = status & 0x0f;
 
+        // === COMPREHENSIVE MIDI LOGGING ===
+        const commandNames = {
+            8: 'Note Off',
+            9: 'Note On',
+            10: 'Poly Aftertouch',
+            11: 'Control Change',
+            12: 'Program Change',
+            13: 'Channel Aftertouch',
+            14: 'Pitch Bend'
+        };
+
+        const commandName = commandNames[command] || 'Unknown';
+
+        if (command === 11) {
+            // Control Change - show CC number and value
+            console.log(`🎛️ MIDI: ${commandName} | Ch:${channel + 1} | CC#:${note} | Value:${velocity}`);
+        } else if (command === 14) {
+            // Pitch Bend
+            const bendValue = ((velocity << 7) | note) - 8192;
+            console.log(`🎵 MIDI: ${commandName} | Ch:${channel + 1} | Value:${bendValue}`);
+        } else if (command === 9 || command === 8) {
+            // Note On/Off
+            console.log(`🎹 MIDI: ${commandName} | Ch:${channel + 1} | Note:${note} | Velocity:${velocity}`);
+        } else {
+            // Other messages
+            console.log(`📡 MIDI: ${commandName} | Ch:${channel + 1} | Data1:${note} | Data2:${velocity}`);
+        }
+        // === END MIDI LOGGING ===
+
         switch (command) {
             case 9: // Note On
                 if (velocity > 0) {
@@ -667,10 +1270,49 @@ class GradiusNext {
 
             case 11: // Control Change
                 if (note === 1) {
-                    // Mod wheel (CC1) controls shape
-                    this.shapeValue = (velocity / 127) * 4;
-                    document.getElementById('shapeSlider').value = this.shapeValue;
-                    this.updateWaveformDisplay();
+                    // CC1 Button - advance shape on initial press (0 → non-zero)
+                    // Button sends decreasing values while held (11→10→9...→0)
+                    if (velocity > 0 && this.lastModValue === 0) {
+                        // Button just pressed! Advance to next shape
+                        this.shapeValue = (this.shapeValue + 1) % 5; // 0-4, wraps around
+                        document.getElementById('shapeSlider').value = this.shapeValue;
+                        this.updateWaveformDisplay();
+
+                        const shapeNames = ['SINE', 'SAW', 'SQUARE', 'TRIANGLE', 'PWM'];
+                        console.log(`🌊 Shape changed to: ${shapeNames[this.shapeValue]} (${this.shapeValue})`);
+                    }
+                    this.lastModValue = velocity;
+                } else if (note === 64) {
+                    // CC64 Button - cycle through octaves on ANY state change
+                    // Button toggles between 127 and 0, trigger on BOTH edges
+                    const wasLow = this.lastCC64Value < 64;
+                    const nowHigh = velocity >= 64;
+
+                    // Trigger if state changed (low→high OR high→low)
+                    if ((wasLow && nowHigh) || (!wasLow && !nowHigh && this.lastCC64Value !== velocity)) {
+                        // Button state changed! Advance to next octave
+                        // Cycle through 2, 3, 4, 5, 6, then back to 2
+                        this.currentOctave = ((this.currentOctave - 2 + 1) % 5) + 2;
+                        this.updateOctaveUI();
+                        this.updatePitchDisplay();
+
+                        console.log(`🎹 Octave changed to: ${this.currentOctave}`);
+                    }
+                    this.lastCC64Value = velocity;
+                } else if (note === 102 && velocity > 0) {
+                    // CC102: Octave Up (M-Audio convention - if controller sends it)
+                    if (this.currentOctave < 6) {
+                        this.currentOctave++;
+                        this.updateOctaveUI();
+                        this.updatePitchDisplay();
+                    }
+                } else if (note === 103 && velocity > 0) {
+                    // CC103: Octave Down (M-Audio convention - if controller sends it)
+                    if (this.currentOctave > 2) {
+                        this.currentOctave--;
+                        this.updateOctaveUI();
+                        this.updatePitchDisplay();
+                    }
                 }
                 break;
 
@@ -695,7 +1337,8 @@ class GradiusNext {
 
     // ===== SEQUENCER =====
     createEmptySequencer() {
-        // 8 tracks: all drum instruments
+        // 8 drum tracks + 4 synth tracks = 12 tracks total
+        // C major pentatonic scale: C, D, E, G, A (in octave 4)
         const drumTracks = [
             { steps: Array(16).fill(false), isDrum: true, drumSound: 'kick', label: 'KICK', color: '#ff0066' },
             { steps: Array(16).fill(false), isDrum: true, drumSound: 'snare', label: 'SNARE', color: '#ffaa00' },
@@ -707,7 +1350,14 @@ class GradiusNext {
             { steps: Array(16).fill(false), isDrum: true, drumSound: 'rim', label: 'RIMSHOT', color: '#ff6600' }
         ];
 
-        return drumTracks;
+        const synthTracks = [
+            { steps: Array(16).fill(false), isDrum: false, note: 72, label: 'C5', color: '#9d4edd', isSynthSeq: true }, // C5
+            { steps: Array(16).fill(false), isDrum: false, note: 69, label: 'A4', color: '#7b2cbf', isSynthSeq: true }, // A4
+            { steps: Array(16).fill(false), isDrum: false, note: 67, label: 'G4', color: '#5a189a', isSynthSeq: true }, // G4
+            { steps: Array(16).fill(false), isDrum: false, note: 64, label: 'E4', color: '#3c096c', isSynthSeq: true }  // E4
+        ];
+
+        return [...drumTracks, ...synthTracks];
     }
 
     startSequencer() {
@@ -754,6 +1404,9 @@ class GradiusNext {
             if (track.steps[this.currentStep]) {
                 if (track.isDrum) {
                     this.playDrum(track.drumSound);
+                } else if (track.isSynthSeq) {
+                    // Play synth sequencer note with its own settings
+                    this.playSynthSeqNote(track.note);
                 } else {
                     this.playNote(track.note);
                     setTimeout(() => this.stopNote(track.note), 50);
@@ -763,6 +1416,71 @@ class GradiusNext {
 
         // Update visual
         this.highlightSequencerStep(this.currentStep);
+    }
+
+    playSynthSeqNote(midiNote) {
+        // Play note with synth sequencer settings (independent from main keyboard)
+        const frequency = this.noteToFrequency(midiNote);
+
+        // Get waveform from synthSeqShape
+        let waveformType = 'sine';
+        if (this.synthSeqShape < 0.8) waveformType = 'sine';
+        else if (this.synthSeqShape < 1.8) waveformType = 'sawtooth';
+        else if (this.synthSeqShape < 2.8) waveformType = 'square';
+        else if (this.synthSeqShape < 3.8) waveformType = 'triangle';
+        else waveformType = 'sawtooth';
+
+        // Create oscillator
+        const osc = this.audioContext.createOscillator();
+        osc.type = waveformType;
+        osc.frequency.value = frequency;
+
+        // Create gain envelope
+        const gain = this.audioContext.createGain();
+        gain.gain.value = 0;
+
+        // Create delay for synth seq
+        const delay = this.audioContext.createDelay(2.0);
+        delay.delayTime.value = this.synthSeqDelay;
+
+        const delayFeedback = this.audioContext.createGain();
+        delayFeedback.gain.value = 0.3;
+
+        const delayWet = this.audioContext.createGain();
+        delayWet.gain.value = 0.5;
+
+        const delayDry = this.audioContext.createGain();
+        delayDry.gain.value = 0.5;
+
+        // Connect delay chain
+        delay.connect(delayFeedback);
+        delayFeedback.connect(delay);
+        delay.connect(delayWet);
+
+        // Connect audio chain
+        osc.connect(gain);
+        gain.connect(delay);
+        gain.connect(delayDry);
+        delayWet.connect(this.synthMixer);
+        delayDry.connect(this.synthMixer);
+
+        // ADSR envelope - short note for sequencer
+        const now = this.audioContext.currentTime;
+        const attack = 0.01;
+        const decay = 0.05;
+        const sustain = 0.7;
+        const sustainExtension = (this.synthSeqSustain / 100) * 0.5; // 0-0.5 seconds (less sensitive)
+        const release = 0.1 + sustainExtension;
+        const noteDuration = 0.05 + sustainExtension;
+
+        gain.gain.setValueAtTime(0, now);
+        gain.gain.linearRampToValueAtTime(0.3, now + attack);
+        gain.gain.linearRampToValueAtTime(0.3 * sustain, now + attack + decay);
+        gain.gain.setValueAtTime(0.3 * sustain, now + noteDuration);
+        gain.gain.linearRampToValueAtTime(0, now + noteDuration + release);
+
+        osc.start(now);
+        osc.stop(now + noteDuration + release);
     }
 
     highlightSequencerStep(step) {
@@ -793,6 +1511,252 @@ class GradiusNext {
         this.renderSequencerGrid();
     }
 
+    generateRandomPattern() {
+        // Array of preset patterns
+        const patterns = [
+            { name: 'Fast & Aggressive', bpm: 150, pattern: 'aggressive', tempo: 'fast' },
+            { name: 'Slow & Melodic', bpm: 90, pattern: 'melodic', tempo: 'slow' },
+            { name: 'Mid Tempo Groove', bpm: 120, pattern: 'groove', tempo: 'mid' },
+            { name: 'Energetic Dance', bpm: 140, pattern: 'dance', tempo: 'fast' },
+            { name: 'Chill Ambient', bpm: 80, pattern: 'ambient', tempo: 'slow' },
+            { name: 'Breakbeat', bpm: 165, pattern: 'breakbeat', tempo: 'fast' }
+        ];
+
+        // Pick random pattern
+        const preset = patterns[Math.floor(Math.random() * patterns.length)];
+        console.log('Generating pattern:', preset.name);
+
+        // Set BPM
+        this.bpm = preset.bpm;
+        document.getElementById('bpmSlider').value = this.bpm;
+        document.getElementById('bpmValue').textContent = this.bpm;
+
+        // Clear existing pattern
+        this.sequencerGrid = this.createEmptySequencer();
+
+        // Generate drum pattern based on type
+        switch (preset.pattern) {
+            case 'aggressive':
+                this.generateAggressivePattern();
+                break;
+            case 'melodic':
+                this.generateMelodicPattern();
+                break;
+            case 'groove':
+                this.generateGroovePattern();
+                break;
+            case 'dance':
+                this.generateDancePattern();
+                break;
+            case 'ambient':
+                this.generateAmbientPattern();
+                break;
+            case 'breakbeat':
+                this.generateBreakbeatPattern();
+                break;
+        }
+
+        // Render and auto-play
+        this.renderSequencerGrid();
+        if (!this.sequencerPlaying) {
+            this.startSequencer();
+        }
+    }
+
+    generateAggressivePattern() {
+        // Kick on 1, 5, 9, 13
+        this.sequencerGrid[0].steps[0] = true;
+        this.sequencerGrid[0].steps[4] = true;
+        this.sequencerGrid[0].steps[8] = true;
+        this.sequencerGrid[0].steps[12] = true;
+
+        // Snare on 4, 12
+        this.sequencerGrid[1].steps[4] = true;
+        this.sequencerGrid[1].steps[12] = true;
+
+        // Hi-hat every other step
+        for (let i = 0; i < 16; i += 2) {
+            this.sequencerGrid[2].steps[i] = true;
+        }
+
+        // Clap on 6, 14
+        this.sequencerGrid[4].steps[6] = true;
+        this.sequencerGrid[4].steps[14] = true;
+
+        // Crash on 1
+        this.sequencerGrid[6].steps[0] = true;
+
+        // Synth notes - aggressive stabs
+        this.sequencerGrid[8].steps[0] = true;  // C5
+        this.sequencerGrid[8].steps[8] = true;
+        this.sequencerGrid[10].steps[4] = true; // G4
+        this.sequencerGrid[10].steps[12] = true;
+
+        // Randomize synth seq shape - aggressive prefers SAW/SQUARE
+        const aggressiveShapes = [1, 2, 2]; // SAW, SQUARE (weighted)
+        this.synthSeqShape = aggressiveShapes[Math.floor(Math.random() * aggressiveShapes.length)];
+        document.getElementById('synthSeqShape').value = this.synthSeqShape;
+    }
+
+    generateMelodicPattern() {
+        // Kick on 1, 9
+        this.sequencerGrid[0].steps[0] = true;
+        this.sequencerGrid[0].steps[8] = true;
+
+        // Snare on 5, 13
+        this.sequencerGrid[1].steps[4] = true;
+        this.sequencerGrid[1].steps[12] = true;
+
+        // Hi-hat sparse
+        this.sequencerGrid[2].steps[2] = true;
+        this.sequencerGrid[2].steps[6] = true;
+        this.sequencerGrid[2].steps[10] = true;
+        this.sequencerGrid[2].steps[14] = true;
+
+        // Synth melody - pentatonic scale
+        this.sequencerGrid[8].steps[0] = true;  // C5
+        this.sequencerGrid[9].steps[2] = true;  // A4
+        this.sequencerGrid[10].steps[4] = true; // G4
+        this.sequencerGrid[11].steps[6] = true; // E4
+        this.sequencerGrid[10].steps[8] = true; // G4
+        this.sequencerGrid[9].steps[10] = true; // A4
+        this.sequencerGrid[8].steps[12] = true; // C5
+        this.sequencerGrid[9].steps[14] = true; // A4
+
+        // Randomize synth seq shape - melodic prefers SINE/TRIANGLE
+        const melodicShapes = [0, 0, 3]; // SINE (weighted), TRIANGLE
+        this.synthSeqShape = melodicShapes[Math.floor(Math.random() * melodicShapes.length)];
+        document.getElementById('synthSeqShape').value = this.synthSeqShape;
+    }
+
+    generateGroovePattern() {
+        // Four on the floor kick
+        this.sequencerGrid[0].steps[0] = true;
+        this.sequencerGrid[0].steps[4] = true;
+        this.sequencerGrid[0].steps[8] = true;
+        this.sequencerGrid[0].steps[12] = true;
+
+        // Snare on 2 and 4
+        this.sequencerGrid[1].steps[4] = true;
+        this.sequencerGrid[1].steps[12] = true;
+
+        // Hi-hat 8ths
+        for (let i = 0; i < 16; i += 2) {
+            this.sequencerGrid[2].steps[i] = true;
+        }
+
+        // Open hi-hat accents
+        this.sequencerGrid[3].steps[6] = true;
+        this.sequencerGrid[3].steps[14] = true;
+
+        // Synth bass line
+        this.sequencerGrid[11].steps[0] = true;  // E4
+        this.sequencerGrid[11].steps[4] = true;
+        this.sequencerGrid[11].steps[8] = true;
+        this.sequencerGrid[11].steps[12] = true;
+
+        // Randomize synth seq shape - groove prefers SAW/SQUARE
+        const grooveShapes = [1, 2]; // SAW, SQUARE
+        this.synthSeqShape = grooveShapes[Math.floor(Math.random() * grooveShapes.length)];
+        document.getElementById('synthSeqShape').value = this.synthSeqShape;
+    }
+
+    generateDancePattern() {
+        // Four on the floor
+        for (let i = 0; i < 16; i += 4) {
+            this.sequencerGrid[0].steps[i] = true;
+        }
+
+        // Clap on 2 and 4
+        this.sequencerGrid[4].steps[4] = true;
+        this.sequencerGrid[4].steps[12] = true;
+
+        // Hi-hat 16ths
+        for (let i = 0; i < 16; i++) {
+            this.sequencerGrid[2].steps[i] = true;
+        }
+
+        // Open hat every 4
+        this.sequencerGrid[3].steps[3] = true;
+        this.sequencerGrid[3].steps[7] = true;
+        this.sequencerGrid[3].steps[11] = true;
+        this.sequencerGrid[3].steps[15] = true;
+
+        // Synth stabs
+        this.sequencerGrid[8].steps[0] = true;
+        this.sequencerGrid[8].steps[6] = true;
+        this.sequencerGrid[10].steps[8] = true;
+        this.sequencerGrid[10].steps[14] = true;
+
+        // Randomize synth seq shape - dance prefers SAW/SQUARE/PWM
+        const danceShapes = [1, 2, 4]; // SAW, SQUARE, PWM
+        this.synthSeqShape = danceShapes[Math.floor(Math.random() * danceShapes.length)];
+        document.getElementById('synthSeqShape').value = this.synthSeqShape;
+    }
+
+    generateAmbientPattern() {
+        // Sparse kick
+        this.sequencerGrid[0].steps[0] = true;
+        this.sequencerGrid[0].steps[12] = true;
+
+        // Hi-hat sparse
+        this.sequencerGrid[2].steps[4] = true;
+        this.sequencerGrid[2].steps[8] = true;
+
+        // Synth pads - sustained notes
+        this.sequencerGrid[8].steps[0] = true;
+        this.sequencerGrid[9].steps[4] = true;
+        this.sequencerGrid[10].steps[8] = true;
+        this.sequencerGrid[11].steps[12] = true;
+
+        // Increase synth seq sustain for ambient
+        this.synthSeqSustain = 80;
+        document.getElementById('synthSeqSustain').value = 80;
+        document.getElementById('synthSeqSustainValue').textContent = '80%';
+
+        // Randomize synth seq shape - ambient prefers SINE/TRIANGLE
+        const ambientShapes = [0, 0, 0, 3]; // SINE (heavily weighted), TRIANGLE
+        this.synthSeqShape = ambientShapes[Math.floor(Math.random() * ambientShapes.length)];
+        document.getElementById('synthSeqShape').value = this.synthSeqShape;
+    }
+
+    generateBreakbeatPattern() {
+        // Syncopated kick
+        this.sequencerGrid[0].steps[0] = true;
+        this.sequencerGrid[0].steps[3] = true;
+        this.sequencerGrid[0].steps[8] = true;
+        this.sequencerGrid[0].steps[11] = true;
+
+        // Snare variations
+        this.sequencerGrid[1].steps[4] = true;
+        this.sequencerGrid[1].steps[10] = true;
+        this.sequencerGrid[1].steps[12] = true;
+
+        // Complex hi-hat pattern
+        for (let i = 0; i < 16; i++) {
+            if (i % 3 === 0 || i % 5 === 0) {
+                this.sequencerGrid[2].steps[i] = true;
+            }
+        }
+
+        // Tom fills
+        this.sequencerGrid[5].steps[6] = true;
+        this.sequencerGrid[5].steps[7] = true;
+        this.sequencerGrid[5].steps[14] = true;
+        this.sequencerGrid[5].steps[15] = true;
+
+        // Synth rhythm
+        this.sequencerGrid[10].steps[2] = true;
+        this.sequencerGrid[9].steps[6] = true;
+        this.sequencerGrid[10].steps[10] = true;
+        this.sequencerGrid[9].steps[13] = true;
+
+        // Randomize synth seq shape - breakbeat can be anything
+        const breakbeatShapes = [0, 1, 2, 3, 4]; // All shapes equally
+        this.synthSeqShape = breakbeatShapes[Math.floor(Math.random() * breakbeatShapes.length)];
+        document.getElementById('synthSeqShape').value = this.synthSeqShape;
+    }
+
     renderSequencerGrid() {
         const grid = document.getElementById('sequencerGrid');
         grid.innerHTML = '';
@@ -803,6 +1767,19 @@ class GradiusNext {
         gridContainer.style.gridTemplateColumns = 'auto repeat(16, 1fr)';
         gridContainer.style.gap = '3px';
         gridContainer.style.alignItems = 'center';
+
+        // Add "DRUM SEQUENCER" header at the very top
+        const drumHeader = document.createElement('div');
+        drumHeader.style.gridColumn = '1 / -1';
+        drumHeader.style.textAlign = 'center';
+        drumHeader.style.fontSize = '0.9rem';
+        drumHeader.style.fontWeight = 'bold';
+        drumHeader.style.color = '#ff0066';
+        drumHeader.style.textShadow = '0 0 10px #ff0066';
+        drumHeader.style.marginBottom = '10px';
+        drumHeader.style.marginTop = '5px';
+        drumHeader.textContent = '🥁 DRUM SEQUENCER 🥁';
+        gridContainer.appendChild(drumHeader);
 
         // Header row with step numbers
         const cornerCell = document.createElement('div');
@@ -825,6 +1802,29 @@ class GradiusNext {
 
         // Create rows for each track
         this.sequencerGrid.forEach((track, trackIndex) => {
+            // Add visual separator between drums (0-7) and synth (8-11)
+            if (trackIndex === 8) {
+                // Add a full-width separator row
+                const separator = document.createElement('div');
+                separator.style.gridColumn = '1 / -1';
+                separator.style.height = '2px';
+                separator.style.background = 'linear-gradient(90deg, transparent, #9d4edd, transparent)';
+                separator.style.margin = '10px 0';
+                gridContainer.appendChild(separator);
+
+                // Add "SYNTH SEQUENCER" label
+                const synthHeader = document.createElement('div');
+                synthHeader.style.gridColumn = '1 / -1';
+                synthHeader.style.textAlign = 'center';
+                synthHeader.style.fontSize = '0.9rem';
+                synthHeader.style.fontWeight = 'bold';
+                synthHeader.style.color = '#9d4edd';
+                synthHeader.style.textShadow = '0 0 10px #9d4edd';
+                synthHeader.style.marginBottom = '5px';
+                synthHeader.textContent = '♪ SYNTH SEQUENCER ♪';
+                gridContainer.appendChild(synthHeader);
+            }
+
             // Track label
             const label = document.createElement('div');
             label.className = 'track-label';
@@ -898,6 +1898,8 @@ class GradiusNext {
                 // Preview sound
                 if (track.isDrum) {
                     this.playDrum(track.drumSound);
+                } else if (track.isSynthSeq) {
+                    this.playSynthSeqNote(track.note);
                 } else {
                     this.playNote(track.note);
                     setTimeout(() => this.stopNote(track.note), 100);
@@ -917,6 +1919,16 @@ class GradiusNext {
             btn.addEventListener('click', (e) => {
                 const mode = e.target.dataset.mode;
                 this.switchMode(mode);
+            });
+        });
+
+        // SFX Mode Toggle
+        document.querySelectorAll('.sfx-mode-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.sfx-mode-btn').forEach(b => b.classList.remove('active'));
+                e.currentTarget.classList.add('active');
+                this.sfxMode = e.currentTarget.dataset.sfx === 'true';
+                console.log('SFX Mode:', this.sfxMode ? 'ON' : 'OFF');
             });
         });
 
@@ -940,12 +1952,19 @@ class GradiusNext {
             this.updateWaveformDisplay();
         });
 
+        // Sustain amount control
+        document.getElementById('sustainAmount').addEventListener('input', (e) => {
+            this.sustainAmount = parseInt(e.target.value);
+            document.getElementById('sustainAmountDisplay').textContent = this.sustainAmount + '%';
+        });
+
         // Octave buttons
         document.querySelectorAll('.octave-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 document.querySelectorAll('.octave-btn').forEach(b => b.classList.remove('active'));
                 e.target.classList.add('active');
                 this.currentOctave = parseInt(e.target.dataset.octave);
+                console.log(`🖱️ On-screen octave button clicked: ${this.currentOctave}`);
                 this.updatePitchDisplay();
             });
         });
@@ -977,18 +1996,6 @@ class GradiusNext {
                 this.updateArpNotes();
             } else {
                 this.stopArpeggiator();
-            }
-        });
-
-        // Sustain toggle
-        document.getElementById('sustainToggle').addEventListener('click', (e) => {
-            this.sustainEnabled = !this.sustainEnabled;
-            e.target.classList.toggle('active');
-            e.target.textContent = this.sustainEnabled ? 'ON' : 'OFF';
-
-            // If turning off sustain, release all sustained notes
-            if (!this.sustainEnabled) {
-                this.releaseSustainedNotes();
             }
         });
 
@@ -1152,6 +2159,26 @@ class GradiusNext {
             }
         });
 
+        // Synth Sequencer Controls
+        document.getElementById('synthSeqDelay').addEventListener('input', (e) => {
+            this.synthSeqDelay = parseFloat(e.target.value);
+            document.getElementById('synthSeqDelayValue').textContent = Math.round(this.synthSeqDelay * 1000) + 'ms';
+        });
+
+        document.getElementById('synthSeqSustain').addEventListener('input', (e) => {
+            this.synthSeqSustain = parseInt(e.target.value);
+            document.getElementById('synthSeqSustainValue').textContent = this.synthSeqSustain + '%';
+        });
+
+        document.getElementById('synthSeqShape').addEventListener('change', (e) => {
+            this.synthSeqShape = parseInt(e.target.value);
+        });
+
+        // Random pattern button
+        document.getElementById('seqRandom').addEventListener('click', () => {
+            this.generateRandomPattern();
+        });
+
         // Initial updates
         this.updateWaveformDisplay();
         this.updatePitchDisplay();
@@ -1189,6 +2216,8 @@ class GradiusNext {
         const notes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
         const startNote = this.currentOctave * 12; // C of current octave
 
+        console.log(`⌨️ setupKeyboard: Building keyboard from MIDI note ${startNote} to ${startNote + 24} (octave ${this.currentOctave})`);
+
         for (let i = 0; i < 25; i++) { // 2 octaves
             const midiNote = startNote + i;
             const noteName = notes[i % 12];
@@ -1207,6 +2236,7 @@ class GradiusNext {
 
             // Mouse events
             key.addEventListener('mousedown', () => {
+                console.log(`🖱️ Mouse clicked key: MIDI note ${midiNote} (${noteName})`);
                 this.heldKeys.add(midiNote);
                 if (this.arpEnabled) {
                     this.updateArpNotes();
@@ -1300,7 +2330,19 @@ class GradiusNext {
     }
 
     updatePitchDisplay() {
+        console.log(`🔄 updatePitchDisplay called - rebuilding keyboard for octave ${this.currentOctave}`);
         this.setupKeyboard(); // Rebuild keyboard with new octave
+    }
+
+    updateOctaveUI() {
+        // Update octave button visual state
+        document.querySelectorAll('.octave-btn').forEach(btn => {
+            if (parseInt(btn.dataset.octave) === this.currentOctave) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        });
     }
 
     // ===== VISUALIZATION =====

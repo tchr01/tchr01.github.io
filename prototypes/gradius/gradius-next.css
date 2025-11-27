@@ -27,26 +27,18 @@ body {
     padding: 12px 20px;
     background: rgba(0, 0, 0, 0.5);
     border-radius: 10px;
-    border: 2px solid #00ff88;
-    box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+    border: 2px solid #555;
 }
 
 .title {
     font-size: 2rem;
     font-weight: bold;
-    text-shadow:
-        0 0 10px #00ff88,
-        0 0 15px #00ff88;
-    color: #00ff88;
+    color: #fff;
     letter-spacing: 6px;
 }
 
 .title .next {
-    color: #ff00ff;
-    text-shadow:
-        0 0 10px #ff00ff,
-        0 0 20px #ff00ff,
-        0 0 30px #ff00ff;
+    color: #5ce1e6;
     margin-left: 10px;
 }
 
@@ -68,10 +60,10 @@ body {
 }
 
 .mode-btn.active {
-    background: #00ff88;
-    border-color: #00ff88;
+    background: #5ce1e6;
+    border-color: #5ce1e6;
     color: #000;
-    box-shadow: 0 0 20px rgba(0, 255, 136, 0.6);
+    box-shadow: 0 0 15px rgba(92, 225, 230, 0.5);
 }
 
 .mode-btn:hover {
@@ -100,8 +92,7 @@ body {
 .visual-panel h2 {
     font-size: 1.2rem;
     margin-bottom: 12px;
-    color: #00ccff;
-    text-shadow: 0 0 10px #00ccff;
+    color: #aaa;
 }
 
 /* Control Groups */
@@ -156,9 +147,10 @@ body {
 }
 
 .voice-btn.active {
-    background: linear-gradient(135deg, #ff00ff, #00ccff);
-    border-color: #fff;
-    box-shadow: 0 0 20px rgba(255, 0, 255, 0.6);
+    background: #5ce1e6;
+    border-color: #5ce1e6;
+    color: #000;
+    box-shadow: 0 0 15px rgba(92, 225, 230, 0.5);
 }
 
 .voice-icon {
@@ -189,7 +181,7 @@ body {
 .slider {
     width: 100%;
     height: 8px;
-    background: linear-gradient(90deg, #ff00ff, #00ccff, #00ff88);
+    background: linear-gradient(90deg, #333, #5ce1e6);
     border-radius: 5px;
     outline: none;
     opacity: 0.8;
@@ -235,7 +227,7 @@ body {
     background: rgba(0, 0, 0, 0.5);
     border-radius: 6px;
     margin-bottom: 8px;
-    border: 1px solid #00ff88;
+    border: 1px solid #555;
     position: relative;
     overflow: hidden;
 }
@@ -252,7 +244,7 @@ body {
 .slider-value {
     font-size: 0.9rem;
     text-align: center;
-    color: #00ccff;
+    color: #aaa;
     margin-top: 4px;
 }
 
@@ -290,10 +282,10 @@ body {
 }
 
 .octave-btn.active {
-    background: #ff00ff;
-    border-color: #ff00ff;
-    color: #fff;
-    box-shadow: 0 0 10px rgba(255, 0, 255, 0.6);
+    background: #5ce1e6;
+    border-color: #5ce1e6;
+    color: #000;
+    box-shadow: 0 0 15px rgba(92, 225, 230, 0.5);
 }
 
 .octave-btn:hover {
@@ -317,10 +309,10 @@ body {
 }
 
 .toggle-btn.active {
-    background: rgba(0, 255, 136, 0.3);
-    border-color: #00ff88;
-    color: #00ff88;
-    box-shadow: 0 0 15px rgba(0, 255, 136, 0.5);
+    background: rgba(92, 225, 230, 0.3);
+    border-color: #5ce1e6;
+    color: #5ce1e6;
+    box-shadow: 0 0 15px rgba(92, 225, 230, 0.5);
 }
 
 /* Arp Pattern Buttons */
@@ -344,10 +336,10 @@ body {
 }
 
 .arp-btn.active {
-    background: #00ccff;
-    border-color: #00ccff;
+    background: #5ce1e6;
+    border-color: #5ce1e6;
     color: #000;
-    box-shadow: 0 0 12px rgba(0, 204, 255, 0.6);
+    box-shadow: 0 0 15px rgba(92, 225, 230, 0.5);
 }
 
 .arp-btn:hover {
@@ -378,7 +370,7 @@ body {
 
 .value-display {
     font-size: 0.75rem;
-    color: #00ff88;
+    color: #aaa;
     text-align: center;
 }
 
@@ -433,83 +425,97 @@ body {
 }
 
 .drum-pad.kick {
-    border-color: #ff0066;
-    color: #ff0066;
+    border-color: #cc6677;
+    color: #cc6677;
 }
 
 .drum-pad.kick:active,
 .drum-pad.kick.playing {
-    background: rgba(255, 0, 102, 0.4);
-    box-shadow: 0 0 30px rgba(255, 0, 102, 0.8);
+    background: rgba(92, 225, 230, 0.3);
+    box-shadow: 0 0 20px rgba(92, 225, 230, 0.6);
+    border-color: #5ce1e6;
+    color: #5ce1e6;
 }
 
 .drum-pad.snare {
-    border-color: #ffaa00;
-    color: #ffaa00;
+    border-color: #cc9966;
+    color: #cc9966;
 }
 
 .drum-pad.snare:active,
 .drum-pad.snare.playing {
-    background: rgba(255, 170, 0, 0.4);
-    box-shadow: 0 0 30px rgba(255, 170, 0, 0.8);
+    background: rgba(92, 225, 230, 0.3);
+    box-shadow: 0 0 20px rgba(92, 225, 230, 0.6);
+    border-color: #5ce1e6;
+    color: #5ce1e6;
 }
 
 .drum-pad.hihat-closed,
 .drum-pad.hihat-open {
-    border-color: #00ccff;
-    color: #00ccff;
+    border-color: #6699bb;
+    color: #6699bb;
 }
 
 .drum-pad.hihat-closed:active,
 .drum-pad.hihat-closed.playing,
 .drum-pad.hihat-open:active,
 .drum-pad.hihat-open.playing {
-    background: rgba(0, 204, 255, 0.4);
-    box-shadow: 0 0 30px rgba(0, 204, 255, 0.8);
+    background: rgba(92, 225, 230, 0.3);
+    box-shadow: 0 0 20px rgba(92, 225, 230, 0.6);
+    border-color: #5ce1e6;
+    color: #5ce1e6;
 }
 
 .drum-pad.clap {
-    border-color: #ff00ff;
-    color: #ff00ff;
+    border-color: #aa88bb;
+    color: #aa88bb;
 }
 
 .drum-pad.clap:active,
 .drum-pad.clap.playing {
-    background: rgba(255, 0, 255, 0.4);
-    box-shadow: 0 0 30px rgba(255, 0, 255, 0.8);
+    background: rgba(92, 225, 230, 0.3);
+    box-shadow: 0 0 20px rgba(92, 225, 230, 0.6);
+    border-color: #5ce1e6;
+    color: #5ce1e6;
 }
 
 .drum-pad.tom {
-    border-color: #00ff88;
-    color: #00ff88;
+    border-color: #77aa88;
+    color: #77aa88;
 }
 
 .drum-pad.tom:active,
 .drum-pad.tom.playing {
-    background: rgba(0, 255, 136, 0.4);
-    box-shadow: 0 0 30px rgba(0, 255, 136, 0.8);
+    background: rgba(92, 225, 230, 0.3);
+    box-shadow: 0 0 20px rgba(92, 225, 230, 0.6);
+    border-color: #5ce1e6;
+    color: #5ce1e6;
 }
 
 .drum-pad.crash {
-    border-color: #ffff00;
-    color: #ffff00;
+    border-color: #ccbb77;
+    color: #ccbb77;
 }
 
 .drum-pad.crash:active,
 .drum-pad.crash.playing {
-    background: rgba(255, 255, 0, 0.4);
-    box-shadow: 0 0 30px rgba(255, 255, 0, 0.8);
+    background: rgba(92, 225, 230, 0.3);
+    box-shadow: 0 0 20px rgba(92, 225, 230, 0.6);
+    border-color: #5ce1e6;
+    color: #5ce1e6;
 }
 
 .drum-pad.rim {
-    border-color: #ff6600;
-    color: #ff6600;
+    border-color: #cc8866;
+    color: #cc8866;
 }
 
 .drum-pad.rim:active,
 .drum-pad.rim.playing {
-    background: rgba(255, 102, 0, 0.4);
-    box-shadow: 0 0 30px rgba(255, 102, 0, 0.8);
+    background: rgba(92, 225, 230, 0.3);
+    box-shadow: 0 0 20px rgba(92, 225, 230, 0.6);
+    border-color: #5ce1e6;
+    color: #5ce1e6;
 }
 
 .pad-icon {
@@ -524,9 +530,9 @@ body {
 .beat-sequencer-controls {
     margin-top: 30px;
     padding: 20px;
-    background: rgba(0, 255, 136, 0.1);
+    background: rgba(0, 0, 0, 0.4);
     border-radius: 10px;
-    border: 2px solid #00ff88;
+    border: 2px solid #555;
 }
 
 .beat-header {
@@ -537,8 +543,7 @@ body {
 }
 
 .beat-header h3 {
-    color: #00ff88;
-    text-shadow: 0 0 10px #00ff88;
+    color: #aaa;
     margin: 0;
 }
 
@@ -549,8 +554,8 @@ body {
 }
 
 .beat-status.playing {
-    color: #00ff88;
-    text-shadow: 0 0 20px #00ff88;
+    color: #5ce1e6;
+    text-shadow: 0 0 15px rgba(92, 225, 230, 0.8);
     animation: beatPulse 1s ease-in-out infinite;
 }
 
@@ -575,18 +580,18 @@ body {
     padding: 12px;
     font-size: 1rem;
     font-weight: bold;
-    background: rgba(0, 255, 136, 0.2);
-    border: 2px solid #00ff88;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid #666;
     border-radius: 8px;
-    color: #00ff88;
+    color: #aaa;
     cursor: pointer;
     transition: all 0.3s;
 }
 
 .beat-btn:hover {
-    background: rgba(0, 255, 136, 0.4);
+    background: rgba(255, 255, 255, 0.15);
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0, 255, 136, 0.4);
+    border-color: #888;
 }
 
 .beat-btn:active {
@@ -594,9 +599,10 @@ body {
 }
 
 .beat-btn.active {
-    background: #00ff88;
+    background: #5ce1e6;
     color: #000;
-    box-shadow: 0 0 20px rgba(0, 255, 136, 0.8);
+    border-color: #5ce1e6;
+    box-shadow: 0 0 15px rgba(92, 225, 230, 0.6);
 }
 
 /* Keyboard */
@@ -622,8 +628,7 @@ body {
     gap: 8px;
     font-size: 1rem;
     font-weight: bold;
-    color: #ff00ff;
-    text-shadow: 0 0 10px #ff00ff;
+    color: #aaa;
 }
 
 .sustain-icon {
@@ -644,10 +649,10 @@ body {
 }
 
 .sustain-toggle-btn.active {
-    background: rgba(255, 0, 255, 0.4);
-    border-color: #ff00ff;
-    color: #ff00ff;
-    box-shadow: 0 0 15px rgba(255, 0, 255, 0.6);
+    background: rgba(92, 225, 230, 0.3);
+    border-color: #5ce1e6;
+    color: #5ce1e6;
+    box-shadow: 0 0 15px rgba(92, 225, 230, 0.5);
 }
 
 .sustain-toggle-btn:hover {
@@ -655,9 +660,8 @@ body {
 }
 
 .keyboard-container h3 {
-    color: #ff00ff;
+    color: #aaa;
     margin-bottom: 15px;
-    text-shadow: 0 0 10px #ff00ff;
 }
 
 .keyboard {
@@ -698,8 +702,8 @@ body {
 }
 
 .key.active {
-    background: #00ff88 !important;
-    box-shadow: 0 0 20px rgba(0, 255, 136, 0.8);
+    background: #5ce1e6 !important;
+    box-shadow: 0 0 20px rgba(92, 225, 230, 0.8);
     transform: translateY(3px);
 }
 
@@ -732,8 +736,8 @@ body {
 }
 
 .midi-status.connected {
-    border-color: #00ff88;
-    background: rgba(0, 255, 136, 0.1);
+    border-color: #5ce1e6;
+    background: rgba(92, 225, 230, 0.1);
 }
 
 .status-icon {
@@ -746,7 +750,7 @@ body {
 }
 
 .midi-status.connected .status-text {
-    color: #00ff88;
+    color: #5ce1e6;
 }
 
 /* Sequencer Mode */
@@ -793,34 +797,34 @@ body {
 }
 
 .play-btn {
-    border-color: #00ff88;
-    color: #00ff88;
+    border-color: #5ce1e6;
+    color: #5ce1e6;
 }
 
 .play-btn:hover,
 .play-btn.active {
-    background: rgba(0, 255, 136, 0.3);
-    box-shadow: 0 0 20px rgba(0, 255, 136, 0.6);
+    background: rgba(92, 225, 230, 0.3);
+    box-shadow: 0 0 20px rgba(92, 225, 230, 0.6);
 }
 
 .stop-btn {
-    border-color: #ff0066;
-    color: #ff0066;
+    border-color: #888;
+    color: #888;
 }
 
 .stop-btn:hover {
-    background: rgba(255, 0, 102, 0.3);
-    box-shadow: 0 0 20px rgba(255, 0, 102, 0.6);
+    background: rgba(255, 255, 255, 0.15);
+    border-color: #aaa;
 }
 
 .clear-btn {
-    border-color: #ffaa00;
-    color: #ffaa00;
+    border-color: #888;
+    color: #888;
 }
 
 .clear-btn:hover {
-    background: rgba(255, 170, 0, 0.3);
-    box-shadow: 0 0 20px rgba(255, 170, 0, 0.6);
+    background: rgba(255, 255, 255, 0.15);
+    border-color: #aaa;
 }
 
 .tempo-control {
@@ -912,7 +916,7 @@ body {
 .mixer-slider {
     width: 100%;
     height: 8px;
-    background: linear-gradient(90deg, #333, #00ff88);
+    background: linear-gradient(90deg, #333, #5ce1e6);
     border-radius: 5px;
     outline: none;
     opacity: 0.9;
@@ -931,8 +935,8 @@ body {
     background: #fff;
     border-radius: 50%;
     cursor: pointer;
-    box-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
-    border: 3px solid #00ff88;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    border: 3px solid #5ce1e6;
 }
 
 .mixer-slider::-moz-range-thumb {
@@ -941,15 +945,14 @@ body {
     background: #fff;
     border-radius: 50%;
     cursor: pointer;
-    box-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
-    border: 3px solid #00ff88;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    border: 3px solid #5ce1e6;
 }
 
 .mixer-value {
     font-size: 1.1rem;
     font-weight: bold;
-    color: #00ff88;
-    text-shadow: 0 0 10px #00ff88;
+    color: #aaa;
     min-width: 50px;
     text-align: center;
 }
@@ -960,7 +963,7 @@ body {
     height: 250px;
     background: rgba(0, 0, 0, 0.5);
     border-radius: 10px;
-    border: 2px solid #00ff88;
+    border: 2px solid #555;
 }
 
 
@@ -992,4 +995,36 @@ body {
 
 .playing {
     animation: pulse 0.3s ease-in-out;
+}
+
+/* SFX Mode Toggle */
+.sfx-mode-toggle {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.sfx-mode-btn {
+    flex: 1;
+    padding: 12px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid #555;
+    border-radius: 8px;
+    color: #aaa;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.sfx-mode-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: #888;
+}
+
+.sfx-mode-btn.active {
+    background: #5ce1e6;
+    border-color: #5ce1e6;
+    color: #000;
+    box-shadow: 0 0 15px rgba(92, 225, 230, 0.5);
 }
