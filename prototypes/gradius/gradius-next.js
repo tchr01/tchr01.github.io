@@ -28,6 +28,18 @@ class GradiusNext {
         this.synthDelay = { node: null, feedback: null, wet: null, dry: null };
         this.drumDelaySavedMix = 0.3; // Save mix value when toggling off
         this.synthDelaySavedMix = 0.5; // Save mix value when toggling off (50% default)
+
+        // Flanger effect
+        this.flanger = {
+            delay: null,        // DelayNode for flanger effect
+            lfo: null,          // OscillatorNode for LFO
+            lfoGain: null,      // GainNode to control LFO depth
+            feedback: null,     // GainNode for feedback
+            wet: null,          // GainNode for wet signal
+            dry: null           // GainNode for dry signal
+        };
+        this.flangerDepth = 0.5; // 0-1 intensity (default 50%)
+
         this.setupDelayChains();
 
         // Synth settings
@@ -203,6 +215,41 @@ class GradiusNext {
         this.synthDelay.node.connect(this.synthDelay.wet);
         this.synthDelay.wet.connect(this.synthMixer);
         this.synthDelay.dry.connect(this.synthMixer);
+
+        // Create FLANGER chain (MORE DRAMATIC)
+        this.flanger.delay = this.audioContext.createDelay(0.05); // 50ms max delay (bigger range)
+        this.flanger.delay.delayTime.value = 0.01; // 10ms base delay (deeper starting point)
+
+        this.flanger.lfo = this.audioContext.createOscillator();
+        this.flanger.lfo.frequency.value = 0.3; // 0.3 Hz LFO rate (slower sweep for more drama)
+
+        this.flanger.lfoGain = this.audioContext.createGain();
+        this.flanger.lfoGain.gain.value = 0.015; // 15ms depth at 50% intensity (3x more modulation)
+
+        this.flanger.feedback = this.audioContext.createGain();
+        this.flanger.feedback.gain.value = 0.7; // 70% feedback (more resonance)
+
+        this.flanger.wet = this.audioContext.createGain();
+        this.flanger.wet.gain.value = 0.4; // 50% intensity = 40% wet (more pronounced)
+
+        this.flanger.dry = this.audioContext.createGain();
+        this.flanger.dry.gain.value = 0.75; // More dry reduction for bigger effect
+
+        // Connect flanger chain
+        this.flanger.lfo.connect(this.flanger.lfoGain);
+        this.flanger.lfoGain.connect(this.flanger.delay.delayTime);
+        this.flanger.delay.connect(this.flanger.feedback);
+        this.flanger.feedback.connect(this.flanger.delay);
+
+        // Connect flanger output to existing delay chain
+        this.flanger.delay.connect(this.flanger.wet);
+        this.flanger.wet.connect(this.synthDelay.node);
+        this.flanger.wet.connect(this.synthDelay.dry);
+        this.flanger.dry.connect(this.synthDelay.node);
+        this.flanger.dry.connect(this.synthDelay.dry);
+
+        // Start LFO
+        this.flanger.lfo.start();
     }
 
     getDrumDestination() {
@@ -211,8 +258,8 @@ class GradiusNext {
     }
 
     getSynthDestination() {
-        // Return synth audio destination
-        return this.synthDelay.node;
+        // Return synth audio destination (routes through flanger first, then delay)
+        return this.flanger.delay;
     }
 
     // ===== DRUM SAMPLES =====
@@ -964,8 +1011,8 @@ class GradiusNext {
         gain.gain.value = 0.6;
 
         source.connect(gain);
-        gain.connect(this.synthDelay.node);
-        gain.connect(this.synthDelay.dry);
+        gain.connect(this.flanger.delay);
+        gain.connect(this.flanger.dry);
 
         source.start(0);
 
@@ -1016,10 +1063,10 @@ class GradiusNext {
         const gain = this.audioContext.createGain();
         gain.gain.value = 0;
 
-        // Connect audio chain - route through synth delay
+        // Connect audio chain - route through flanger then delay
         osc.connect(gain);
-        gain.connect(this.synthDelay.node);
-        gain.connect(this.synthDelay.dry);
+        gain.connect(this.flanger.delay);
+        gain.connect(this.flanger.dry);
 
         // ADSR envelope from voice preset
         const now = this.audioContext.currentTime;
@@ -1299,6 +1346,21 @@ class GradiusNext {
                         console.log(`🎹 Octave changed to: ${this.currentOctave}`);
                     }
                     this.lastCC64Value = velocity;
+                } else if (note === 7) {
+                    // CC7 Volume Knob - Flanger Intensity (0-127)
+                    const intensity = velocity / 127; // Normalize to 0-1
+                    this.flangerDepth = intensity;
+
+                    // Update LFO depth and wet/dry mix (MORE DRAMATIC)
+                    this.flanger.lfoGain.gain.value = 0.03 * intensity; // 0-30ms modulation (6x bigger)
+                    this.flanger.wet.gain.value = intensity * 0.8; // Max 80% wet (much more pronounced)
+                    this.flanger.dry.gain.value = 1 - (intensity * 0.5); // More dry reduction (50-100%)
+
+                    // Update UI slider
+                    document.getElementById('flangerIntensity').value = intensity;
+                    document.getElementById('flangerIntensityValue').textContent = Math.round(intensity * 100) + '%';
+
+                    console.log(`🌊 Flanger intensity: ${Math.round(intensity * 100)}%`);
                 } else if (note === 102 && velocity > 0) {
                     // CC102: Octave Up (M-Audio convention - if controller sends it)
                     if (this.currentOctave < 6) {
@@ -2054,6 +2116,19 @@ class GradiusNext {
             this.synthDelay.wet.gain.value = value;
             this.synthDelay.dry.gain.value = 1 - value;
             document.getElementById('synthDelayMixValue').textContent = Math.round(value * 100) + '%';
+        });
+
+        // FLANGER Intensity control
+        document.getElementById('flangerIntensity').addEventListener('input', (e) => {
+            const intensity = parseFloat(e.target.value);
+            this.flangerDepth = intensity;
+
+            // Update flanger parameters (MORE DRAMATIC)
+            this.flanger.lfoGain.gain.value = 0.03 * intensity; // 0-30ms modulation depth (6x bigger)
+            this.flanger.wet.gain.value = intensity * 0.8; // Max 80% wet (much more pronounced)
+            this.flanger.dry.gain.value = 1 - (intensity * 0.5); // More dry reduction (50-100%)
+
+            document.getElementById('flangerIntensityValue').textContent = Math.round(intensity * 100) + '%';
         });
 
         // DRUM Delay toggle
