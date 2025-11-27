@@ -27,7 +27,7 @@ class GradiusNext {
         this.drumDelay = { node: null, feedback: null, wet: null, dry: null };
         this.synthDelay = { node: null, feedback: null, wet: null, dry: null };
         this.drumDelaySavedMix = 0.3; // Save mix value when toggling off
-        this.synthDelaySavedMix = 0.5; // Save mix value when toggling off (50% default)
+        this.synthDelaySavedMix = 0.0; // Save mix value when toggling off (0% default - off)
 
         // Flanger effect
         this.flanger = {
@@ -38,15 +38,15 @@ class GradiusNext {
             wet: null,          // GainNode for wet signal
             dry: null           // GainNode for dry signal
         };
-        this.flangerDepth = 0.5; // 0-1 intensity (default 50%)
+        this.flangerDepth = 0.0; // 0-1 intensity (default 0% - off)
 
         this.setupDelayChains();
 
         // Synth settings
         this.currentOctave = 4;
         this.pitchBendValue = 0;
-        this.waveformType = 'triangle'; // sine, sawtooth, square, triangle
-        this.shapeValue = 3; // 0-4 (sine, saw, square, tri, pwm) - default to TRIANGLE
+        this.waveformType = 'triangle'; // sine, sawtooth, square, triangle (pwm uses special handling)
+        this.shapeValue = 4; // 0-4 (sine, saw, square, tri, pwm) - default to PWM
 
         // Synth voice presets
         this.synthVoices = {
@@ -204,10 +204,10 @@ class GradiusNext {
         this.synthDelay.feedback.gain.value = 0.65; // 65% feedback default
 
         this.synthDelay.wet = this.audioContext.createGain();
-        this.synthDelay.wet.gain.value = 0.5; // 50% mix default
+        this.synthDelay.wet.gain.value = 0.0; // 0% mix (off by default)
 
         this.synthDelay.dry = this.audioContext.createGain();
-        this.synthDelay.dry.gain.value = 0.5; // 50% dry default
+        this.synthDelay.dry.gain.value = 1.0; // 100% dry (off by default)
 
         // Connect synth delay chain
         this.synthDelay.node.connect(this.synthDelay.feedback);
@@ -224,16 +224,16 @@ class GradiusNext {
         this.flanger.lfo.frequency.value = 0.3; // 0.3 Hz LFO rate (slower sweep for more drama)
 
         this.flanger.lfoGain = this.audioContext.createGain();
-        this.flanger.lfoGain.gain.value = 0.015; // 15ms depth at 50% intensity (3x more modulation)
+        this.flanger.lfoGain.gain.value = 0.0; // 0ms depth (off by default)
 
         this.flanger.feedback = this.audioContext.createGain();
         this.flanger.feedback.gain.value = 0.7; // 70% feedback (more resonance)
 
         this.flanger.wet = this.audioContext.createGain();
-        this.flanger.wet.gain.value = 0.4; // 50% intensity = 40% wet (more pronounced)
+        this.flanger.wet.gain.value = 0.0; // 0% wet (off by default)
 
         this.flanger.dry = this.audioContext.createGain();
-        this.flanger.dry.gain.value = 0.75; // More dry reduction for bigger effect
+        this.flanger.dry.gain.value = 1.0; // 100% dry (off by default)
 
         // Connect flanger chain
         this.flanger.lfo.connect(this.flanger.lfoGain);
@@ -1289,29 +1289,41 @@ class GradiusNext {
         switch (command) {
             case 9: // Note On
                 if (velocity > 0) {
-                    this.heldKeys.add(note);
+                    // Apply octave transposition to MIDI input
+                    // Default octave is 4, so offset by (currentOctave - 4) * 12 semitones
+                    const octaveOffset = (this.currentOctave - 4) * 12;
+                    const transposedNote = note + octaveOffset;
+
+                    this.heldKeys.add(note); // Store original note for tracking
                     if (this.arpEnabled) {
                         this.updateArpNotes();
                     } else {
-                        this.playNote(note);
+                        this.playNote(transposedNote); // Play transposed note
                     }
                 } else {
                     // Velocity 0 is Note Off
+                    const octaveOffset = (this.currentOctave - 4) * 12;
+                    const transposedNote = note + octaveOffset;
+
                     this.heldKeys.delete(note);
                     if (this.arpEnabled) {
                         this.updateArpNotes();
                     } else {
-                        this.stopNote(note);
+                        this.stopNote(transposedNote); // Stop transposed note
                     }
                 }
                 break;
 
             case 8: // Note Off
+                // Apply octave transposition to MIDI input
+                const octaveOffsetNoteOff = (this.currentOctave - 4) * 12;
+                const transposedNoteOff = note + octaveOffsetNoteOff;
+
                 this.heldKeys.delete(note);
                 if (this.arpEnabled) {
                     this.updateArpNotes();
                 } else {
-                    this.stopNote(note);
+                    this.stopNote(transposedNoteOff); // Stop transposed note
                 }
                 break;
 
