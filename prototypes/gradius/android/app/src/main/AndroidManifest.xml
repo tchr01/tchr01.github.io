@@ -38,4 +38,8 @@
     <!-- Permissions -->
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <!-- MIDI permissions for controller support -->
+    <uses-feature android:name="android.software.midi" android:required="false" />
 </manifest>
