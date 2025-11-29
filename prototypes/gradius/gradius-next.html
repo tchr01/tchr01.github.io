@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1, minimum-scale=1">
     <title>GradiusNext - EDM Synth & Drums</title>
     <link rel="stylesheet" href="gradius-next.css">
 </head>
@@ -102,25 +102,21 @@
                     <div class="slider-value" id="pitchDisplay">0</div>
                 </div>
 
+                <!-- Master Reverb -->
+                <div class="control-group compact">
+                    <label class="control-label">
+                        <span class="icon">🏛️</span> MASTER REVERB
+                    </label>
+                    <input type="range" class="slider" id="masterReverbMix" min="0" max="1" step="0.05" value="0.3">
+                    <div class="slider-value" id="masterReverbMixValue">30%</div>
+                </div>
+
             </aside>
 
             <!-- Center: Drum Pads / Sequencer -->
             <section class="center-panel">
-                <!-- Live Mode: Keyboard First -->
-                <div class="live-mode" id="liveMode">
-                    <!-- Beat Sequencer Controls -->
-                    <div class="beat-sequencer-controls">
-                        <div class="beat-header">
-                            <h3>BEAT SEQUENCER</h3>
-                            <span class="beat-status" id="beatStatus">●</span>
-                        </div>
-                        <div class="beat-controls">
-                            <button class="beat-btn" id="beatPlay">▶ PLAY BEAT</button>
-                            <button class="beat-btn" id="beatStop">⏹ STOP</button>
-                            <button class="beat-btn" id="beatEdit">✎ EDIT</button>
-                        </div>
-                    </div>
-
+                <!-- Combined View: Keyboard + Sequencer -->
+                <div id="mainContent">
                     <!-- Keyboard Visualization -->
                     <div class="keyboard-container">
                         <div class="keyboard-header">
@@ -147,52 +143,7 @@
                         </div>
                     </div>
 
-                    <!-- Drum Pads -->
-                    <h2>DRUM PADS</h2>
-                    <div class="drum-pads">
-                        <button class="drum-pad kick" data-sound="kick">
-                            <span class="pad-icon">🥁</span>
-                            <span class="pad-label">KICK</span>
-                        </button>
-                        <button class="drum-pad snare" data-sound="snare">
-                            <span class="pad-icon">🥁</span>
-                            <span class="pad-label">SNARE</span>
-                        </button>
-                        <button class="drum-pad hihat-closed" data-sound="hihat-closed">
-                            <span class="pad-icon">🎩</span>
-                            <span class="pad-label">HI-HAT</span>
-                        </button>
-                        <button class="drum-pad hihat-open" data-sound="hihat-open">
-                            <span class="pad-icon">🎩</span>
-                            <span class="pad-label">HI-HAT OPEN</span>
-                        </button>
-                        <button class="drum-pad clap" data-sound="clap">
-                            <span class="pad-icon">👏</span>
-                            <span class="pad-label">CLAP</span>
-                        </button>
-                        <button class="drum-pad tom" data-sound="tom">
-                            <span class="pad-icon">🥁</span>
-                            <span class="pad-label">TOM</span>
-                        </button>
-                        <button class="drum-pad crash" data-sound="crash">
-                            <span class="pad-icon">💥</span>
-                            <span class="pad-label">CRASH</span>
-                        </button>
-                        <button class="drum-pad rim" data-sound="rim">
-                            <span class="pad-icon">⭕</span>
-                            <span class="pad-label">RIMSHOT</span>
-                        </button>
-                    </div>
-
-                    <!-- MIDI Status -->
-                    <div class="midi-status" id="midiStatus">
-                        <span class="status-icon">🎹</span>
-                        <span class="status-text">MIDI: Not Connected</span>
-                    </div>
-                </div>
-
-                <!-- Sequencer Mode -->
-                <div class="sequencer-mode active" id="sequencerMode">
+                    <!-- Sequencer Section -->
                     <h2>SEQUENCER</h2>
                     <div class="sequencer-controls">
                         <button class="seq-btn play-btn" id="seqPlay">▶</button>
@@ -233,6 +184,19 @@
                                 </select>
                             </div>
                         </div>
+
+                        <!-- Drum Set Selector -->
+                        <h3 style="font-size: 0.9rem; margin: 15px 0 5px 0; color: #aaa;">DRUM SOUNDS</h3>
+                        <div class="drum-set-toggle" style="margin-top: 8px;">
+                            <button class="drum-set-btn active" data-set="edm">🎸 EDM</button>
+                            <button class="drum-set-btn" data-set="trap">🔊 TRAP</button>
+                        </div>
+                    </div>
+
+                    <!-- MIDI Status -->
+                    <div class="midi-status" id="midiStatus">
+                        <span class="status-icon">🎹</span>
+                        <span class="status-text">MIDI: Not Connected</span>
                     </div>
                 </div>
             </section>
@@ -259,8 +223,8 @@
                         </div>
                         <div class="mini-control">
                             <label>MIX</label>
-                            <input type="range" class="slider mini-slider" id="synthDelayMix" min="0" max="1" step="0.05" value="0.5">
-                            <span class="value-display" id="synthDelayMixValue">50%</span>
+                            <input type="range" class="slider mini-slider" id="synthDelayMix" min="0" max="1" step="0.05" value="0">
+                            <span class="value-display" id="synthDelayMixValue">0%</span>
                         </div>
                         <div class="mini-control">
                             <label>PHASER</label>
@@ -288,8 +252,8 @@
                         </div>
                         <div class="mini-control">
                             <label>MIX</label>
-                            <input type="range" class="slider mini-slider" id="drumDelayMix" min="0" max="1" step="0.05" value="0.4">
-                            <span class="value-display" id="drumDelayMixValue">40%</span>
+                            <input type="range" class="slider mini-slider" id="drumDelayMix" min="0" max="1" step="0.05" value="0">
+                            <span class="value-display" id="drumDelayMixValue">0%</span>
                         </div>
                     </div>
                 </div>
@@ -335,21 +299,6 @@
                         </label>
                         <input type="range" class="slider mixer-slider" id="synthVolume" min="0" max="1" step="0.01" value="0.3" orient="vertical">
                         <span class="mixer-value" id="synthVolumeValue">30%</span>
-                    </div>
-                </div>
-
-                <!-- Master Reverb -->
-                <h2 style="margin-top: 20px;">MASTER REVERB</h2>
-                <div class="control-group" style="margin-top: 10px;">
-                    <label class="control-label" style="font-size: 0.9rem; margin-bottom: 8px;">
-                        <span class="icon">🏛️</span> ROOM
-                    </label>
-                    <div class="delay-controls">
-                        <div class="mini-control">
-                            <label>MIX</label>
-                            <input type="range" class="slider mini-slider" id="masterReverbMix" min="0" max="1" step="0.05" value="0.3">
-                            <span class="value-display" id="masterReverbMixValue">30%</span>
-                        </div>
                     </div>
                 </div>
 

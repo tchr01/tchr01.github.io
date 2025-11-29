@@ -2,6 +2,8 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    /* Remove 300ms touch delay on interactive elements */
+    touch-action: manipulation;
 }
 
 body {
@@ -10,6 +12,7 @@ body {
     color: #fff;
     overflow-x: hidden;
     min-height: 100vh;
+    -webkit-touch-callout: none; /* Prevent long-press popup on iOS */
 }
 
 .container {
@@ -45,6 +48,12 @@ body {
 .mode-switch {
     display: flex;
     gap: 10px;
+}
+
+/* Global button optimization for touch responsiveness */
+button, .drum-pad, .sequencer-cell {
+    -webkit-tap-highlight-color: transparent; /* Remove tap flash on Android */
+    will-change: transform; /* Enable hardware acceleration */
 }
 
 .mode-btn {
@@ -590,85 +599,6 @@ body {
     font-size: 0.9rem;
 }
 
-/* Beat Sequencer Controls in Live Mode */
-.beat-sequencer-controls {
-    margin-top: 30px;
-    padding: 20px;
-    background: rgba(0, 0, 0, 0.4);
-    border-radius: 10px;
-    border: 2px solid #555;
-}
-
-.beat-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-}
-
-.beat-header h3 {
-    color: #aaa;
-    margin: 0;
-}
-
-.beat-status {
-    font-size: 1.5rem;
-    color: #666;
-    transition: all 0.3s;
-}
-
-.beat-status.playing {
-    color: #5ce1e6;
-    text-shadow: 0 0 15px rgba(92, 225, 230, 0.8);
-    animation: beatPulse 1s ease-in-out infinite;
-}
-
-@keyframes beatPulse {
-    0%, 100% {
-        opacity: 1;
-        transform: scale(1);
-    }
-    50% {
-        opacity: 0.6;
-        transform: scale(1.2);
-    }
-}
-
-.beat-controls {
-    display: flex;
-    gap: 10px;
-}
-
-.beat-btn {
-    flex: 1;
-    padding: 12px;
-    font-size: 1rem;
-    font-weight: bold;
-    background: rgba(255, 255, 255, 0.1);
-    border: 2px solid #666;
-    border-radius: 8px;
-    color: #aaa;
-    cursor: pointer;
-    transition: all 0.3s;
-}
-
-.beat-btn:hover {
-    background: rgba(255, 255, 255, 0.15);
-    transform: translateY(-2px);
-    border-color: #888;
-}
-
-.beat-btn:active {
-    transform: translateY(0);
-}
-
-.beat-btn.active {
-    background: #5ce1e6;
-    color: #000;
-    border-color: #5ce1e6;
-    box-shadow: 0 0 15px rgba(92, 225, 230, 0.6);
-}
-
 /* Keyboard */
 .keyboard-container {
     margin-top: 30px;
@@ -1187,4 +1117,36 @@ body {
     border-color: #5ce1e6;
     color: #000;
     box-shadow: 0 0 15px rgba(92, 225, 230, 0.5);
+}
+
+/* Drum Set Toggle */
+.drum-set-toggle {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.drum-set-btn {
+    flex: 1;
+    padding: 12px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid #555;
+    border-radius: 8px;
+    color: #aaa;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.drum-set-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: #888;
+}
+
+.drum-set-btn.active {
+    background: #ff6b6b;
+    border-color: #ff6b6b;
+    color: #fff;
+    box-shadow: 0 0 15px rgba(255, 107, 107, 0.5);
 }

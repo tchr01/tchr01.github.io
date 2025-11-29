@@ -4,6 +4,20 @@ class GradiusNext {
         // Audio Context
         this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
+        // Ensure audio context is resumed (required for mobile web)
+        const resumeAudio = () => {
+            if (this.audioContext.state === 'suspended') {
+                this.audioContext.resume().then(() => {
+                    console.log('AudioContext resumed');
+                });
+            }
+            // Remove listeners after first resume
+            document.removeEventListener('touchstart', resumeAudio);
+            document.removeEventListener('click', resumeAudio);
+        };
+        document.addEventListener('touchstart', resumeAudio, { once: true });
+        document.addEventListener('click', resumeAudio, { once: true });
+
         // Audio nodes
         this.masterGain = this.audioContext.createGain();
         this.masterGain.gain.value = 0.7;
@@ -30,8 +44,8 @@ class GradiusNext {
         // Separate effects chains
         this.drumDelay = { node: null, feedback: null, wet: null, dry: null };
         this.synthDelay = { node: null, feedback: null, wet: null, dry: null };
-        this.drumDelaySavedMix = 0.3; // Save mix value when toggling off
-        this.synthDelaySavedMix = 0.5; // Save mix value when toggling off (50% default - on)
+        this.drumDelaySavedMix = 0.3; // Save mix value when toggling on
+        this.synthDelaySavedMix = 0.5; // Save mix value when toggling on
 
         // Phaser effect
         this.phaser = {
@@ -149,6 +163,8 @@ class GradiusNext {
 
         // Drum samples
         this.drumBuffers = {};
+        this.trapDrumBuffers = {};
+        this.currentDrumSet = 'edm'; // 'edm' or 'trap'
         this.loadingDrums = false;
 
         // Sound effects mode
@@ -185,6 +201,7 @@ class GradiusNext {
     async init() {
         this.setupUI();
         await this.loadDrumSamples();
+        await this.loadTrapDrumSamples();
         await this.loadSoundEffects();
         await this.initMIDI();
         this.setupKeyboard();
@@ -203,10 +220,10 @@ class GradiusNext {
         this.drumDelay.feedback.gain.value = 0.5; // 50% feedback
 
         this.drumDelay.wet = this.audioContext.createGain();
-        this.drumDelay.wet.gain.value = 0.4; // 40% mix (ON by default)
+        this.drumDelay.wet.gain.value = 0; // OFF by default
 
         this.drumDelay.dry = this.audioContext.createGain();
-        this.drumDelay.dry.gain.value = 0.6; // 60% dry (complement of 40% wet)
+        this.drumDelay.dry.gain.value = 1; // 100% dry when delay is off
 
         // Connect drum delay chain
         this.drumDelay.node.connect(this.drumDelay.feedback);
@@ -223,10 +240,10 @@ class GradiusNext {
         this.synthDelay.feedback.gain.value = 0.65; // 65% feedback default
 
         this.synthDelay.wet = this.audioContext.createGain();
-        this.synthDelay.wet.gain.value = 0.5; // 50% mix (on by default)
+        this.synthDelay.wet.gain.value = 0; // OFF by default
 
         this.synthDelay.dry = this.audioContext.createGain();
-        this.synthDelay.dry.gain.value = 0.5; // 50% dry (on by default)
+        this.synthDelay.dry.gain.value = 1; // 100% dry when delay is off
 
         // Connect synth delay chain
         this.synthDelay.node.connect(this.synthDelay.feedback);
@@ -491,11 +508,175 @@ class GradiusNext {
         return buffer;
     }
 
+    // ===== TRAP DRUM SOUNDS =====
+    async loadTrapDrumSamples() {
+        const sampleRate = this.audioContext.sampleRate;
+
+        // TRAP KICK: Punchy, shorter attack
+        this.trapDrumBuffers.kick = this.generateTrapKick(sampleRate);
+
+        // TRAP SNARE: Crispy, higher pitched
+        this.trapDrumBuffers.snare = this.generateTrapSnare(sampleRate);
+
+        // TRAP HI-HAT CLOSED: Tighter, faster decay
+        this.trapDrumBuffers['hihat-closed'] = this.generateTrapHiHat(sampleRate, false);
+
+        // TRAP HI-HAT OPEN: Medium duration
+        this.trapDrumBuffers['hihat-open'] = this.generateTrapHiHat(sampleRate, true);
+
+        // TRAP CLAP: Sharper clap
+        this.trapDrumBuffers.clap = this.generateTrapClap(sampleRate);
+
+        // TRAP TOM: Higher pitch tom
+        this.trapDrumBuffers.tom = this.generateTrapTom(sampleRate);
+
+        // TRAP CRASH: Similar crash
+        this.trapDrumBuffers.crash = this.generateTrapCrash(sampleRate);
+
+        // TRAP RIM: Sharper, more defined
+        this.trapDrumBuffers.rim = this.generateTrapRim(sampleRate);
+
+        console.log('Trap drum samples loaded!');
+    }
+
+    generateTrapKick(sampleRate) {
+        const duration = 0.22; // Much shorter - punchy trap style
+        const buffer = this.audioContext.createBuffer(1, sampleRate * duration, sampleRate);
+        const data = buffer.getChannelData(0);
+
+        for (let i = 0; i < data.length; i++) {
+            const t = i / sampleRate;
+            // Much higher pitch sweep from 220Hz to 35Hz - bright attack
+            const freq = 220 * Math.exp(-t * 18);
+            // Very fast decay for punch
+            const env = Math.exp(-t * 14);
+            data[i] = Math.sin(2 * Math.PI * freq * t) * env * 1.2;
+        }
+
+        return buffer;
+    }
+
+    generateTrapSnare(sampleRate) {
+        const duration = 0.14; // Shorter and crisper
+        const buffer = this.audioContext.createBuffer(1, sampleRate * duration, sampleRate);
+        const data = buffer.getChannelData(0);
+
+        for (let i = 0; i < data.length; i++) {
+            const t = i / sampleRate;
+            // Much higher pitched sine (trap snares are VERY bright)
+            const body = Math.sin(2 * Math.PI * 300 * t) * 0.3;
+            // Heavy noise component for sharp, crispy sound
+            const noise = (Math.random() * 2 - 1) * 0.9;
+            // Very fast decay for sharpness
+            const env = Math.exp(-t * 25);
+            data[i] = (body + noise) * env * 1.15;
+        }
+
+        return buffer;
+    }
+
+    generateTrapHiHat(sampleRate, open) {
+        const duration = open ? 0.2 : 0.025; // Much tighter closed hat, shorter open
+        const buffer = this.audioContext.createBuffer(1, sampleRate * duration, sampleRate);
+        const data = buffer.getChannelData(0);
+
+        for (let i = 0; i < data.length; i++) {
+            const t = i / sampleRate;
+            // Very high-frequency noise for brightness
+            const noise = (Math.random() * 2 - 1);
+            // Much brighter filter frequency
+            const filtered = noise * Math.sin(2 * Math.PI * 12000 * t);
+            // Extremely fast decay - trap hats are tight
+            const env = Math.exp(-t * (open ? 18 : 100));
+            data[i] = filtered * env * 0.5;
+        }
+
+        return buffer;
+    }
+
+    generateTrapClap(sampleRate) {
+        const duration = 0.1; // Shorter trap clap
+        const buffer = this.audioContext.createBuffer(1, sampleRate * duration, sampleRate);
+        const data = buffer.getChannelData(0);
+
+        // More aggressive, tighter claps with sharper decay
+        const claps = [0, 0.005, 0.01, 0.015];
+
+        for (let i = 0; i < data.length; i++) {
+            const t = i / sampleRate;
+            let signal = 0;
+
+            claps.forEach(clapTime => {
+                if (t >= clapTime) {
+                    const localT = t - clapTime;
+                    const noise = (Math.random() * 2 - 1);
+                    const env = Math.exp(-localT * 65); // Sharper decay
+                    signal += noise * env;
+                }
+            });
+
+            data[i] = signal * 0.7;
+        }
+
+        return buffer;
+    }
+
+    generateTrapTom(sampleRate) {
+        const duration = 0.28; // Shorter for trap tempo
+        const buffer = this.audioContext.createBuffer(1, sampleRate * duration, sampleRate);
+        const data = buffer.getChannelData(0);
+
+        for (let i = 0; i < data.length; i++) {
+            const t = i / sampleRate;
+            // Much higher frequency sweep for trap - bright and punchy
+            const freq = 320 * Math.exp(-t * 10);
+            const env = Math.exp(-t * 12);
+            data[i] = Math.sin(2 * Math.PI * freq * t) * env * 1.15;
+        }
+
+        return buffer;
+    }
+
+    generateTrapCrash(sampleRate) {
+        const duration = 1.0; // Shorter crash for trap
+        const buffer = this.audioContext.createBuffer(1, sampleRate * duration, sampleRate);
+        const data = buffer.getChannelData(0);
+
+        for (let i = 0; i < data.length; i++) {
+            const t = i / sampleRate;
+            // Much brighter, higher frequencies for trap brightness
+            const noise = (Math.random() * 2 - 1);
+            const filtered = noise * (Math.sin(2 * Math.PI * 8000 * t) + Math.sin(2 * Math.PI * 10000 * t)) * 0.5;
+            const env = Math.exp(-t * 3);
+            data[i] = filtered * env * 0.4;
+        }
+
+        return buffer;
+    }
+
+    generateTrapRim(sampleRate) {
+        const duration = 0.06; // Shorter, snappier
+        const buffer = this.audioContext.createBuffer(1, sampleRate * duration, sampleRate);
+        const data = buffer.getChannelData(0);
+
+        for (let i = 0; i < data.length; i++) {
+            const t = i / sampleRate;
+            // Much higher pitched, sharper click
+            const click = Math.sin(2 * Math.PI * 1600 * t);
+            const env = Math.exp(-t * 130);
+            data[i] = click * env * 1.3;
+        }
+
+        return buffer;
+    }
+
     playDrum(drumName) {
-        if (!this.drumBuffers[drumName]) return;
+        // Select buffer from current drum set
+        const buffers = this.currentDrumSet === 'trap' ? this.trapDrumBuffers : this.drumBuffers;
+        if (!buffers[drumName]) return;
 
         const source = this.audioContext.createBufferSource();
-        source.buffer = this.drumBuffers[drumName];
+        source.buffer = buffers[drumName];
 
         const gain = this.audioContext.createGain();
         gain.gain.value = 0.8;
@@ -1545,11 +1726,8 @@ class GradiusNext {
             this.currentStep = (this.currentStep + 1) % 16;
         }, stepDuration);
 
-        // Update UI in both modes
+        // Update UI
         document.getElementById('seqPlay').classList.add('active');
-        document.getElementById('beatPlay').classList.add('active');
-        document.getElementById('beatPlay').textContent = '⏸ PAUSE';
-        document.getElementById('beatStatus').classList.add('playing');
     }
 
     stopSequencer() {
@@ -1564,11 +1742,8 @@ class GradiusNext {
 
         this.stopAllNotes();
 
-        // Update UI in both modes
+        // Update UI
         document.getElementById('seqPlay').classList.remove('active');
-        document.getElementById('beatPlay').classList.remove('active');
-        document.getElementById('beatPlay').textContent = '▶ PLAY BEAT';
-        document.getElementById('beatStatus').classList.remove('playing');
     }
 
     playSequencerStep() {
@@ -2403,8 +2578,8 @@ class GradiusNext {
                     cell.classList.add('active');
                 }
 
-                // Click handler
-                cell.addEventListener('click', () => {
+                // Click/touch handler for instant response
+                this.addTouchClickListener(cell, () => {
                     this.toggleSequencerCell(trackIndex, step);
                 });
 
@@ -2457,6 +2632,26 @@ class GradiusNext {
         }
     }
 
+    // ===== TOUCH/CLICK HELPER =====
+    addTouchClickListener(element, callback) {
+        // Use touchstart for instant response on mobile, click as fallback
+        let isTouch = false;
+
+        element.addEventListener('touchstart', (e) => {
+            isTouch = true;
+            e.preventDefault(); // Prevent 300ms click delay
+            callback(e);
+        });
+
+        element.addEventListener('click', (e) => {
+            // Only fire click if it wasn't from touch
+            if (!isTouch) {
+                callback(e);
+            }
+            isTouch = false;
+        });
+    }
+
     // ===== UI SETUP =====
     setupUI() {
         // Mode switching
@@ -2474,6 +2669,16 @@ class GradiusNext {
                 e.currentTarget.classList.add('active');
                 this.sfxMode = e.currentTarget.dataset.sfx === 'true';
                 console.log('SFX Mode:', this.sfxMode ? 'ON' : 'OFF');
+            });
+        });
+
+        // Drum Set Selector (EDM / TRAP)
+        document.querySelectorAll('.drum-set-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.drum-set-btn').forEach(b => b.classList.remove('active'));
+                e.currentTarget.classList.add('active');
+                this.currentDrumSet = e.currentTarget.dataset.set;
+                console.log('Drum Set:', this.currentDrumSet.toUpperCase());
             });
         });
 
@@ -2665,30 +2870,12 @@ class GradiusNext {
             document.getElementById('leadVolumeValue').textContent = Math.round(sliderValue * 100) + '%';
         });
 
-        // Drum pads
+        // Drum pads - use touch for instant response
         document.querySelectorAll('.drum-pad').forEach(pad => {
-            pad.addEventListener('click', (e) => {
+            this.addTouchClickListener(pad, (e) => {
                 const sound = e.currentTarget.dataset.sound;
                 this.playDrum(sound);
             });
-        });
-
-        // Beat sequencer controls in Live Mode
-        document.getElementById('beatPlay').addEventListener('click', () => {
-            if (this.sequencerPlaying) {
-                this.stopSequencer();
-            } else {
-                this.startSequencer();
-            }
-        });
-
-        document.getElementById('beatStop').addEventListener('click', () => {
-            this.stopSequencer();
-        });
-
-        document.getElementById('beatEdit').addEventListener('click', () => {
-            // Switch to sequencer mode for editing
-            this.switchMode('sequencer');
         });
 
         // Sequencer controls
