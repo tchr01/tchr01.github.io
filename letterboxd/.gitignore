@@ -1,0 +1,4 @@
+node_modules/
+movies.json
+.DS_Store
+*.log

@@ -1,0 +1,21 @@
+{
+  "name": "letterboxd-viewer",
+  "version": "1.0.0",
+  "description": "A quick browse viewer for your Letterboxd list with movie posters and genres",
+  "main": "scraper.js",
+  "type": "module",
+  "scripts": {
+    "scrape": "node scraper.js"
+  },
+  "keywords": [
+    "letterboxd",
+    "movies",
+    "viewer",
+    "scraper"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "csv-parse": "^5.5.0"
+  }
+}
